@@ -28,9 +28,6 @@ public class FlaskController {
             throw new ApplicationException(ErrorCode.REQUEST_PARAMETER_MISSING_ERROR);
         }
 
-        request.put("s3Path", s3Path);
-        request.put("category", category);
-
         // flask로 요청 전송
         try{
             HttpHeaders headers = new HttpHeaders();
