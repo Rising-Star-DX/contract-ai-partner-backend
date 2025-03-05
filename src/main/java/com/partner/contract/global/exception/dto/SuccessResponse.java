@@ -1,5 +1,6 @@
 package com.partner.contract.global.exception.dto;
 
+import com.partner.contract.global.exception.error.SuccessCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,5 +13,9 @@ public class SuccessResponse<T> {
 
     public static <T> SuccessResponse<T> of(String code, String message, T data) {
         return new SuccessResponse<>(code, message, data);
+    }
+
+    public static <T> SuccessResponse<T> of(SuccessCode successCode, T data) {
+        return new SuccessResponse<>(successCode.getCode(), successCode.getMessage(), data);
     }
 }
