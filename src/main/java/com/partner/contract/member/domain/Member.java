@@ -38,6 +38,10 @@ public class Member {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Company company;
+
     @Builder
     public Member(String name, String identifier, String password, String email, String profileImage, Role role, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.name = name;
