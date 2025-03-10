@@ -1,10 +1,13 @@
 package com.partner.contract.member.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +25,7 @@ public class Member {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = true)
+    @Column
     private String profileImage;
 
     @Column(nullable = false)
@@ -35,4 +38,15 @@ public class Member {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
+    @Builder
+    public Member(String name, String identifier, String password, String email, String profileImage, Role role, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.name = name;
+        this.identifier = identifier;
+        this.password = password;
+        this.email = email;
+        this.profileImage = profileImage;
+        this.role = role;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 }
