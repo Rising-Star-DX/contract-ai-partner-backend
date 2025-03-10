@@ -3,6 +3,7 @@ package com.partner.contract.category.domain;
 import com.partner.contract.agreement.domain.Agreement;
 import com.partner.contract.standard.domain.Standard;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -30,4 +31,13 @@ public class Category {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Agreement> agreementList;
+
+    @Builder
+    public Category(String name, LocalDateTime createdAt, LocalDateTime updatedAt, List<Standard> standardList, List<Agreement> agreementList) {
+        this.name = name;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.standardList = standardList;
+        this.agreementList = agreementList;
+    }
 }

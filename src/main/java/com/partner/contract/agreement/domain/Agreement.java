@@ -40,4 +40,15 @@ public class Agreement {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @Builder
+    public Agreement(String name, FileType type, String url, UploadStatus status, LocalDateTime createdAt, String summaryContent, Integer totalPage, Category category) {
+        this.name = name;
+        this.type = type;
+        this.url = url;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.summaryContent = summaryContent;
+        this.totalPage = totalPage;
+        this.category = category;
+    }
 }
