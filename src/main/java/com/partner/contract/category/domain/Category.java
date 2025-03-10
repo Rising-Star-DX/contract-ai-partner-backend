@@ -1,5 +1,6 @@
 package com.partner.contract.category.domain;
 
+import com.partner.contract.agreement.domain.Agreement;
 import com.partner.contract.standard.domain.Standard;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
@@ -25,5 +26,8 @@ public class Category {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<Standard> standards;
+    private List<Standard> standardList;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Agreement> agreementList;
 }

@@ -1,6 +1,8 @@
 package com.partner.contract.agreement.domain;
 
+import com.partner.contract.category.domain.Category;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -33,5 +35,9 @@ public class Agreement {
 
     @Column(nullable = false)
     private Integer totalPage;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
 }
