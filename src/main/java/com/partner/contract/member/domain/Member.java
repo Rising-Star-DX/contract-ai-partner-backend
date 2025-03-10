@@ -43,7 +43,7 @@ public class Member {
     private Company company;
 
     @Builder
-    public Member(String name, String identifier, String password, String email, String profileImage, Role role, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Member(String name, String identifier, String password, String email, String profileImage, Role role, LocalDateTime createdAt, LocalDateTime updatedAt, Company company) {
         this.name = name;
         this.identifier = identifier;
         this.password = password;
@@ -52,5 +52,6 @@ public class Member {
         this.role = role;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.company = company;
     }
 }

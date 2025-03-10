@@ -25,15 +25,17 @@ public class Company {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
-    private List<Member> members;
+    private List<Member> memberList;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
-    private List<Department> departments;
+    private List<Department> departmentList;
 
     @Builder
-    public Company(String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Company(String name, LocalDateTime createdAt, LocalDateTime updatedAt, List<Member> memberList, List<Department> departmentList) {
         this.name = name;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.memberList = memberList;
+        this.departmentList = departmentList;
     }
 }
