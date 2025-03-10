@@ -1,10 +1,13 @@
 package com.partner.contract.member.domain;
 
+import com.partner.contract.agreement.domain.MemberAgreement;
+import com.partner.contract.standard.domain.MemberStandard;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -41,6 +44,12 @@ public class Member {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberStandard> memberStandardList;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberAgreement> memberAgreementList;
 
     @Builder
     public Member(String name, String identifier, String password, String email, String profileImage, Role role, LocalDateTime createdAt, LocalDateTime updatedAt, Company company) {

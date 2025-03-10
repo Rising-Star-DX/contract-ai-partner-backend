@@ -44,8 +44,11 @@ public class Agreement {
     @OneToMany(mappedBy = "agreement", cascade = CascadeType.ALL)
     private List<AgreementIncorrectText> agreementIncorrectTextList;
 
+    @OneToMany(mappedBy = "agreement", cascade = CascadeType.ALL)
+    private List<MemberAgreement> memberAgreementList;
+
     @Builder
-    public Agreement(String name, FileType type, String url, UploadStatus status, LocalDateTime createdAt, String summaryContent, Integer totalPage, Category category, List<AgreementIncorrectText> agreementIncorrectTextList) {
+    public Agreement(String name, FileType type, String url, UploadStatus status, LocalDateTime createdAt, String summaryContent, Integer totalPage, Category category, List<AgreementIncorrectText> agreementIncorrectTextList, List<MemberAgreement> memberAgreementList) {
         this.name = name;
         this.type = type;
         this.url = url;
@@ -55,5 +58,6 @@ public class Agreement {
         this.totalPage = totalPage;
         this.category = category;
         this.agreementIncorrectTextList = agreementIncorrectTextList;
+        this.memberAgreementList = memberAgreementList;
     }
 }
