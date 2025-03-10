@@ -1,5 +1,7 @@
 package com.partner.contract.standard.domain;
 
+import com.partner.contract.agreement.domain.FileType;
+import com.partner.contract.agreement.domain.UploadStatus;
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 
@@ -16,14 +18,15 @@ public class Standard {
     private String name;
 
     @Column(nullable = false)
-    private String type;
+    private FileType type;
 
     @Column(nullable = false)
     private String url;
 
     @Column(nullable = false)
-    private String status;
+    private UploadStatus status;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
 }
