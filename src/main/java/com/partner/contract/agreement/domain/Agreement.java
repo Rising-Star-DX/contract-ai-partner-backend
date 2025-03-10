@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -40,8 +41,11 @@ public class Agreement {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @OneToMany(mappedBy = "agreement", cascade = CascadeType.ALL)
+    private List<AgreementIncorrectText> agreementIncorrectTextList;
+
     @Builder
-    public Agreement(String name, FileType type, String url, UploadStatus status, LocalDateTime createdAt, String summaryContent, Integer totalPage, Category category) {
+    public Agreement(String name, FileType type, String url, UploadStatus status, LocalDateTime createdAt, String summaryContent, Integer totalPage, Category category, List<AgreementIncorrectText> agreementIncorrectTextList) {
         this.name = name;
         this.type = type;
         this.url = url;
@@ -50,5 +54,6 @@ public class Agreement {
         this.summaryContent = summaryContent;
         this.totalPage = totalPage;
         this.category = category;
+        this.agreementIncorrectTextList = agreementIncorrectTextList;
     }
 }
