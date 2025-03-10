@@ -35,4 +35,13 @@ public class Standard {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @Builder
+    public Standard(String name, FileType type, String url, UploadStatus status, LocalDateTime createdAt, Category category) {
+        this.name = name;
+        this.type = type;
+        this.url = url;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.category = category;
+    }
 }
