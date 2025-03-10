@@ -2,10 +2,12 @@ package com.partner.contract.agreement.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor
 public class AgreementIncorrectText {
 
     @Id
@@ -37,8 +39,12 @@ public class AgreementIncorrectText {
     @JoinColumn(name = "agreement_id", nullable = false)
     private Agreement agreement;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "custom_text_id", nullable = false)
+    private CustomText customText;
+
     @Builder
-    public AgreementIncorrectText(String position, Integer page, Float accuracy, LocalDateTime createdAt, String incorrectText, String proofText, String correctedText, Agreement agreement) {
+    public AgreementIncorrectText(String position, Integer page, Float accuracy, LocalDateTime createdAt, String incorrectText, String proofText, String correctedText, Agreement agreement, CustomText customText) {
         this.position = position;
         this.page = page;
         this.accuracy = accuracy;
@@ -47,5 +53,6 @@ public class AgreementIncorrectText {
         this.proofText = proofText;
         this.correctedText = correctedText;
         this.agreement = agreement;
+        this.customText = customText;
     }
 }
