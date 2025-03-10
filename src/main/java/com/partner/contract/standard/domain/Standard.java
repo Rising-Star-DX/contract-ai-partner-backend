@@ -2,7 +2,9 @@ package com.partner.contract.standard.domain;
 
 import com.partner.contract.agreement.domain.FileType;
 import com.partner.contract.agreement.domain.UploadStatus;
+import com.partner.contract.category.domain.Category;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -28,5 +30,9 @@ public class Standard {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
 }
