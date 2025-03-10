@@ -27,6 +27,9 @@ public class Company {
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<Member> members;
 
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    private List<Department> departments;
+
     @Builder
     public Company(String name, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.name = name;
