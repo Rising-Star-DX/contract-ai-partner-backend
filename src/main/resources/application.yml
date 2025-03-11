@@ -5,7 +5,7 @@ spring:
   application:
     name: contract
   datasource:
-    url: jdbc:sqlserver://localhost:1434;databaseName=${secret.mssql.db};encrypt=false;trustServerCertificate=true
+    url: jdbc:sqlserver://${secret.mssql.endpoint};databaseName=${secret.mssql.db};encrypt=false;trustServerCertificate=true
     username: ${secret.mssql.username}
     password: ${secret.mssql.password}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
