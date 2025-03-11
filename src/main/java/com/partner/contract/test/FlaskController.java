@@ -17,12 +17,13 @@ import java.util.Map;
 @RestController
 public class FlaskController {
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String flaskUrl = "http://localhost:5000/flask/contract/{contract_id}/ai-review";
-
+    private static final String FLASK_SERVER_IP = System.getenv("FLASK_SERVER_IP");
     @PostMapping("/sends3url")
     public ResponseEntity<SuccessResponse<Map>> sends3url(@RequestBody Map<String, String> request) {
         String s3Path = "s3://rising-star-reference-document-bucket/가맹사업거래의 공정화에 관한 법률(법률)(제20712호)(20250121).pdf";
         String category = "R&D";
+
+        String flaskUrl = "http://"+FLASK_SERVER_IP+"/flask/contract/1/ai-review"; // 1 -> {contract_id}
 
         if(s3Path == null || s3Path.isEmpty()) {
             throw new ApplicationException(ErrorCode.REQUEST_PARAMETER_MISSING_ERROR);
