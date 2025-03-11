@@ -31,7 +31,7 @@ public class FlaskController {
 
         request.put("s3Path", s3Path);
         request.put("category", category);
-        request.put("id", "1");
+        request.put("id", "1"); 
 
         // flask로 요청 전송
         try{
