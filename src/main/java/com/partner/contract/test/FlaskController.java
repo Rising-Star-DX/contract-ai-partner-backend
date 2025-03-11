@@ -23,7 +23,7 @@ public class FlaskController {
         String s3Path = "s3://rising-star-reference-document-bucket/가맹사업거래의 공정화에 관한 법률(법률)(제20712호)(20250121).pdf";
         String category = "R&D";
 
-        String flaskUrl = "http://"+"52.79.79.23"+"/flask/reference-document"; // 1 -> {contract_id}
+        String flaskUrl = "http://"+FLASK_SERVER_IP+"/flask/reference-document"; // 1 -> {contract_id}
 
         if(s3Path == null || s3Path.isEmpty()) {
             throw new ApplicationException(ErrorCode.REQUEST_PARAMETER_MISSING_ERROR);
