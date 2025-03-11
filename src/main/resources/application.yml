@@ -1,0 +1,27 @@
+spring:
+  config:
+    import: "application-secret.yml"
+
+  application:
+    name: contract
+  datasource:
+    url: jdbc:sqlserver://localhost:1434;databaseName=${secret.mssql.db};encrypt=false;trustServerCertificate=true
+    username: ${secret.mssql.username}
+    password: ${secret.mssql.password}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    jpa:
+      database-platform: org.hibernate.dialect.SQLServerDialect
+      hibernate:
+        ddl-auto: none
+      show-sql: true
+
+server:
+  port: 8080
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
