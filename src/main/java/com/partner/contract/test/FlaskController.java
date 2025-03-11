@@ -23,7 +23,7 @@ public class FlaskController {
         String s3Path = "s3://rising-star-reference-document-bucket/가맹사업거래의 공정화에 관한 법률(법률)(제20712호)(20250121).pdf";
         String category = "R&D";
 
-        String flaskUrl = "http://"+FLASK_SERVER_IP+"/flask/contract/1/ai-review"; // 1 -> {contract_id}
+        String flaskUrl = "http://"+"52.79.79.23"+"/flask/reference-document"; // 1 -> {contract_id}
 
         if(s3Path == null || s3Path.isEmpty()) {
             throw new ApplicationException(ErrorCode.REQUEST_PARAMETER_MISSING_ERROR);
@@ -31,6 +31,7 @@ public class FlaskController {
 
         request.put("s3Path", s3Path);
         request.put("category", category);
+        request.put("id", "1");
 
         // flask로 요청 전송
         try{
@@ -38,11 +39,13 @@ public class FlaskController {
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity<Map<String, String>> entity = new HttpEntity<>(request, headers);
+            System.out.println(flaskUrl);
             // 추후에 저장할 dto 타입으로 변경해야함
             ResponseEntity<Map> response = restTemplate.exchange(flaskUrl, HttpMethod.POST, entity, Map.class);
 
             return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS, response.getBody()));
         } catch (Exception e) {
+            System.out.println(e);
             throw new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
