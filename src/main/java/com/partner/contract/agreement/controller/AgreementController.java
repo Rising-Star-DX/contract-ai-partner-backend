@@ -19,9 +19,9 @@ public class AgreementController {
     private final AgreementService agreementService;
 
     @GetMapping
-    public ResponseEntity<SuccessResponse<List<AgreementResponseDto>>> getAllAgreements() {
-        List<AgreementResponseDto> agreements = agreementService.getAllAgreements();
-        //System.out.println(standards);
+    public ResponseEntity<SuccessResponse<List<AgreementResponseDto>>> agreementList() {
+        List<AgreementResponseDto> agreements = agreementService.findAgreementList();
+
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), agreements));
     }
 }
