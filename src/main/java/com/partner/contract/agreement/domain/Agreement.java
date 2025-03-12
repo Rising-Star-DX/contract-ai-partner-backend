@@ -1,5 +1,7 @@
 package com.partner.contract.agreement.domain;
 
+import com.partner.contract.agreement.common.enums.AiStatus;
+import com.partner.contract.agreement.common.enums.FileType;
 import com.partner.contract.category.domain.Category;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -30,7 +32,7 @@ public class Agreement {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private UploadStatus status;
+    private AiStatus aiStatus;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -52,11 +54,11 @@ public class Agreement {
     private List<MemberAgreement> memberAgreementList;
 
     @Builder
-    public Agreement(String name, FileType type, String url, UploadStatus status, LocalDateTime createdAt, String summaryContent, Integer totalPage, Category category, List<AgreementIncorrectText> agreementIncorrectTextList, List<MemberAgreement> memberAgreementList) {
+    public Agreement(String name, FileType type, String url, AiStatus aiStatus, LocalDateTime createdAt, String summaryContent, Integer totalPage, Category category, List<AgreementIncorrectText> agreementIncorrectTextList, List<MemberAgreement> memberAgreementList) {
         this.name = name;
         this.type = type;
         this.url = url;
-        this.status = status;
+        this.aiStatus = aiStatus;
         this.createdAt = createdAt;
         this.summaryContent = summaryContent;
         this.totalPage = totalPage;

@@ -1,5 +1,6 @@
 package com.partner.contract.member.domain;
 
+import com.partner.contract.agreement.common.enums.Role;
 import com.partner.contract.agreement.domain.MemberAgreement;
 import com.partner.contract.standard.domain.MemberStandard;
 import jakarta.persistence.*;
