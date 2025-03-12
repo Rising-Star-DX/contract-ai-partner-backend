@@ -19,9 +19,9 @@ public class StandardController {
     private final StandardService standardService;
 
     @GetMapping
-    public ResponseEntity<SuccessResponse<List<StandardResponseDto>>> getAllStandards() {
-        List<StandardResponseDto> standards = standardService.getAllStandards();
-        System.out.println(standards);
+    public ResponseEntity<SuccessResponse<List<StandardResponseDto>>> standardList() {
+        List<StandardResponseDto> standards = standardService.findStandardList();
+
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), standards));
     }
 }
