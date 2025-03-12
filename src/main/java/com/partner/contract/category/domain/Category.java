@@ -4,6 +4,7 @@ import com.partner.contract.agreement.domain.Agreement;
 import com.partner.contract.standard.domain.Standard;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class Category {
 
     @Id

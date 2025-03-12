@@ -1,8 +1,11 @@
 package com.partner.contract.agreement.domain;
 
+import com.partner.contract.agreement.common.enums.AiStatus;
+import com.partner.contract.agreement.common.enums.FileType;
 import com.partner.contract.category.domain.Category;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -10,6 +13,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class Agreement {
 
     @Id
@@ -20,13 +24,15 @@ public class Agreement {
     private String name;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private FileType type;
 
     @Column(nullable = false)
     private String url;
 
     @Column(nullable = false)
-    private UploadStatus status;
+    @Enumerated(EnumType.STRING)
+    private AiStatus aiStatus;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -48,11 +54,11 @@ public class Agreement {
     private List<MemberAgreement> memberAgreementList;
 
     @Builder
-    public Agreement(String name, FileType type, String url, UploadStatus status, LocalDateTime createdAt, String summaryContent, Integer totalPage, Category category, List<AgreementIncorrectText> agreementIncorrectTextList, List<MemberAgreement> memberAgreementList) {
+    public Agreement(String name, FileType type, String url, AiStatus aiStatus, LocalDateTime createdAt, String summaryContent, Integer totalPage, Category category, List<AgreementIncorrectText> agreementIncorrectTextList, List<MemberAgreement> memberAgreementList) {
         this.name = name;
         this.type = type;
         this.url = url;
-        this.status = status;
+        this.aiStatus = aiStatus;
         this.createdAt = createdAt;
         this.summaryContent = summaryContent;
         this.totalPage = totalPage;
