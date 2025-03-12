@@ -1,4 +1,4 @@
-package com.partner.contract.member.domain;
+package com.partner.contract.agreement.common.enums;
 
 import lombok.RequiredArgsConstructor;
 

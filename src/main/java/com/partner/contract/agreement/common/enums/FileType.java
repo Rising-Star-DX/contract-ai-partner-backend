@@ -1,4 +1,4 @@
-package com.partner.contract.agreement.domain;
+package com.partner.contract.agreement.common.enums;
 
 public enum FileType {
     PDF,
