@@ -3,6 +3,7 @@ package com.partner.contract.agreement.domain;
 import com.partner.contract.category.domain.Category;
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class Agreement {
 
     @Id
@@ -20,12 +22,14 @@ public class Agreement {
     private String name;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private FileType type;
 
     @Column(nullable = false)
     private String url;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private UploadStatus status;
 
     @Column(nullable = false)
