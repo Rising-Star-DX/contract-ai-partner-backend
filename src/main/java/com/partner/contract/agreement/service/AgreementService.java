@@ -21,4 +21,18 @@ public class AgreementService {
                 .map(AgreementResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
+    public List<AgreementResponseDto> findAgreementListByName(String name) {
+        return agreementRepository.findByNameContaining(name)
+                .stream()
+                .map(AgreementResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<AgreementResponseDto> findAgreementListByCategoryId(Long categoryId) {
+        return agreementRepository.findByCategoryId(categoryId)
+                .stream()
+                .map(AgreementResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
 }
