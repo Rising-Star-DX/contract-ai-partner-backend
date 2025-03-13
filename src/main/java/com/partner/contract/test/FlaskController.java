@@ -19,7 +19,7 @@ import java.util.Map;
 public class FlaskController {
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @Value("${secret.flask.local.ip}")
+    @Value("${secret.flask.ip}")
     private String FLASK_SERVER_IP;
 
     @PostMapping("/sends3url")
