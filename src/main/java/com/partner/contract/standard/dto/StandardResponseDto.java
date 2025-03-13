@@ -1,6 +1,7 @@
 package com.partner.contract.standard.dto;
 
 import com.partner.contract.agreement.common.enums.AiStatus;
+import com.partner.contract.agreement.common.enums.FileStatus;
 import com.partner.contract.agreement.common.enums.FileType;
 import com.partner.contract.standard.domain.Standard;
 import lombok.Builder;
@@ -16,17 +17,15 @@ public class StandardResponseDto {
     private Long id;
     private String name;
     private FileType type;
-    private String category;
-    private AiStatus aiStatus;
+    private String status;
     private LocalDateTime createdAt;
 
     @Builder
-    public StandardResponseDto(Long id, String name, FileType type, String category, AiStatus aiStatus, LocalDateTime createdAt) {
+    public StandardResponseDto(Long id, String name, FileType type, String status, LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.type = type;
-        this.category = category;
-        this.aiStatus = aiStatus;
+        this.status = status;
         this.createdAt = createdAt;
     }
 
@@ -35,9 +34,24 @@ public class StandardResponseDto {
                 .id(standard.getId())
                 .name(standard.getName())
                 .type(standard.getType())
-                .category(standard.getCategory().getName())
-                .aiStatus(standard.getAiStatus())
+                .status(determineStatus(standard.getFileStatus(), standard.getAiStatus()))
                 .createdAt(standard.getCreatedAt())
                 .build();
     }
+
+    private static String determineStatus(FileStatus fileStatus, AiStatus aiStatus) {
+        if (fileStatus == FileStatus.UPLOADING && aiStatus == null) {
+            return "UPLOADING";
+        } else if (fileStatus == FileStatus.FAILED && aiStatus == null) {
+            return "FILEFAILED";
+        } else if (fileStatus == FileStatus.SUCCESS && aiStatus == AiStatus.ANALYZING) {
+            return "ANALYZING";
+        } else if (fileStatus == FileStatus.SUCCESS && aiStatus == AiStatus.FAILED) {
+            return "AIFAILED";
+        } else if (fileStatus == FileStatus.SUCCESS && aiStatus == AiStatus.SUCCESS) {
+            return "SUCCESS";
+        }
+        return null;
+    }
+
 }
