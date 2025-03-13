@@ -21,4 +21,18 @@ public class StandardService {
                 .map(StandardResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
+
+    public List<StandardResponseDto> findStandardListByName(String name) {
+        return standardRepository.findByNameContaining(name)
+                .stream()
+                .map(StandardResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<StandardResponseDto> findStandardListByCategoryId(Long categoryId) {
+        return standardRepository.findByCategoryId(categoryId)
+                .stream()
+                .map(StandardResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
 }
