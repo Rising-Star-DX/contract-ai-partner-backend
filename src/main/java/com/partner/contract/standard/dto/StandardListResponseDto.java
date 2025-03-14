@@ -1,7 +1,7 @@
 package com.partner.contract.standard.dto;
 
-import com.partner.contract.agreement.common.enums.FileType;
-import com.partner.contract.agreement.common.utils.DocumentStatusUtil;
+import com.partner.contract.common.enums.FileType;
+import com.partner.contract.common.utils.DocumentStatusUtil;
 import com.partner.contract.standard.domain.Standard;
 import lombok.Builder;
 import lombok.Getter;
