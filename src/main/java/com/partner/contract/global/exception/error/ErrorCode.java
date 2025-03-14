@@ -23,7 +23,10 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "G999", "서버 내부 에러가 발생했습니다."),
 
     // Category
-    CATEGORY_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "C001", "해당 ID에 대응되는 카테고리가 없습니다.")
+    CATEGORY_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "C001", "해당 ID에 대응되는 카테고리가 없습니다."),
+
+    // STANDARD
+    STANDARD_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "ST001", "해당 ID에 대응되는 문서가 없습니다.");
     ;
 
     private final HttpStatus status;
