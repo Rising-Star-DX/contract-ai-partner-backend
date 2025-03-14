@@ -4,6 +4,7 @@ import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
 import com.partner.contract.standard.dto.StandardListResponseDto;
+import com.partner.contract.standard.dto.StandardResponseDto;
 import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -41,5 +42,10 @@ public class StandardService {
                 .stream()
                 .map(StandardListResponseDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public StandardResponseDto findStandardById(Long id) {
+        Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
+        return StandardResponseDto.fromEntity(standard);
     }
 }
