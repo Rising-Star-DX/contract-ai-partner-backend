@@ -1,6 +1,7 @@
 package com.partner.contract.agreement.domain;
 
 import com.partner.contract.agreement.common.enums.AiStatus;
+import com.partner.contract.agreement.common.enums.FileStatus;
 import com.partner.contract.agreement.common.enums.FileType;
 import com.partner.contract.category.domain.Category;
 import jakarta.persistence.*;
@@ -32,6 +33,10 @@ public class Agreement {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    private FileStatus fileStatus;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private AiStatus aiStatus;
 
     @Column(nullable = false)
@@ -54,10 +59,11 @@ public class Agreement {
     private List<MemberAgreement> memberAgreementList;
 
     @Builder
-    public Agreement(String name, FileType type, String url, AiStatus aiStatus, LocalDateTime createdAt, String summaryContent, Integer totalPage, Category category, List<AgreementIncorrectText> agreementIncorrectTextList, List<MemberAgreement> memberAgreementList) {
+    public Agreement(String name, FileType type, String url, FileStatus fileStatus, AiStatus aiStatus, LocalDateTime createdAt, String summaryContent, Integer totalPage, Category category, List<AgreementIncorrectText> agreementIncorrectTextList, List<MemberAgreement> memberAgreementList) {
         this.name = name;
         this.type = type;
         this.url = url;
+        this.fileStatus = fileStatus;
         this.aiStatus = aiStatus;
         this.createdAt = createdAt;
         this.summaryContent = summaryContent;

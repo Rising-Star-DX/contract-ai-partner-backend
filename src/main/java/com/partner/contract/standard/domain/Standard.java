@@ -1,8 +1,8 @@
 package com.partner.contract.standard.domain;
 
 import com.partner.contract.agreement.common.enums.AiStatus;
+import com.partner.contract.agreement.common.enums.FileStatus;
 import com.partner.contract.agreement.common.enums.FileType;
-import com.partner.contract.agreement.domain.FileType;
 import com.partner.contract.category.domain.Category;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -32,6 +32,10 @@ public class Standard {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    private FileStatus fileStatus;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private AiStatus aiStatus;
 
     @Column(nullable = false)
@@ -45,10 +49,11 @@ public class Standard {
     private List<MemberStandard> memberStandardList;
 
     @Builder
-    public Standard(String name, FileType type, String url, AiStatus aiStatus, LocalDateTime createdAt, Category category, List<MemberStandard> memberStandardList) {
+    public Standard(String name, FileType type, String url, FileStatus fileStatus, AiStatus aiStatus, LocalDateTime createdAt, Category category, List<MemberStandard> memberStandardList) {
         this.name = name;
         this.type = type;
         this.url = url;
+        this.fileStatus = fileStatus;
         this.aiStatus = aiStatus;
         this.createdAt = createdAt;
         this.category = category;
