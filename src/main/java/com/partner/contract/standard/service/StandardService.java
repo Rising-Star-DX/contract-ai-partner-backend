@@ -44,6 +44,19 @@ public class StandardService {
                 .collect(Collectors.toList());
     }
 
+    public Long initFileUpload(FileUploadInitRequestDto requestDto) {
+        Category category = categoryRepository.findById(requestDto.getCategoryId())
+                .orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
+
+        Standard standard = Standard.builder()
+                .name(requestDto.getName())
+                .type(requestDto.getType())
+                .category(category)
+                .build();
+
+        return standardRepository.save(standard).getId();
+    }
+
     public StandardResponseDto findStandardById(Long id) {
         Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
         return StandardResponseDto.fromEntity(standard);
