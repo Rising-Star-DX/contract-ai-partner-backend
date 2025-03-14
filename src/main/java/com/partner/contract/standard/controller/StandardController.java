@@ -2,16 +2,15 @@ package com.partner.contract.standard.controller;
 
 import com.partner.contract.global.exception.dto.SuccessResponse;
 import com.partner.contract.global.exception.error.SuccessCode;
+import com.partner.contract.standard.dto.FileUploadInitRequestDto;
 import com.partner.contract.standard.dto.StandardListResponseDto;
 import com.partner.contract.standard.service.StandardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -38,5 +37,11 @@ public class StandardController {
         List<StandardListResponseDto> standards = standardService.findStandardListByCategoryId(categoryId);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), standards));
+    }
+
+    @PostMapping("/upload/init")
+    public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUploadInit(@RequestBody FileUploadInitRequestDto requestDto) {
+        Long id = standardService.initFileUpload(requestDto);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.INSERT_SUCCESS.getCode(), SuccessCode.INSERT_SUCCESS.getMessage(), Map.of("id", id)));
     }
 }

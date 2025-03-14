@@ -1,4 +1,4 @@
-package com.partner.contract.agreement.common.enums;
+package com.partner.contract.common.enums;
 
 public enum FileStatus {
     UPLOADING,

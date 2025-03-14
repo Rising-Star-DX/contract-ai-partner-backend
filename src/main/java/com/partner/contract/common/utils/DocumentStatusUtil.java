@@ -1,7 +1,7 @@
-package com.partner.contract.agreement.common.utils;
+package com.partner.contract.common.utils;
 
-import com.partner.contract.agreement.common.enums.AiStatus;
-import com.partner.contract.agreement.common.enums.FileStatus;
+import com.partner.contract.common.enums.AiStatus;
+import com.partner.contract.common.enums.FileStatus;
 
 public class DocumentStatusUtil {
     public static String determineStatus(FileStatus fileStatus, AiStatus aiStatus) {

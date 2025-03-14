@@ -1,8 +1,8 @@
 package com.partner.contract.agreement.domain;
 
-import com.partner.contract.agreement.common.enums.AiStatus;
-import com.partner.contract.agreement.common.enums.FileStatus;
-import com.partner.contract.agreement.common.enums.FileType;
+import com.partner.contract.common.enums.AiStatus;
+import com.partner.contract.common.enums.FileStatus;
+import com.partner.contract.common.enums.FileType;
 import com.partner.contract.category.domain.Category;
 import jakarta.persistence.*;
 import lombok.Builder;
