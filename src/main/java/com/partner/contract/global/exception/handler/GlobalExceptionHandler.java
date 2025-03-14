@@ -23,6 +23,6 @@ public class GlobalExceptionHandler {
         log.error("{}: {}", e.getClass().getSimpleName(), e.getMessage(), e);
         return ResponseEntity
                 .badRequest()
-                .body(ErrorResponse.of("R001", e.getMessage())); // runtime error
+                .body(ErrorResponse.of("RT", e.getMessage())); // runtime error
     }
 }

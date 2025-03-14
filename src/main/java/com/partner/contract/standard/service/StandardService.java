@@ -1,8 +1,11 @@
 package com.partner.contract.standard.service;
 
+import com.partner.contract.category.domain.Category;
+import com.partner.contract.category.repository.CategoryRepository;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
+import com.partner.contract.standard.dto.FileUploadInitRequestDto;
 import com.partner.contract.standard.dto.StandardListResponseDto;
 import com.partner.contract.standard.dto.StandardResponseDto;
 import com.partner.contract.standard.repository.StandardRepository;
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class StandardService {
     private final StandardRepository standardRepository;
+    private final CategoryRepository categoryRepository;
 
     public List<StandardListResponseDto> findStandardList() {
         return standardRepository.findAllByOrderByCreatedAtDesc()
