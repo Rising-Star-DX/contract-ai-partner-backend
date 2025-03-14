@@ -7,6 +7,7 @@ import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
 import com.partner.contract.standard.dto.FileUploadInitRequestDto;
 import com.partner.contract.standard.dto.StandardListResponseDto;
+import com.partner.contract.standard.dto.StandardResponseDto;
 import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -58,5 +59,10 @@ public class StandardService {
                 .build();
 
         return standardRepository.save(standard).getId();
+    }
+
+    public StandardResponseDto findStandardById(Long id) {
+        Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
+        return StandardResponseDto.fromEntity(standard);
     }
 }
