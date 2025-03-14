@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,17 +28,18 @@ public class Standard {
     @Enumerated(EnumType.STRING)
     private FileType type;
 
-    @Column(nullable = false)
+    @Column
     private String url;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private FileStatus fileStatus;
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private AiStatus aiStatus;
 
+    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
