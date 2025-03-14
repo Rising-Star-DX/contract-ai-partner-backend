@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 public class Standard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +42,7 @@ public class Standard {
     private AiStatus aiStatus;
 
     @CreatedDate
-    @Column(nullable = false)
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
