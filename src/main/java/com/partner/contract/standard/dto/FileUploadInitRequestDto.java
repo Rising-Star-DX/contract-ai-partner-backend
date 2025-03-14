@@ -1,11 +1,9 @@
 package com.partner.contract.standard.dto;
 
 import com.partner.contract.common.enums.FileType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-@AllArgsConstructor
+@Data
 public class FileUploadInitRequestDto {
     private String name; // 문서 이름
     private FileType type; // 문서 타입
