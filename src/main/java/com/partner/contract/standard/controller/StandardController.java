@@ -15,6 +15,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/standards")
 public class StandardController {
     private final StandardService standardService;
