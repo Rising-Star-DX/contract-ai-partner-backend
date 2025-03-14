@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface AgreementRepository extends JpaRepository<Agreement, Long> {
     List<Agreement> findAllByOrderByCreatedAtDesc();
+    List<Agreement> findByNameContaining(String name);
+    List<Agreement> findByCategoryId(Long categoryId);
 }

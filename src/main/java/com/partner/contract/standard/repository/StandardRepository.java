@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface StandardRepository extends JpaRepository<Standard, Long> {
     List<Standard> findAllByOrderByCreatedAtDesc();
+    List<Standard> findByNameContaining(String name);
+    List<Standard> findByCategoryId(Long categoryId);
 }
