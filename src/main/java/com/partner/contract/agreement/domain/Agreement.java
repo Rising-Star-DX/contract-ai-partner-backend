@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 public class Agreement {
 
     @Id
@@ -28,24 +31,20 @@ public class Agreement {
     @Enumerated(EnumType.STRING)
     private FileType type;
 
-    @Column(nullable = false)
     private String url;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private FileStatus fileStatus;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private AiStatus aiStatus;
 
+    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
     private String summaryContent;
 
-    @Column(nullable = false)
     private Integer totalPage;
 
     @ManyToOne(fetch = FetchType.LAZY)
