@@ -57,7 +57,6 @@ public class StandardService {
         return standardRepository.save(standard).getId();
     }
 
-    
     public StandardResponseDto findStandardById(Long id) {
         Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
         return StandardResponseDto.fromEntity(standard);
