@@ -17,9 +17,6 @@ public class AwsS3Config {
     @Value("${secret.aws.credentials.secret-key}")
     private String secretKey;
 
-    @Value("${secret.aws.s3.bucket-name}")
-    private String bucketName;
-
     @Value("${secret.aws.s3.region}")
     private String region;
 
