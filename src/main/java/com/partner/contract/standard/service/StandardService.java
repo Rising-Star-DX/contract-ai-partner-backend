@@ -2,6 +2,7 @@ package com.partner.contract.standard.service;
 
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
+import com.partner.contract.common.dto.FileUploadRequestDto;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
@@ -12,6 +13,7 @@ import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,5 +66,16 @@ public class StandardService {
     public StandardResponseDto findStandardById(Long id) {
         Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
         return StandardResponseDto.fromEntity(standard);
+    }
+
+    public Long uploadFile(MultipartFile file, FileUploadRequestDto data){
+
+        // S3 파일 업로드
+
+
+        Standard standard = standardRepository.findById(data.getId())
+                .orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
+
+
     }
 }
