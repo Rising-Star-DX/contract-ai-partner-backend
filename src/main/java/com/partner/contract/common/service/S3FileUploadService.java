@@ -25,8 +25,13 @@ public class S3FileUploadService {
     @Value("${secret.aws.s3.bucket-name}")
     private String bucketName;
 
+    public String getBucketName() {
+        return bucketName;
+    }
+
     public String uploadFile(MultipartFile file) throws IOException {
-        String fileName = file.getOriginalFilename() + "_" + UUID.randomUUID();
+
+        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 
         try (InputStream inputStream = file.getInputStream()) { // try-with-resources 사용
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
