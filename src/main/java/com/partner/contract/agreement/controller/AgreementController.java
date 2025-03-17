@@ -56,4 +56,11 @@ public class AgreementController {
                 SuccessCode.UPDATE_SUCCESS.getMessage(),
                 Map.of("id", id)));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<String>> agreementDelete(@PathVariable("id") Long id) {
+        agreementService.deleteAgreement(id);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+    }
 }
