@@ -8,7 +8,9 @@ import com.partner.contract.standard.dto.FileUploadInitRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -44,5 +46,16 @@ public class AgreementController {
     public ResponseEntity<SuccessResponse<Map<String, Long>>> agreementFileUploadInit(@RequestBody FileUploadInitRequestDto requestDto) {
         Long id = agreementService.initFileUpload(requestDto);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.INSERT_SUCCESS.getCode(), SuccessCode.INSERT_SUCCESS.getMessage(), Map.of("id", id)));
+    }
+
+    @PatchMapping("/upload")
+    public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUpload(
+            @RequestPart("file") MultipartFile file,
+            @RequestParam("id") Long id) throws IOException {
+
+        agreementService.uploadFile(file, id);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
+                SuccessCode.UPDATE_SUCCESS.getMessage(),
+                Map.of("id", id)));
     }
 }
