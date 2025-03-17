@@ -49,7 +49,7 @@ public class AgreementController {
     @PatchMapping("/upload")
     public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUpload(
             @RequestPart("file") MultipartFile file,
-            @RequestParam("id") Long id) throws IOException {
+            @RequestParam("id") Long id) {
 
         agreementService.uploadFile(file, id);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
