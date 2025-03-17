@@ -9,7 +9,7 @@ import com.partner.contract.common.service.S3FileUploadService;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
-import com.partner.contract.standard.dto.FileUploadInitRequestDto;
+import com.partner.contract.common.dto.FileUploadInitRequestDto;
 import com.partner.contract.standard.dto.StandardListResponseDto;
 import com.partner.contract.standard.dto.StandardResponseDto;
 import com.partner.contract.standard.repository.StandardRepository;
@@ -39,7 +39,6 @@ public class StandardService {
     private String FLASK_SERVER_IP;
 
     private final S3FileUploadService s3FileUploadService;
-
 
     public List<StandardListResponseDto> findStandardList() {
         return standardRepository.findAllWithCategoryByOrderByCreatedAtDesc()
@@ -119,5 +118,12 @@ public class StandardService {
         String url = "s3://" + s3FileUploadService.getBucketName() + "/" + fileName;
         standard.updateFileStatus(url, FileStatus.SUCCESS, AiStatus.ANALYZING);
         standardRepository.save(standard);
+    }
+
+    public void analyze(Long id){
+        Standard standard = standardRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
+
+
     }
 }

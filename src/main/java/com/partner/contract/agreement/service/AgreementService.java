@@ -10,7 +10,7 @@ import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.service.S3FileUploadService;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
-import com.partner.contract.standard.dto.FileUploadInitRequestDto;
+import com.partner.contract.common.dto.FileUploadInitRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

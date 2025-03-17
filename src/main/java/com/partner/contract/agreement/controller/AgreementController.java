@@ -4,7 +4,7 @@ import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.service.AgreementService;
 import com.partner.contract.global.exception.dto.SuccessResponse;
 import com.partner.contract.global.exception.error.SuccessCode;
-import com.partner.contract.standard.dto.FileUploadInitRequestDto;
+import com.partner.contract.common.dto.FileUploadInitRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

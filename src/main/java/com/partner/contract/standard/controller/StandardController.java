@@ -2,7 +2,7 @@ package com.partner.contract.standard.controller;
 
 import com.partner.contract.global.exception.dto.SuccessResponse;
 import com.partner.contract.global.exception.error.SuccessCode;
-import com.partner.contract.standard.dto.FileUploadInitRequestDto;
+import com.partner.contract.common.dto.FileUploadInitRequestDto;
 import com.partner.contract.standard.dto.StandardListResponseDto;
 import com.partner.contract.standard.dto.StandardResponseDto;
 import com.partner.contract.standard.service.StandardService;
@@ -68,6 +68,16 @@ public class StandardController {
             @RequestParam("id") Long id) {
 
         standardService.uploadFile(file, id);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
+                SuccessCode.UPDATE_SUCCESS.getMessage(),
+                Map.of("id", id)));
+    }
+
+    @PatchMapping("/analysis")
+    public ResponseEntity<SuccessResponse<Map<String, Long>>> standardAnalysis(@RequestParam("id") Long id){
+
+        standardService.analyze(id);
+
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
                 SuccessCode.UPDATE_SUCCESS.getMessage(),
                 Map.of("id", id)));
