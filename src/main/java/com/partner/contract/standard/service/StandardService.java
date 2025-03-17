@@ -91,15 +91,16 @@ public class StandardService {
         ResponseEntity<FlaskResponseDto> response = restTemplate.exchange(flaskUrl, HttpMethod.DELETE, null, FlaskResponseDto.class);
         FlaskResponseDto flaskResponseBody = response.getBody();
 
-        if(flaskResponseBody == null) {
+        if (flaskResponseBody == null) {
             throw new ApplicationException(ErrorCode.Flask_SERVER_ERROR);
         }
 
         if ("success".equals(flaskResponseBody.getData())) {
             standardRepository.delete(standard);
         } else {
-            throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, flaskResponseBody.getCode(), flaskResponseBody.getMessage());
+            throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "F-" + flaskResponseBody.getCode(), flaskResponseBody.getMessage());
         }
+    }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED) // FAIL 예외 처리를 위해 NOT_SUPPORTED로 설정
     public void uploadFile(MultipartFile file, Long id) {
