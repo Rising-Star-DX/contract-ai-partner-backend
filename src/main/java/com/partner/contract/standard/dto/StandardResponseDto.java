@@ -19,7 +19,7 @@ public class StandardResponseDto {
     private FileType type;
     private String url;
     private String status;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdAt;
 
     @Builder

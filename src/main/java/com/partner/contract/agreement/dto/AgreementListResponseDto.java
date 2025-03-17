@@ -18,7 +18,7 @@ public class AgreementListResponseDto {
     private String name;
     private FileType type;
     private String status;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdAt;
 
     @Builder
