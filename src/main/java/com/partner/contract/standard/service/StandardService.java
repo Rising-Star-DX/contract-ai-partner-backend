@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,21 +30,21 @@ public class StandardService {
     private final S3FileUploadService s3FileUploadService;
 
     public List<StandardListResponseDto> findStandardList() {
-        return standardRepository.findAllByOrderByCreatedAtDesc()
+        return standardRepository.findAllWithCategoryByOrderByCreatedAtDesc()
                 .stream()
                 .map(StandardListResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public List<StandardListResponseDto> findStandardListByName(String name) {
-        return standardRepository.findByNameContaining(name)
+        return standardRepository.findWithCategoryByNameContaining(name)
                 .stream()
                 .map(StandardListResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public List<StandardListResponseDto> findStandardListByCategoryId(Long categoryId) {
-        List<Standard> standards = standardRepository.findByCategoryId(categoryId);
+        List<Standard> standards = standardRepository.findWithCategoryByCategoryId(categoryId);
         if(standards.isEmpty()) {
             throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR);
         }
