@@ -9,6 +9,7 @@ import com.partner.contract.standard.service.StandardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -60,5 +61,15 @@ public class StandardController {
         standardService.deleteStandard(id);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+
+    @PatchMapping("/upload")
+    public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUpload(
+            @RequestPart("file") MultipartFile file,
+            @RequestParam("id") Long id) {
+
+        standardService.uploadFile(file, id);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
+                SuccessCode.UPDATE_SUCCESS.getMessage(),
+                Map.of("id", id)));
     }
 }

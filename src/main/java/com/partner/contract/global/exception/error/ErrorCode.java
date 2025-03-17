@@ -27,8 +27,12 @@ public enum ErrorCode {
     // STANDARD
     STANDARD_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "ST001", "해당 ID에 대응되는 문서가 없습니다."),
 
+    // File
+    S3_FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F001", "S3 파일 업로드 중 에러가 발생했습니다."),
+    FILE_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F002", "파일 처리 중 에러가 발생했습니다."),
+    
     // Flask
-    Flask_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F001", "Flask 서버 응답 없음");
+    Flask_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F001", "Flask 서버 응답 없음"),
     ;
 
     private final HttpStatus status;

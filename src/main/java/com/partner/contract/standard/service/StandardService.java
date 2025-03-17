@@ -3,6 +3,9 @@ package com.partner.contract.standard.service;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
 import com.partner.contract.common.dto.FlaskResponseDto;
+import com.partner.contract.common.enums.AiStatus;
+import com.partner.contract.common.enums.FileStatus;
+import com.partner.contract.common.service.S3FileUploadService;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
@@ -16,8 +19,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,22 +38,25 @@ public class StandardService {
     @Value("${secret.flask.ip}")
     private String FLASK_SERVER_IP;
 
+    private final S3FileUploadService s3FileUploadService;
+
+
     public List<StandardListResponseDto> findStandardList() {
-        return standardRepository.findAllByOrderByCreatedAtDesc()
+        return standardRepository.findAllWithCategoryByOrderByCreatedAtDesc()
                 .stream()
                 .map(StandardListResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public List<StandardListResponseDto> findStandardListByName(String name) {
-        return standardRepository.findByNameContaining(name)
+        return standardRepository.findWithCategoryByNameContaining(name)
                 .stream()
                 .map(StandardListResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public List<StandardListResponseDto> findStandardListByCategoryId(Long categoryId) {
-        List<Standard> standards = standardRepository.findByCategoryId(categoryId);
+        List<Standard> standards = standardRepository.findWithCategoryByCategoryId(categoryId);
         if(standards.isEmpty()) {
             throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR);
         }
@@ -92,5 +100,23 @@ public class StandardService {
         } else {
             throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, flaskResponseBody.getCode(), flaskResponseBody.getMessage());
         }
+
+    @Transactional(propagation = Propagation.NOT_SUPPORTED) // FAIL 예외 처리를 위해 NOT_SUPPORTED로 설정
+    public void uploadFile(MultipartFile file, Long id) {
+
+        Standard standard = standardRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
+
+        String fileName = null;
+        try {
+            fileName = s3FileUploadService.uploadFile(file);
+        } catch (ApplicationException e) {
+            standard.updateFileStatus(null, FileStatus.FAILED, null);
+            standardRepository.save(standard);
+            throw e; // 예외 다시 던지기
+        }
+        String url = "s3://" + s3FileUploadService.getBucketName() + "/" + fileName;
+        standard.updateFileStatus(url, FileStatus.SUCCESS, AiStatus.ANALYZING);
+        standardRepository.save(standard);
     }
 }
