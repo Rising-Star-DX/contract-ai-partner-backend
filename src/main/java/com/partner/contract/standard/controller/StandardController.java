@@ -55,6 +55,13 @@ public class StandardController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), standard));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<String>> standardDelete(@PathVariable("id") Long id) {
+        standardService.deleteStandard(id);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+    }
+
     @PatchMapping("/upload")
     public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUpload(
             @RequestPart("file") MultipartFile file,
