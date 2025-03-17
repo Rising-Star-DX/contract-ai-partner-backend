@@ -29,7 +29,7 @@ public class S3FileUploadService {
         return bucketName;
     }
 
-    public String uploadFile(MultipartFile file) throws IOException {
+    public String uploadFile(MultipartFile file) {
 
         String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
 

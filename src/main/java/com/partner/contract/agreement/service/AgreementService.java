@@ -29,7 +29,7 @@ public class AgreementService {
     private final AgreementRepository agreementRepository;
     private final CategoryRepository categoryRepository;
     private final S3FileUploadService s3FileUploadService;
-
+  
     public List<AgreementListResponseDto> findAgreementList() {
         return agreementRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
@@ -67,9 +67,9 @@ public class AgreementService {
 
         return agreementRepository.save(agreement).getId();
     }
-
+  
     @Transactional(propagation = Propagation.NOT_SUPPORTED) // FAIL 예외 처리를 위해 NOT_SUPPORTED로 설정
-    public void uploadFile(MultipartFile file, Long id) throws IOException {
+    public void uploadFile(MultipartFile file, Long id) {
 
         Agreement agreement = agreementRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
