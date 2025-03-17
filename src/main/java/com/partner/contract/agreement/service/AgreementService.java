@@ -10,7 +10,6 @@ import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.service.S3FileUploadService;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
-import com.partner.contract.standard.domain.Standard;
 import com.partner.contract.standard.dto.FileUploadInitRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,21 +29,21 @@ public class AgreementService {
     private final S3FileUploadService s3FileUploadService;
   
     public List<AgreementListResponseDto> findAgreementList() {
-        return agreementRepository.findAllByOrderByCreatedAtDesc()
+        return agreementRepository.findAllWithCategoryByOrderByCreatedAtDesc()
                 .stream()
                 .map(AgreementListResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public List<AgreementListResponseDto> findAgreementListByName(String name) {
-        return agreementRepository.findByNameContaining(name)
+        return agreementRepository.findWithCategoryByNameContaining(name)
                 .stream()
                 .map(AgreementListResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public List<AgreementListResponseDto> findAgreementListByCategoryId(Long categoryId) {
-        List<Agreement> agreements = agreementRepository.findByCategoryId(categoryId);
+        List<Agreement> agreements = agreementRepository.findWithCategoryByCategoryId(categoryId);
         if(agreements.isEmpty()) {
             throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR);
         }
