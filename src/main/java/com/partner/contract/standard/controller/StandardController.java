@@ -57,10 +57,10 @@ public class StandardController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<SuccessResponse<String>> standardDelete(@PathVariable("id") Long id) {
-        System.out.println("Delete Method");
         standardService.deleteStandard(id);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+    }
 
     @PatchMapping("/upload")
     public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUpload(
