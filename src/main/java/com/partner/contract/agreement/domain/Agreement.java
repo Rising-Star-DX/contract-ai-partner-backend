@@ -71,4 +71,10 @@ public class Agreement {
         this.agreementIncorrectTextList = agreementIncorrectTextList;
         this.memberAgreementList = memberAgreementList;
     }
+
+    public void updateFileStatus(String url, FileStatus fileStatus, AiStatus aiStatus) {
+        this.url = url;
+        this.fileStatus = fileStatus;
+        this.aiStatus = aiStatus;
+    }
 }

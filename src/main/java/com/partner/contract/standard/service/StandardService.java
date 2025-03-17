@@ -74,7 +74,7 @@ public class StandardService {
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED) // FAIL 예외 처리를 위해 NOT_SUPPORTED로 설정
-    public void uploadFile(MultipartFile file, Long id) throws IOException {
+    public void uploadFile(MultipartFile file, Long id) {
 
         Standard standard = standardRepository.findById(id)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
