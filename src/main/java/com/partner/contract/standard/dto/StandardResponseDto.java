@@ -1,5 +1,6 @@
 package com.partner.contract.standard.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.partner.contract.common.enums.FileType;
 import com.partner.contract.common.utils.DocumentStatusUtil;
 import com.partner.contract.standard.domain.Standard;
@@ -18,6 +19,7 @@ public class StandardResponseDto {
     private FileType type;
     private String url;
     private String status;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime createdAt;
 
     @Builder
