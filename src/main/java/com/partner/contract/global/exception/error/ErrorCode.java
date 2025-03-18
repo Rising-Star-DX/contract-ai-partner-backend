@@ -32,7 +32,8 @@ public enum ErrorCode {
     FILE_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F002", "파일 처리 중 에러가 발생했습니다."),
     
     // Flask
-    Flask_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F001", "Flask에서 반환된 데이터 형식이 올바르지 않습니다."),
+    FLASK_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F001", "Flask에서 반환된 데이터 형식이 올바르지 않습니다."),
+    FLASK_SERVER_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F002", "Flask API 요청 중 문제가 발생했습니다."),
     ;
 
     private final HttpStatus status;
