@@ -46,6 +46,12 @@ public class AgreementController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.INSERT_SUCCESS.getCode(), SuccessCode.INSERT_SUCCESS.getMessage(), Map.of("id", id)));
     }
 
+    @DeleteMapping("/upload/{id}")
+    public ResponseEntity<SuccessResponse<String>> agreementFileUploadCancel(@PathVariable("id") Long id){
+        agreementService.cancelFileUpload(id);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+    }
+
     @PatchMapping("/upload/{id}")
     public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUpload(
             @RequestPart("file") MultipartFile file,
