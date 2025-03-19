@@ -5,7 +5,7 @@ import com.partner.contract.common.enums.FileStatus;
 
 public class DocumentStatusUtil {
     public static String determineStatus(FileStatus fileStatus, AiStatus aiStatus) {
-        if (fileStatus == FileStatus.UPLOADING && aiStatus == null) {
+        if ((fileStatus == FileStatus.UPLOADING || fileStatus == null) && aiStatus == null) {
             return "UPLOADING";
         } else if (fileStatus == FileStatus.FAILED && aiStatus == null) {
             return "FILE-FAILED";
