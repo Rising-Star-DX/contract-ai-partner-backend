@@ -61,10 +61,10 @@ public class StandardController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
     }
 
-    @PatchMapping("/upload")
+    @PatchMapping("/upload/{id}")
     public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUpload(
             @RequestPart("file") MultipartFile file,
-            @RequestParam("id") Long id) {
+            @PathVariable("id") Long id) {
 
         standardService.uploadFile(file, id);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
