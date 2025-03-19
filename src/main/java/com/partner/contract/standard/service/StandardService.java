@@ -176,11 +176,13 @@ public class StandardService {
             // Flask 응답 검증 추가
             if (body == null) {
                 standard.updateAiStatus(AiStatus.FAILED);
+                standardRepository.save(standard);
                 throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
             }
 
             if (body.getData() == null) {
                 standard.updateAiStatus(AiStatus.FAILED);
+                standardRepository.save(standard);
                 throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
             }
 
@@ -189,10 +191,12 @@ public class StandardService {
                 standardRepository.save(standard);
             } else {
                 standard.updateAiStatus(AiStatus.FAILED);
+                standardRepository.save(standard);
                 throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "F-" + body.getCode(), body.getMessage());
             }
         } catch (RestClientException e) {
             standard.updateAiStatus(AiStatus.FAILED);
+            standardRepository.save(standard);
             throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR);
         }
     }
