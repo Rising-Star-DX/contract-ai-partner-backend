@@ -16,7 +16,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     public List<CategoryListResponseDto> findCategoryList() {
-        return categoryRepository.findAllByOrderByCreatedAt()
+        return categoryRepository.findAllByOrderByName()
                 .stream()
                 .map(CategoryListResponseDto::fromEntity)
                 .collect(Collectors.toList());
