@@ -120,4 +120,13 @@ public class StandardService {
         standard.updateFileStatus(url, FileStatus.SUCCESS, AiStatus.ANALYZING);
         standardRepository.save(standard);
     }
+
+    public void cancelFileUpload(Long id) {
+        Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
+
+        if (standard.getFileStatus() != null || standard.getAiStatus() != null) {
+            throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
+        }
+        standardRepository.delete(standard);
+    }
 }
