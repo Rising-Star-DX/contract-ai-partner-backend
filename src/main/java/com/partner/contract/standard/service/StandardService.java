@@ -86,7 +86,7 @@ public class StandardService {
     public void deleteStandard(Long id) {
         Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
 
-        String flaskUrl = "http://rising-star-alb-885642517.ap-northeast-2.elb.amazonaws.com:5000/flask/standards/" + id;
+        String flaskUrl = FLASK_SERVER_IP + "/flask/standards/" + id;
 
         try {
             ResponseEntity<FlaskResponseDto<String>> response = restTemplate.exchange(
