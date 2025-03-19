@@ -21,15 +21,17 @@ public class StandardResponseDto {
     private String status;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDateTime createdAt;
+    private String categoryName;
 
     @Builder
-    public StandardResponseDto(Long id, String name, FileType type, String url, String status, LocalDateTime createdAt) {
+    public StandardResponseDto(Long id, String name, FileType type, String url, String status, LocalDateTime createdAt, String categoryName) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.url = url;
         this.status = status;
         this.createdAt = createdAt;
+        this.categoryName = categoryName;
     }
 
     public static StandardResponseDto fromEntity(Standard standard) {
@@ -40,6 +42,7 @@ public class StandardResponseDto {
                 .url(standard.getUrl())
                 .status(DocumentStatusUtil.determineStatus(standard.getFileStatus(), standard.getAiStatus()))
                 .createdAt(standard.getCreatedAt())
+                .categoryName(standard.getCategory().getName())
                 .build();
     }
 }
