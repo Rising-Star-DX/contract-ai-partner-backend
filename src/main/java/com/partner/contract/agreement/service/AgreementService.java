@@ -100,7 +100,7 @@ public class AgreementService {
     public void deleteAgreement(Long id) {
         Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
 
-        String flaskUrl = "http://" + FLASK_SERVER_IP + "/flask/agreements/" + id;
+        String flaskUrl = FLASK_SERVER_IP + "/flask/agreements/" + id;
 
         try {
             ResponseEntity<FlaskResponseDto<String>> response = restTemplate.exchange(
