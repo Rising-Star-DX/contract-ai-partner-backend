@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,9 +15,10 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     public List<CategoryListResponseDto> findCategoryList() {
-        return categoryRepository.findAllByOrderByName()
-                .stream()
-                .map(CategoryListResponseDto::fromEntity)
-                .collect(Collectors.toList());
+        return categoryRepository.findAllWithStandardAndAgreementByOrderByName();
+    }
+
+    public List<CategoryListResponseDto> findCategoryListByName(String name) {
+        return categoryRepository.findAllWithStandardAndAgreementByNameOrderByName(name);
     }
 }
