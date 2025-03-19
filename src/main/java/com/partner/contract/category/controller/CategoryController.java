@@ -32,7 +32,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessResponse<Map<String, Boolean>>> categoryDetails(@PathVariable("id") Long id) {
+    public ResponseEntity<SuccessResponse<Map<String, Boolean>>> categoryStandardCheck(@PathVariable("id") Long id) {
         Boolean existence = categoryService.checkStandardExistence(id);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), Map.of("result", existence)));
