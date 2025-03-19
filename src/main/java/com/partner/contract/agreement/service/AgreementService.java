@@ -37,7 +37,7 @@ public class AgreementService {
 
     @Value("${secret.flask.ip}")
     private String FLASK_SERVER_IP;
-  
+
     public List<AgreementListResponseDto> findAgreementList() {
         return agreementRepository.findAllWithCategoryByOrderByCreatedAtDesc()
                 .stream()
@@ -111,5 +111,14 @@ public class AgreementService {
         } else {
             throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "F-" + flaskResponseBody.getCode(), flaskResponseBody.getMessage());
         }
+    }
+
+    public void cancelFileUpload(Long id) {
+        Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
+
+        if (agreement.getFileStatus() != null || agreement.getAiStatus() != null) {
+            throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
+        }
+        agreementRepository.delete(agreement);
     }
 }
