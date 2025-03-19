@@ -141,6 +141,10 @@ public class StandardService {
         Standard standard = standardRepository.findWithCategoryById(id)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
 
+        if (standard.getFileStatus() != FileStatus.SUCCESS) {
+            throw new ApplicationException(ErrorCode.MISSING_FILE_FOR_ANALYSIS);
+        }
+
         // Flask에 AI 분석 요청
         String url = FLASK_SERVER_IP + "/flask/standards/analysis";
 

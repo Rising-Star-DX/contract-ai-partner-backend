@@ -30,7 +30,10 @@ public enum ErrorCode {
     // File
     S3_FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F001", "S3 파일 업로드 중 에러가 발생했습니다."),
     FILE_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F002", "파일 처리 중 에러가 발생했습니다."),
-    
+
+    // Analysis
+    MISSING_FILE_FOR_ANALYSIS(HttpStatus.BAD_REQUEST, "AN001", "AI 분석을 수행하려면 파일이 필요합니다."),
+
     // Flask
     FLASK_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F001", "Flask에서 반환된 데이터 형식이 올바르지 않습니다."),
     FLASK_SERVER_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F002", "Flask API 요청 중 문제가 발생했습니다."),
