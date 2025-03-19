@@ -21,16 +21,21 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED_ERROR(HttpStatus.METHOD_NOT_ALLOWED, "G010", "허용되지 않은 메소드입니다."),
     DATABASE_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "G998", "데이터베이스 연결에 실패했습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "G999", "서버 내부 에러가 발생했습니다."),
-
     // Category
     CATEGORY_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "C001", "해당 ID에 대응되는 카테고리가 없습니다."),
 
     // STANDARD
-    STANDARD_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "ST001", "해당 ID에 대응되는 문서가 없습니다."),
+    STANDARD_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "ST001", "해당 ID에 대응되는 기준문서가 없습니다."),
+
+    // AGREEMENT
+    AGREEMENT_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "A001", "해당 ID에 대응되는 계약서가 없습니다."),
 
     // File
     S3_FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F001", "S3 파일 업로드 중 에러가 발생했습니다."),
     FILE_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F002", "파일 처리 중 에러가 발생했습니다."),
+    
+    // Flask
+    Flask_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F001", "Flask에서 반환된 데이터 형식이 올바르지 않습니다."),
     ;
 
     private final HttpStatus status;

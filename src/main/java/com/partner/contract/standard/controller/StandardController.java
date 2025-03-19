@@ -16,7 +16,6 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/standards")
 public class StandardController {
     private final StandardService standardService;
@@ -55,10 +54,17 @@ public class StandardController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), standard));
     }
 
-    @PatchMapping("/upload")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<String>> standardDelete(@PathVariable("id") Long id) {
+        standardService.deleteStandard(id);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+    }
+
+    @PatchMapping("/upload/{id}")
     public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUpload(
             @RequestPart("file") MultipartFile file,
-            @RequestParam("id") Long id) {
+            @PathVariable("id") Long id) {
 
         standardService.uploadFile(file, id);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
