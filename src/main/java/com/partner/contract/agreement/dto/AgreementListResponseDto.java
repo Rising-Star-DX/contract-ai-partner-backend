@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.partner.contract.agreement.domain.Agreement;
 import com.partner.contract.common.enums.FileType;
 import com.partner.contract.common.utils.DocumentStatusUtil;
+import com.partner.contract.agreement.domain.Agreement;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

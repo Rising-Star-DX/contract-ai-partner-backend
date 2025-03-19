@@ -11,13 +11,13 @@ import java.util.Optional;
 
 @Repository
 public interface StandardRepository extends JpaRepository<Standard, Long> {
-    @Query("select s from Standard s join s.category c order by s.createdAt desc")
+    @Query("select s from Standard s join fetch s.category c order by s.createdAt desc")
     List<Standard> findAllWithCategoryByOrderByCreatedAtDesc();
 
-    @Query("select s from Standard s join s.category c where s.name like %:name%")
+    @Query("select s from Standard s join fetch s.category c where s.name like %:name%")
     List<Standard> findWithCategoryByNameContaining(@Param("name") String name);
-
-    @Query("select s from Standard s join s.category c where s.category.id = :categoryId")
+  
+    @Query("select s from Standard s join fetch s.category c where s.category.id = :categoryId")
     List<Standard> findWithCategoryByCategoryId(@Param("categoryId") Long categoryId);
 
     @Query("select s from Standard s join fetch s.category c where s.id = :id")

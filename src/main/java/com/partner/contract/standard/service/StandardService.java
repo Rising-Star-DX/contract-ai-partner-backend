@@ -135,7 +135,7 @@ public class StandardService {
         standard.updateFileStatus(url, FileStatus.SUCCESS, AiStatus.ANALYZING);
         standardRepository.save(standard);
     }
-
+  
     @Transactional(propagation = Propagation.NOT_SUPPORTED) // FAIL 예외 처리를 위해 NOT_SUPPORTED로 설정
     public void analyze(Long id) {
         Standard standard = standardRepository.findWithCategoryById(id)
@@ -195,5 +195,14 @@ public class StandardService {
             standard.updateAiStatus(AiStatus.FAILED);
             throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR);
         }
+    }
+
+    public void cancelFileUpload(Long id) {
+        Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
+
+        if (standard.getFileStatus() != null || standard.getAiStatus() != null) {
+            throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
+        }
+        standardRepository.delete(standard);
     }
 }

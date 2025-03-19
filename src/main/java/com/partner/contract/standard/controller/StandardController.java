@@ -16,7 +16,6 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/standards")
 public class StandardController {
     private final StandardService standardService;
@@ -48,6 +47,12 @@ public class StandardController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.INSERT_SUCCESS.getCode(), SuccessCode.INSERT_SUCCESS.getMessage(), Map.of("id", id)));
     }
 
+    @DeleteMapping("/upload/{id}")
+    public ResponseEntity<SuccessResponse<String>> standardFileUploadCancel(@PathVariable("id") Long id){
+        standardService.cancelFileUpload(id);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse<StandardResponseDto>> standardById(@PathVariable("id") Long id) {
         StandardResponseDto standard = standardService.findStandardById(id);
@@ -62,10 +67,10 @@ public class StandardController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
     }
 
-    @PatchMapping("/upload")
+    @PatchMapping("/upload/{id}")
     public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUpload(
             @RequestPart("file") MultipartFile file,
-            @RequestParam("id") Long id) {
+            @PathVariable("id") Long id) {
 
         standardService.uploadFile(file, id);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
