@@ -5,18 +5,17 @@ import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
+import com.partner.contract.common.dto.FileUploadInitRequestDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.service.S3FileUploadService;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
-import com.partner.contract.common.dto.FileUploadInitRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -112,22 +111,13 @@ public class AgreementService {
 
             FlaskResponseDto<String> body = response.getBody();
 
-            // Flask 응답 검증 추가
-            if (body == null) {
-                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
-            }
-
-            if (body.getData() == null) {
-                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
-            }
-
-            if ("success".equals(body.getData())) {
+            if (body != null && body.getData() != null && "success".equals(body.getData())) {
                 agreementRepository.delete(agreement);
             } else {
-                throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "F-" + body.getCode(), body.getMessage());
+                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR, "fail");
             }
         } catch (RestClientException e) {
-            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR);
+            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR, e.getMessage());
         }
     }
 
