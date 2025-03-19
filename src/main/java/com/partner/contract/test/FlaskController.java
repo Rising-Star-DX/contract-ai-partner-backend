@@ -27,7 +27,7 @@ public class FlaskController {
         String s3Path = "s3://rising-star-reference-document-bucket/테스트용.pdf";
         String category = "R&D";
 
-        String flaskUrl = "http://"+FLASK_SERVER_IP+"/flask/standard"; // 1 -> {contract_id}
+        String flaskUrl = FLASK_SERVER_IP+"/flask/standard"; // 1 -> {contract_id}
 
         if(s3Path == null || s3Path.isEmpty()) {
             throw new ApplicationException(ErrorCode.REQUEST_PARAMETER_MISSING_ERROR);

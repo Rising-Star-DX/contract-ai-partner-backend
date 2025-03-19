@@ -69,4 +69,8 @@ public class Standard {
         this.fileStatus = fileStatus;
         this.aiStatus = aiStatus;
     }
+
+    public void updateAiStatus(AiStatus aiStatus) {
+        this.aiStatus = aiStatus;
+    }
 }
