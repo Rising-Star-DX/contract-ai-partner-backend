@@ -103,7 +103,7 @@ public class AgreementService {
         FlaskResponseDto flaskResponseBody = response.getBody();
 
         if (flaskResponseBody == null) {
-            throw new ApplicationException(ErrorCode.Flask_SERVER_ERROR);
+            throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
         }
 
         if ("success".equals(flaskResponseBody.getData())) {
