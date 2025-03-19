@@ -166,7 +166,7 @@ public class StandardService {
             // Flask에 API 요청
             ResponseEntity<FlaskResponseDto<String>> response = restTemplate.exchange(
                     url,
-                    HttpMethod.DELETE,
+                    HttpMethod.POST,
                     requestEntity,
                     new ParameterizedTypeReference<FlaskResponseDto<String>>() {} // ✅ 제네릭 타입 유지
             );
