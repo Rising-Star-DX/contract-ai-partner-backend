@@ -5,8 +5,8 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class FlaskResponseDto {
-    private String code;
-    private String message;
-    private String data;
+public class FlaskResponseDto<T>{
+    private String code = "Unknown code";
+    private String message = "Unknown message";
+    private T data;
 }

@@ -1,4 +1,4 @@
-package com.partner.contract.agreement.dto;
+package com.partner.contract.common.dto;
 
 import com.partner.contract.common.enums.FileType;
 import lombok.Data;

@@ -31,12 +31,16 @@ public enum ErrorCode {
     AGREEMENT_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "A001", "해당 ID에 대응되는 계약서가 없습니다."),
 
     // File
-    S3_FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F001", "S3 파일 업로드 중 에러가 발생했습니다."),
-    FILE_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F002", "파일 처리 중 에러가 발생했습니다."),
+    S3_FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FI001", "S3 파일 업로드 중 에러가 발생했습니다."),
+    FILE_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FI002", "파일 처리 중 에러가 발생했습니다."),
     FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F003", "이미 S3 업로드 및 AI 분석이 진행 중인 파일입니다."),
-    
+
+    // Analysis
+    MISSING_FILE_FOR_ANALYSIS(HttpStatus.BAD_REQUEST, "AN001", "AI 분석을 수행하려면 파일이 필요합니다."),
+
     // Flask
-    Flask_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F001", "Flask에서 반환된 데이터 형식이 올바르지 않습니다."),
+    FLASK_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FL001", "Flask에서 반환된 데이터 형식이 올바르지 않습니다."),
+    FLASK_SERVER_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FL002", "Flask API 요청 중 문제가 발생했습니다."),
     ;
 
     private final HttpStatus status;
