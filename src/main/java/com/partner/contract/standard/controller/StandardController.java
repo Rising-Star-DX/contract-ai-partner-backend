@@ -73,8 +73,8 @@ public class StandardController {
                 Map.of("id", id)));
     }
 
-    @PatchMapping("/analysis")
-    public ResponseEntity<SuccessResponse<Map<String, Long>>> standardAnalysis(@RequestParam("id") Long id){
+    @PatchMapping("/analysis/{id}")
+    public ResponseEntity<SuccessResponse<Map<String, Long>>> standardAnalysis(@PathVariable("id") Long id){
 
         standardService.analyze(id);
 
