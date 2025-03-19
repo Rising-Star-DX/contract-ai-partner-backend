@@ -47,6 +47,12 @@ public class StandardController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.INSERT_SUCCESS.getCode(), SuccessCode.INSERT_SUCCESS.getMessage(), Map.of("id", id)));
     }
 
+    @DeleteMapping("/upload/{id}")
+    public ResponseEntity<SuccessResponse<String>> standardFileUploadCancel(@PathVariable("id") Long id){
+        standardService.cancelFileUpload(id);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse<StandardResponseDto>> standardById(@PathVariable("id") Long id) {
         StandardResponseDto standard = standardService.findStandardById(id);
