@@ -1,7 +1,10 @@
 package com.partner.contract.category.service;
 
+import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.dto.CategoryListResponseDto;
 import com.partner.contract.category.repository.CategoryRepository;
+import com.partner.contract.global.exception.error.ApplicationException;
+import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +22,12 @@ public class CategoryService {
     }
 
     public List<CategoryListResponseDto> findCategoryListByName(String name) {
-        return categoryRepository.findAllWithStandardAndAgreementByNameOrderByName(name);
+        return categoryRepository.findWithStandardAndAgreementByNameOrderByName(name);
+    }
+
+    public Boolean checkStandardExistence(Long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
+
+        return categoryRepository.findWithStandardById(id) > 0;
     }
 }
