@@ -14,12 +14,14 @@ import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.common.dto.FileUploadInitRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -99,17 +101,33 @@ public class AgreementService {
         Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
 
         String flaskUrl = "http://" + FLASK_SERVER_IP + "/flask/agreements/" + id;
-        ResponseEntity<FlaskResponseDto> response = restTemplate.exchange(flaskUrl, HttpMethod.DELETE, null, FlaskResponseDto.class);
-        FlaskResponseDto flaskResponseBody = response.getBody();
 
-        if (flaskResponseBody == null) {
-            throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
-        }
+        try {
+            ResponseEntity<FlaskResponseDto<String>> response = restTemplate.exchange(
+                    flaskUrl,
+                    HttpMethod.DELETE,
+                    null,
+                    new ParameterizedTypeReference<FlaskResponseDto<String>>() {} // ✅ 제네릭 타입 유지
+            );
 
-        if ("success".equals(flaskResponseBody.getData())) {
-            agreementRepository.delete(agreement);
-        } else {
-            throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "F-" + flaskResponseBody.getCode(), flaskResponseBody.getMessage());
+            FlaskResponseDto<String> body = response.getBody();
+
+            // Flask 응답 검증 추가
+            if (body == null) {
+                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
+            }
+
+            if (body.getData() == null) {
+                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
+            }
+
+            if ("success".equals(body.getData())) {
+                agreementRepository.delete(agreement);
+            } else {
+                throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "F-" + body.getCode(), body.getMessage());
+            }
+        } catch (RestClientException e) {
+            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR);
         }
     }
 
