@@ -5,10 +5,10 @@ import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
-import com.partner.contract.common.dto.FileUploadInitRequestDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
+import com.partner.contract.common.enums.FileType;
 import com.partner.contract.common.service.S3FileUploadService;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
@@ -18,7 +18,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -39,61 +38,46 @@ public class AgreementService {
     @Value("${secret.flask.ip}")
     private String FLASK_SERVER_IP;
 
-    public List<AgreementListResponseDto> findAgreementList() {
-        return agreementRepository.findAllWithCategoryByOrderByCreatedAtDesc()
-                .stream()
-                .map(AgreementListResponseDto::fromEntity)
-                .collect(Collectors.toList());
-    }
+    public List<AgreementListResponseDto> findAgreementList(String name, Long categoryId) {
+        List<Agreement> agreements;
 
-    public List<AgreementListResponseDto> findAgreementListByName(String name) {
-        return agreementRepository.findWithCategoryByNameContaining(name)
-                .stream()
-                .map(AgreementListResponseDto::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    public List<AgreementListResponseDto> findAgreementListByCategoryId(Long categoryId) {
-        List<Agreement> agreements = agreementRepository.findWithCategoryByCategoryId(categoryId);
-        if(agreements.isEmpty()) {
-            throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR);
+        if(categoryId == null) {
+            agreements = agreementRepository.findWithCategoryByNameContaining(name);
         }
+        else {
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
+
+            agreements = agreementRepository.findAgreementListOrderByCreatedAtDesc(name, categoryId);
+        }
+
         return agreements
                 .stream()
                 .map(AgreementListResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
+  
+    public Long uploadFile(MultipartFile file, Long categoryId) {
 
-    public Long initFileUpload(FileUploadInitRequestDto requestDto) {
-        Category category = categoryRepository.findById(requestDto.getCategoryId())
+        Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
 
         Agreement agreement = Agreement.builder()
-                .name(requestDto.getName())
-                .type(requestDto.getType())
+                .name(file.getOriginalFilename())
+                .type(FileType.fromContentType(file.getContentType()))
                 .category(category)
                 .build();
 
-        return agreementRepository.save(agreement).getId();
-    }
-  
-    @Transactional(propagation = Propagation.NOT_SUPPORTED) // FAIL 예외 처리를 위해 NOT_SUPPORTED로 설정
-    public void uploadFile(MultipartFile file, Long id) {
-
-        Agreement agreement = agreementRepository.findById(id)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
-
+        // s3 파일 저장
         String fileName = null;
         try {
-            fileName = s3FileUploadService.uploadFile(file);
+            fileName = s3FileUploadService.uploadFile(file, "agreements");
         } catch (ApplicationException e) {
-            agreement.updateFileStatus(null, FileStatus.FAILED, null);
-            agreementRepository.save(agreement);
             throw e; // 예외 다시 던지기
         }
         String url = "s3://" + s3FileUploadService.getBucketName() + "/" + fileName;
         agreement.updateFileStatus(url, FileStatus.SUCCESS, AiStatus.ANALYZING);
-        agreementRepository.save(agreement);
+        return agreementRepository.save(agreement).getId();
     }
 
     public void deleteAgreement(Long id) {

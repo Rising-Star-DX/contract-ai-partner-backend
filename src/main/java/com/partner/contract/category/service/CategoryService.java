@@ -16,12 +16,8 @@ import java.util.List;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public List<CategoryListResponseDto> findCategoryList() {
-        return categoryRepository.findAllWithStandardAndAgreementByOrderByName();
-    }
-
-    public List<CategoryListResponseDto> findCategoryListByName(String name) {
-        return categoryRepository.findWithStandardAndAgreementByNameOrderByName(name);
+    public List<CategoryListResponseDto> findCategoryList(String name) {
+        return categoryRepository.findCategoryListOrderByName(name);
     }
 
     public Boolean checkStandardExistence(Long id) {
