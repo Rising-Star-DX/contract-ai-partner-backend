@@ -59,7 +59,6 @@ public class S3Service {
 
     public void deleteFile(String url) {
         String filePath = url.split(getBucketName())[1].substring(1);
-        System.out.printf("filePath: %s\n", filePath);
 
         if (!isFileExists(filePath)) {
             throw new ApplicationException(ErrorCode.S3_FILE_NOT_FOUND_ERROR);
