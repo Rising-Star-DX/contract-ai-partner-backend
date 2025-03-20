@@ -40,25 +40,19 @@ public class StandardService {
     @Value("${secret.flask.ip}")
     private String FLASK_SERVER_IP;
 
-    public List<StandardListResponseDto> findStandardList() {
-        return standardRepository.findAllWithCategoryByOrderByCreatedAtDesc()
-                .stream()
-                .map(StandardListResponseDto::fromEntity)
-                .collect(Collectors.toList());
-    }
+    public List<StandardListResponseDto> findStandardList(String name, Long categoryId) {
+        List<Standard> standards;
 
-    public List<StandardListResponseDto> findStandardListByName(String name) {
-        return standardRepository.findWithCategoryByNameContaining(name)
-                .stream()
-                .map(StandardListResponseDto::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    public List<StandardListResponseDto> findStandardListByCategoryId(Long categoryId) {
-        List<Standard> standards = standardRepository.findWithCategoryByCategoryId(categoryId);
-        if (standards.isEmpty()) {
-            throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR);
+        if(categoryId == null) {
+            standards = standardRepository.findWithCategoryByNameContainingOrderByCreatedAtDesc(name);
         }
+        else {
+            categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
+
+            standards = standardRepository.findStandardListOrderByCreatedAtDesc(name, categoryId);
+        }
+
         return standards
                 .stream()
                 .map(StandardListResponseDto::fromEntity)
@@ -73,9 +67,17 @@ public class StandardService {
     public void deleteStandard(Long id) {
         Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
 
+        if(standard.getFileStatus() == FileStatus.UPLOADING || standard.getAiStatus() == AiStatus.ANALYZING) {
+            throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
+        }
+
         String flaskUrl = FLASK_SERVER_IP + "/flask/standards/" + id;
 
+        FlaskResponseDto<String> body;
+
+        //UPLOAD & AI 분석중일 때 삭제 X
         try {
+            // Flask에 API 요청
             ResponseEntity<FlaskResponseDto<String>> response = restTemplate.exchange(
                     flaskUrl,
                     HttpMethod.DELETE,
@@ -83,15 +85,20 @@ public class StandardService {
                     new ParameterizedTypeReference<FlaskResponseDto<String>>() {} // ✅ 제네릭 타입 유지
             );
 
-            FlaskResponseDto<String> body = response.getBody();
+            body = response.getBody();
 
-            if (body != null && body.getData() != null && "success".equals(body.getData())) {
-                standardRepository.delete(standard);
-            } else {
-                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR, "fail");
-            }
         } catch (RestClientException e) {
             throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR, e.getMessage());
+        }
+
+        try {
+            if ("success".equals(body.getData())) { // 기준문서 분석 성공
+                standardRepository.delete(standard);
+            } else {
+                throw new ApplicationException(ErrorCode.FLASK_DELETE_ERROR);
+            }
+        } catch (NullPointerException e) {
+            throw new ApplicationException(ErrorCode.FLASK_RESPONSE_NULL_ERROR, e.getMessage());
         }
     }
 
