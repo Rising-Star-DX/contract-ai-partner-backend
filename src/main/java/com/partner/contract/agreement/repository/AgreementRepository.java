@@ -10,12 +10,8 @@ import java.util.List;
 
 @Repository
 public interface AgreementRepository extends JpaRepository<Agreement, Long> {
-//    @Query("select a from Agreement a join fetch a.category c order by a.createdAt desc")
-//    List<Agreement> findAllWithCategoryByOrderByCreatedAtDesc();
     @Query("select a from Agreement a join fetch a.category c where a.name like %:name%")
     List<Agreement> findWithCategoryByNameContaining(@Param("name") String name);
-//    @Query("select a from Agreement a join fetch a.category c where a.category.id = :categoryId")
-//    List<Agreement> findWithCategoryByCategoryId(@Param("categoryId") Long categoryId);
     @Query("select a from Agreement a join fetch a.category c where a.name like %:name% and a.category.id = :categoryId order by a.createdAt desc")
     List<Agreement> findAgreementListOrderByCreatedAtDesc(@Param("name") String name, @Param("categoryId") Long categoryId);
 }
