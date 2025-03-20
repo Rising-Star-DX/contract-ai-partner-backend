@@ -2,6 +2,7 @@ package com.partner.contract.common.service;
 
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,8 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class S3FileUploadService {
+public class S3Service {
     private final S3Client s3Client;
 
     @Value("${secret.aws.s3.bucket-name}")
@@ -52,6 +52,43 @@ public class S3FileUploadService {
             }
         } catch (IOException e) {
             throw new ApplicationException(ErrorCode.FILE_PROCESSING_ERROR);
+        } catch (S3Exception e) {
+            throw new ApplicationException(ErrorCode.S3_CONNECTION_ERROR);
+        }
+    }
+
+    public void deleteFile(String url) {
+        String filePath = url.split(getBucketName())[1].substring(1);
+
+        if (!isFileExists(filePath)) {
+            throw new ApplicationException(ErrorCode.S3_FILE_NOT_FOUND_ERROR);
+        }
+
+        try {
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(filePath)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
+        } catch (S3Exception e) {
+            throw new ApplicationException(ErrorCode.S3_CONNECTION_ERROR);
+        }
+    }
+
+    private boolean isFileExists(String filePath) {
+        try {
+            HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(filePath)
+                    .build();
+
+            s3Client.headObject(headObjectRequest);
+            return true; // 파일이 존재함
+        } catch (NoSuchKeyException e) {
+            return false; // 파일이 존재하지 않음 (삭제 성공)
+        } catch (S3Exception e) {
+            throw new ApplicationException(ErrorCode.S3_CONNECTION_ERROR);
         }
     }
 }

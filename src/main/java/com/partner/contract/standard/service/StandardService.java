@@ -7,7 +7,7 @@ import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.enums.FileType;
-import com.partner.contract.common.service.S3FileUploadService;
+import com.partner.contract.common.service.S3Service;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
@@ -35,7 +35,7 @@ public class StandardService {
     private final StandardRepository standardRepository;
     private final CategoryRepository categoryRepository;
     private final RestTemplate restTemplate;
-    private final S3FileUploadService s3FileUploadService;
+    private final S3Service s3Service;
 
     @Value("${secret.flask.ip}")
     private String FLASK_SERVER_IP;
@@ -109,11 +109,11 @@ public class StandardService {
         // S3 파일 저장
         String fileName = null;
         try {
-            fileName = s3FileUploadService.uploadFile(file, "standards");
+            fileName = s3Service.uploadFile(file, "standards");
         } catch (ApplicationException e) {
             throw e; // 예외 다시 던지기
         }
-        String url = "s3://" + s3FileUploadService.getBucketName() + "/" + fileName;
+        String url = "s3://" + s3Service.getBucketName() + "/" + fileName;
         standard.updateFileStatus(url, FileStatus.SUCCESS, AiStatus.ANALYZING);
         return standardRepository.save(standard).getId();
     }
@@ -181,9 +181,14 @@ public class StandardService {
     public void cancelFileUpload(Long id) {
         Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
 
-        if (standard.getFileStatus() != null || standard.getAiStatus() != null) {
+        if (standard.getFileStatus() == FileStatus.SUCCESS && standard.getAiStatus() != AiStatus.ANALYZING){
+            // S3에 업로드 된 파일 삭제
+            s3Service.deleteFile(standard.getUrl());
+
+            // RDB 데이터 삭제
+            standardRepository.delete(standard);
+        } else {
             throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
         }
-        standardRepository.delete(standard);
     }
 }
