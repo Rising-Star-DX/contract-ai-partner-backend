@@ -67,8 +67,8 @@ public class StandardController {
             @PathVariable("category-id") Long categoryId) {
 
         Long id = standardService.uploadFile(file, categoryId);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
-                SuccessCode.UPDATE_SUCCESS.getMessage(),
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.INSERT_SUCCESS.getCode(),
+                SuccessCode.INSERT_SUCCESS.getMessage(),
                 Map.of("id", id)));
     }
 
