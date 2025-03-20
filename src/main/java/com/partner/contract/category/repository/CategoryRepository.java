@@ -26,5 +26,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             "where c.name like %:name% " +
             "group by c.id, c.name, c.createdAt " +
             "order by c.name")
-    List<CategoryListResponseDto> findAllWithStandardAndAgreementByNameOrderByName(@Param("name") String name);
+    List<CategoryListResponseDto> findWithStandardAndAgreementByNameOrderByName(@Param("name") String name);
+
+    @Query("select count(s.id) from Category c join c.standardList s where c.id=:id")
+    Long findWithStandardById(@Param("id") Long id);
 }

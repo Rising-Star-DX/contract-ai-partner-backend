@@ -98,22 +98,13 @@ public class StandardService {
 
             FlaskResponseDto<String> body = response.getBody();
 
-            // Flask 응답 검증 추가
-            if (body == null) {
-                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
-            }
-
-            if (body.getData() == null) {
-                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
-            }
-
-            if ("success".equals(body.getData())) {
+            if (body != null && body.getData() != null && "success".equals(body.getData())) {
                 standardRepository.delete(standard);
             } else {
-                throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "F-" + body.getCode(), body.getMessage());
+                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR, "fail");
             }
         } catch (RestClientException e) {
-            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR);
+            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR, e.getMessage());
         }
     }
 
@@ -173,14 +164,7 @@ public class StandardService {
 
             FlaskResponseDto<String> body = response.getBody();
 
-            // Flask 응답 검증 추가
-            if (body == null) {
-                standard.updateAiStatus(AiStatus.FAILED);
-                standardRepository.save(standard);
-                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
-            }
-
-            if (body.getData() == null) {
+            if (body == null && body.getData() == null) {
                 standard.updateAiStatus(AiStatus.FAILED);
                 standardRepository.save(standard);
                 throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
@@ -192,12 +176,12 @@ public class StandardService {
             } else {
                 standard.updateAiStatus(AiStatus.FAILED);
                 standardRepository.save(standard);
-                throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "F-" + body.getCode(), body.getMessage());
+                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR, "fail");
             }
         } catch (RestClientException e) {
             standard.updateAiStatus(AiStatus.FAILED);
             standardRepository.save(standard);
-            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR);
+            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR, e.getMessage());
         }
     }
 
