@@ -15,18 +15,10 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
             "from Category c " +
             "left join c.standardList s " +
             "left join c.agreementList a " +
-            "group by c.id, c.name, c.createdAt " +
-            "order by c.name")
-    List<CategoryListResponseDto> findAllWithStandardAndAgreementByOrderByName();
-
-    @Query("select new com.partner.contract.category.dto.CategoryListResponseDto(c.id, c.name, count(distinct s.id), count(distinct a.id), c.createdAt) " +
-            "from Category c " +
-            "left join c.standardList s " +
-            "left join c.agreementList a " +
             "where c.name like %:name% " +
             "group by c.id, c.name, c.createdAt " +
             "order by c.name")
-    List<CategoryListResponseDto> findWithStandardAndAgreementByNameOrderByName(@Param("name") String name);
+    List<CategoryListResponseDto> findCategoryListOrderByName(@Param("name") String name);
 
     @Query("select count(s.id) from Category c join c.standardList s where c.id=:id")
     Long findWithStandardById(@Param("id") Long id);
