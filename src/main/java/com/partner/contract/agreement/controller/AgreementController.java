@@ -2,7 +2,6 @@ package com.partner.contract.agreement.controller;
 
 import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.service.AgreementService;
-import com.partner.contract.common.dto.FileUploadInitRequestDto;
 import com.partner.contract.global.exception.dto.SuccessResponse;
 import com.partner.contract.global.exception.error.SuccessCode;
 import lombok.RequiredArgsConstructor;
