@@ -42,7 +42,7 @@ public class AgreementService {
     public List<AgreementListResponseDto> findAgreementList(String name, Long categoryId) {
         List<Agreement> agreements;
 
-        if(categoryId == 0) {
+        if(categoryId == null) {
             agreements = agreementRepository.findWithCategoryByNameContaining(name);
         }
         else {

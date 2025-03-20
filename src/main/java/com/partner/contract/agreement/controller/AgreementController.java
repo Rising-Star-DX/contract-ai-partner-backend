@@ -23,7 +23,7 @@ public class AgreementController {
     @GetMapping
     public ResponseEntity<SuccessResponse<List<AgreementListResponseDto>>> agreementList(
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
-            @RequestParam(name = "category-id", required = false, defaultValue = "0") Long categoryId) {
+            @RequestParam(name = "category-id", required = false) Long categoryId) {
         List<AgreementListResponseDto> agreements = agreementService.findAgreementList(name, categoryId);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), agreements));
