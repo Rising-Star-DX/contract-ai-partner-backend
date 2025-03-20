@@ -41,12 +41,6 @@ public class StandardController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), standards));
     }
 
-    @PostMapping("/upload/init")
-    public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUploadInit(@RequestBody FileUploadInitRequestDto requestDto) {
-        Long id = standardService.initFileUpload(requestDto);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.INSERT_SUCCESS.getCode(), SuccessCode.INSERT_SUCCESS.getMessage(), Map.of("id", id)));
-    }
-
     @DeleteMapping("/upload/{id}")
     public ResponseEntity<SuccessResponse<String>> standardFileUploadCancel(@PathVariable("id") Long id){
         standardService.cancelFileUpload(id);
@@ -67,12 +61,12 @@ public class StandardController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
     }
 
-    @PatchMapping("/upload/{id}")
+    @PostMapping("/upload/{category-id}")
     public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUpload(
             @RequestPart("file") MultipartFile file,
-            @PathVariable("id") Long id) {
+            @PathVariable("category-id") Long categoryId) {
 
-        standardService.uploadFile(file, id);
+        Long id = standardService.uploadFile(file, categoryId);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
                 SuccessCode.UPDATE_SUCCESS.getMessage(),
                 Map.of("id", id)));

@@ -29,9 +29,9 @@ public class S3FileUploadService {
         return bucketName;
     }
 
-    public String uploadFile(MultipartFile file) {
+    public String uploadFile(MultipartFile file, String folder) {
 
-        String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+        String fileName = folder + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
 
         try (InputStream inputStream = file.getInputStream()) { // try-with-resources 사용
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
