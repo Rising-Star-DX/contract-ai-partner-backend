@@ -29,20 +29,6 @@ public class AgreementController {
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), agreements));
     }
 
-//    @GetMapping(params = "name")
-//    public ResponseEntity<SuccessResponse<List<AgreementListResponseDto>>> agreementListByName(@RequestParam("name") String name) {
-//        List<AgreementListResponseDto> agreements = agreementService.findAgreementListByName(name);
-//
-//        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), agreements));
-//    }
-//
-//    @GetMapping(params = "category-id")
-//    public ResponseEntity<SuccessResponse<List<AgreementListResponseDto>>> agreementListByCategoryId(@RequestParam("category-id") Long categoryId) {
-//        List<AgreementListResponseDto> agreements = agreementService.findAgreementListByCategoryId(categoryId);
-//
-//        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), agreements));
-//    }
-
     @PostMapping("/upload/init")
     public ResponseEntity<SuccessResponse<Map<String, Long>>> agreementFileUploadInit(@RequestBody FileUploadInitRequestDto requestDto) {
         Long id = agreementService.initFileUpload(requestDto);
