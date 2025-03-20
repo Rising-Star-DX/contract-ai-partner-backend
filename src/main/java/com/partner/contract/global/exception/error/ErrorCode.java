@@ -33,8 +33,11 @@ public enum ErrorCode {
     // File
     S3_FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FI001", "S3 파일 업로드 중 에러가 발생했습니다."),
     FILE_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FI002", "파일 처리 중 에러가 발생했습니다."),
-    FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FI003", "이미 S3 업로드 및 AI 분석이 진행 중인 파일입니다."),
+    FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FI003", "S3 업로드 중이거나 AI 분석이 진행 중인 파일은 삭제할 수 없습니다."),
     FILE_TYPE_ERROR(HttpStatus.BAD_REQUEST, "FI004", "지원하지 않는 파일 확장자이거나 파일 확장자를 가져올 수 없습니다."),
+    S3_FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FI005", "S3 파일 삭제 중 에러가 발생했습니다."),
+    S3_FILE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "FI006", "S3에 현재 URL에 대응되는 파일이 존재하지 않습니다."),
+    S3_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3C001", "S3 통신 중 문제가 발생했습니다."),
 
     // Analysis
     MISSING_FILE_FOR_ANALYSIS(HttpStatus.BAD_REQUEST, "AN001", "AI 분석을 수행하려면 파일이 필요합니다."),
@@ -44,6 +47,7 @@ public enum ErrorCode {
     FLASK_SERVER_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FL002", "Flask API 요청 중 문제가 발생했습니다."),
     FLASK_RESPONSE_NULL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FL003", "Flask에서 응답한 data가 null입니다."),
     FLASK_ANALYSIS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FL004", "Flask에서 AI 분석에 실패했습니다."),
+    FLASK_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FL005", "Flask에서 데이터 삭제에 실패했습니다.")
     ;
 
     private final HttpStatus status;

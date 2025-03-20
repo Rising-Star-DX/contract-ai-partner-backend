@@ -2,7 +2,6 @@ package com.partner.contract.standard.controller;
 
 import com.partner.contract.global.exception.dto.SuccessResponse;
 import com.partner.contract.global.exception.error.SuccessCode;
-import com.partner.contract.common.dto.FileUploadInitRequestDto;
 import com.partner.contract.standard.dto.StandardListResponseDto;
 import com.partner.contract.standard.dto.StandardResponseDto;
 import com.partner.contract.standard.service.StandardService;
@@ -21,30 +20,18 @@ public class StandardController {
     private final StandardService standardService;
 
     @GetMapping
-    public ResponseEntity<SuccessResponse<List<StandardListResponseDto>>> standardList() {
-        List<StandardListResponseDto> standards = standardService.findStandardList();
-
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), standards));
-    }
-
-    @GetMapping(params = "name")
-    public ResponseEntity<SuccessResponse<List<StandardListResponseDto>>> standardListByName(@RequestParam("name") String name) {
-        List<StandardListResponseDto> standards = standardService.findStandardListByName(name);
-
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), standards));
-    }
-
-    @GetMapping(params = "category-id")
-    public ResponseEntity<SuccessResponse<List<StandardListResponseDto>>> standardListByCategoryId(@RequestParam("category-id") Long categoryId) {
-        List<StandardListResponseDto> standards = standardService.findStandardListByCategoryId(categoryId);
+    public ResponseEntity<SuccessResponse<List<StandardListResponseDto>>> standardList(
+            @RequestParam(name = "name", required = false, defaultValue = "") String name,
+            @RequestParam(name = "category-id", required = false) Long categoryId) {
+        List<StandardListResponseDto> standards = standardService.findStandardList(name, categoryId);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), standards));
     }
 
     @DeleteMapping("/upload/{id}")
-    public ResponseEntity<SuccessResponse<String>> standardFileUploadCancel(@PathVariable("id") Long id){
+    public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUploadCancel(@PathVariable("id") Long id){
         standardService.cancelFileUpload(id);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), Map.of("id", id)));
     }
 
     @GetMapping("/{id}")
