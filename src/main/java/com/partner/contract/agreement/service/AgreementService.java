@@ -42,10 +42,10 @@ public class AgreementService {
         List<Agreement> agreements;
 
         if(categoryId == null) {
-            agreements = agreementRepository.findWithCategoryByNameContaining(name);
+            agreements = agreementRepository.findWithCategoryByNameContainingOrderByCreatedAtDesc(name);
         }
         else {
-            Category category = categoryRepository.findById(categoryId)
+            categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
 
             agreements = agreementRepository.findAgreementListOrderByCreatedAtDesc(name, categoryId);
