@@ -153,6 +153,7 @@ public class StandardService {
         // HTTP Request Body 설정
         HttpEntity<AnalysisRequestDto> requestEntity = new HttpEntity<>(analysisRequestDto, headers);
 
+        FlaskResponseDto<String> body;
         try {
             // Flask에 API 요청
             ResponseEntity<FlaskResponseDto<String>> response = restTemplate.exchange(
@@ -162,26 +163,27 @@ public class StandardService {
                     new ParameterizedTypeReference<FlaskResponseDto<String>>() {} // ✅ 제네릭 타입 유지
             );
 
-            FlaskResponseDto<String> body = response.getBody();
+            body = response.getBody();
 
-            if (body == null && body.getData() == null) {
-                standard.updateAiStatus(AiStatus.FAILED);
-                standardRepository.save(standard);
-                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR);
-            }
+        } catch (RestClientException e) {
+            standard.updateAiStatus(AiStatus.FAILED);
+            standardRepository.save(standard);
+            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR, e.getMessage());
+        }
 
+        try {
             if ("success".equals(body.getData())) { // 기준문서 분석 성공
                 standard.updateAiStatus(AiStatus.SUCCESS);
                 standardRepository.save(standard);
             } else {
                 standard.updateAiStatus(AiStatus.FAILED);
                 standardRepository.save(standard);
-                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR, "fail");
+                throw new ApplicationException(ErrorCode.FLASK_ANALYSIS_ERROR);
             }
-        } catch (RestClientException e) {
+        } catch (NullPointerException e) {
             standard.updateAiStatus(AiStatus.FAILED);
             standardRepository.save(standard);
-            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR, e.getMessage());
+            throw new ApplicationException(ErrorCode.FLASK_RESPONSE_NULL_ERROR, e.getMessage());
         }
     }
 
