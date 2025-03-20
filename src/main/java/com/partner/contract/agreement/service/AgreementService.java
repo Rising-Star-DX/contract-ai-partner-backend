@@ -5,22 +5,19 @@ import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
-import com.partner.contract.common.dto.FileUploadInitRequestDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.enums.FileType;
-import com.partner.contract.common.service.S3FileUploadService;
+import com.partner.contract.common.service.S3Service;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
-import com.partner.contract.standard.domain.Standard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -35,7 +32,7 @@ import java.util.stream.Collectors;
 public class AgreementService {
     private final AgreementRepository agreementRepository;
     private final CategoryRepository categoryRepository;
-    private final S3FileUploadService s3FileUploadService;
+    private final S3Service s3Service;
     private final RestTemplate restTemplate;
 
     @Value("${secret.flask.ip}")
@@ -80,11 +77,11 @@ public class AgreementService {
         // s3 파일 저장
         String fileName = null;
         try {
-            fileName = s3FileUploadService.uploadFile(file, "agreements");
+            fileName = s3Service.uploadFile(file, "agreements");
         } catch (ApplicationException e) {
             throw e; // 예외 다시 던지기
         }
-        String url = "s3://" + s3FileUploadService.getBucketName() + "/" + fileName;
+        String url = "s3://" + s3Service.getBucketName() + "/" + fileName;
         agreement.updateFileStatus(url, FileStatus.SUCCESS, AiStatus.ANALYZING);
         return agreementRepository.save(agreement).getId();
     }
@@ -117,9 +114,14 @@ public class AgreementService {
     public void cancelFileUpload(Long id) {
         Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
 
-        if (agreement.getFileStatus() != null || agreement.getAiStatus() != null) {
+        if (agreement.getFileStatus() == FileStatus.SUCCESS && agreement.getAiStatus() != AiStatus.ANALYZING){
+            // S3에 업로드 된 파일 삭제
+            s3Service.deleteFile(agreement.getUrl());
+
+            // RDB 데이터 삭제
+            agreementRepository.delete(agreement);
+        } else {
             throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
         }
-        agreementRepository.delete(agreement);
     }
 }

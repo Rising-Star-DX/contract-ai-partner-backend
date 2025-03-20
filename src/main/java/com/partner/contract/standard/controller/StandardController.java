@@ -42,9 +42,9 @@ public class StandardController {
     }
 
     @DeleteMapping("/upload/{id}")
-    public ResponseEntity<SuccessResponse<String>> standardFileUploadCancel(@PathVariable("id") Long id){
+    public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUploadCancel(@PathVariable("id") Long id){
         standardService.cancelFileUpload(id);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), Map.of("id", id)));
     }
 
     @GetMapping("/{id}")

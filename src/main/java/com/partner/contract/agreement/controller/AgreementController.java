@@ -41,9 +41,9 @@ public class AgreementController {
     }
 
     @DeleteMapping("/upload/{id}")
-    public ResponseEntity<SuccessResponse<String>> agreementFileUploadCancel(@PathVariable("id") Long id){
+    public ResponseEntity<SuccessResponse<Map<String, Long>>> agreementFileUploadCancel(@PathVariable("id") Long id){
         agreementService.cancelFileUpload(id);
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), Map.of("id", id)));
     }
 
     @PostMapping("/upload/{category-id}")
