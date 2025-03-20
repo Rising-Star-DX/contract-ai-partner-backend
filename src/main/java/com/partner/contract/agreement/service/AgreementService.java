@@ -39,25 +39,19 @@ public class AgreementService {
     @Value("${secret.flask.ip}")
     private String FLASK_SERVER_IP;
 
-    public List<AgreementListResponseDto> findAgreementList() {
-        return agreementRepository.findAllWithCategoryByOrderByCreatedAtDesc()
-                .stream()
-                .map(AgreementListResponseDto::fromEntity)
-                .collect(Collectors.toList());
-    }
+    public List<AgreementListResponseDto> findAgreementList(String name, Long categoryId) {
+        List<Agreement> agreements;
 
-    public List<AgreementListResponseDto> findAgreementListByName(String name) {
-        return agreementRepository.findWithCategoryByNameContaining(name)
-                .stream()
-                .map(AgreementListResponseDto::fromEntity)
-                .collect(Collectors.toList());
-    }
-
-    public List<AgreementListResponseDto> findAgreementListByCategoryId(Long categoryId) {
-        List<Agreement> agreements = agreementRepository.findWithCategoryByCategoryId(categoryId);
-        if(agreements.isEmpty()) {
-            throw new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR);
+        if(categoryId == null) {
+            agreements = agreementRepository.findWithCategoryByNameContaining(name);
         }
+        else {
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
+
+            agreements = agreementRepository.findAgreementListOrderByCreatedAtDesc(name, categoryId);
+        }
+
         return agreements
                 .stream()
                 .map(AgreementListResponseDto::fromEntity)
