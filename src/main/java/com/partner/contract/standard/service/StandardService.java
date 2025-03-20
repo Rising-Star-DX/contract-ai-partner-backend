@@ -3,10 +3,10 @@ package com.partner.contract.standard.service;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
 import com.partner.contract.common.dto.AnalysisRequestDto;
-import com.partner.contract.common.dto.FileUploadInitRequestDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
+import com.partner.contract.common.enums.FileType;
 import com.partner.contract.common.service.S3FileUploadService;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
@@ -65,19 +65,6 @@ public class StandardService {
                 .collect(Collectors.toList());
     }
 
-    public Long initFileUpload(FileUploadInitRequestDto requestDto) {
-        Category category = categoryRepository.findById(requestDto.getCategoryId())
-                .orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
-
-        Standard standard = Standard.builder()
-                .name(requestDto.getName())
-                .type(requestDto.getType())
-                .category(category)
-                .build();
-
-        return standardRepository.save(standard).getId();
-    }
-
     public StandardResponseDto findStandardById(Long id) {
         Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
         return StandardResponseDto.fromEntity(standard);
@@ -108,23 +95,27 @@ public class StandardService {
         }
     }
 
-    @Transactional(propagation = Propagation.NOT_SUPPORTED) // FAIL 예외 처리를 위해 NOT_SUPPORTED로 설정
-    public void uploadFile(MultipartFile file, Long id) {
+    public Long uploadFile(MultipartFile file, Long categoryId) {
 
-        Standard standard = standardRepository.findById(id)
-                .orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
 
+        Standard standard = Standard.builder()
+                .name(file.getOriginalFilename())
+                .type(FileType.fromContentType(file.getContentType()))
+                .category(category)
+                .build();
+
+        // S3 파일 저장
         String fileName = null;
         try {
-            fileName = s3FileUploadService.uploadFile(file);
+            fileName = s3FileUploadService.uploadFile(file, "standards");
         } catch (ApplicationException e) {
-            standard.updateFileStatus(null, FileStatus.FAILED, null);
-            standardRepository.save(standard);
             throw e; // 예외 다시 던지기
         }
         String url = "s3://" + s3FileUploadService.getBucketName() + "/" + fileName;
         standard.updateFileStatus(url, FileStatus.SUCCESS, AiStatus.ANALYZING);
-        standardRepository.save(standard);
+        return standardRepository.save(standard).getId();
     }
   
     @Transactional(propagation = Propagation.NOT_SUPPORTED) // FAIL 예외 처리를 위해 NOT_SUPPORTED로 설정

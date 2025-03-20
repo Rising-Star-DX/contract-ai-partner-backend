@@ -33,7 +33,8 @@ public enum ErrorCode {
     // File
     S3_FILE_UPLOAD_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FI001", "S3 파일 업로드 중 에러가 발생했습니다."),
     FILE_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FI002", "파일 처리 중 에러가 발생했습니다."),
-    FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "F003", "이미 S3 업로드 및 AI 분석이 진행 중인 파일입니다."),
+    FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FI003", "이미 S3 업로드 및 AI 분석이 진행 중인 파일입니다."),
+    FILE_TYPE_ERROR(HttpStatus.BAD_REQUEST, "FI004", "지원하지 않는 파일 확장자이거나 파일 확장자를 가져올 수 없습니다."),
 
     // Analysis
     MISSING_FILE_FOR_ANALYSIS(HttpStatus.BAD_REQUEST, "AN001", "AI 분석을 수행하려면 파일이 필요합니다."),
