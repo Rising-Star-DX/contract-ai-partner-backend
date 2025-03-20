@@ -75,7 +75,6 @@ public class StandardService {
 
         FlaskResponseDto<String> body;
 
-        //UPLOAD & AI 분석중일 때 삭제 X
         try {
             // Flask에 API 요청
             ResponseEntity<FlaskResponseDto<String>> response = restTemplate.exchange(
