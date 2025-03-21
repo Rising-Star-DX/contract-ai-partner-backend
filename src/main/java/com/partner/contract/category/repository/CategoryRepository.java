@@ -22,4 +22,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @Query("select count(s.id) from Category c join c.standardList s where c.id=:id")
     Long findWithStandardById(@Param("id") Long id);
+
+    Category findByName(String name);
 }
