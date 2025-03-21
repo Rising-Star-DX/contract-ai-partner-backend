@@ -51,4 +51,14 @@ public class AgreementController {
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
     }
+
+    @PatchMapping("/analysis/{id}")
+    public ResponseEntity<SuccessResponse<Map<String, Long>>> standardAnalysis(@PathVariable("id") Long id){
+
+        agreementService.analyze(id);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
+                SuccessCode.UPDATE_SUCCESS.getMessage(),
+                Map.of("id", id)));
+    }
 }

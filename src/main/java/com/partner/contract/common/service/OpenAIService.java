@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -19,13 +20,15 @@ public class OpenAIService {
     private String model;
 
     @Async("gptAsyncExecutor")
-    public CompletableFuture<String> callGpt(String prompt) {
+    public CompletableFuture<String> callGpt(List<String> messages) {
         GptRequestDto gptRequestDto = GptRequestDto.builder()
-                .prompt(prompt)
+                .messages(messages)
                 .model(model)
                 .top_p(1.0)
                 .temperature(0.5)
                 .build();
+
+        System.out.println("gptRequestDto = " + gptRequestDto);
 
         return openAIConfig.post()
                 .uri("/v1/chat/completions")

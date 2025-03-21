@@ -9,6 +9,7 @@ import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.enums.FileType;
+import com.partner.contract.common.service.OpenAIService;
 import com.partner.contract.common.service.S3Service;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
@@ -24,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +35,7 @@ public class AgreementService {
     private final AgreementRepository agreementRepository;
     private final CategoryRepository categoryRepository;
     private final S3Service s3Service;
+    private final OpenAIService openAIService;
     private final RestTemplate restTemplate;
 
     @Value("${secret.flask.ip}")
@@ -117,5 +120,10 @@ public class AgreementService {
         } else {
             throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
         }
+    }
+
+    public void analyze(Long id) {
+        CompletableFuture<String> hi = openAIService.callGpt(List.of("hi"));
+        System.out.println(hi.join());
     }
 }
