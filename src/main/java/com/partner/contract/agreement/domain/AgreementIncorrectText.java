@@ -21,7 +21,7 @@ public class AgreementIncorrectText {
     private Integer page;
 
     @Column(nullable = false)
-    private Float accuracy;
+    private Double accuracy;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -44,7 +44,7 @@ public class AgreementIncorrectText {
     private CustomText customText;
 
     @Builder
-    public AgreementIncorrectText(String position, Integer page, Float accuracy, LocalDateTime createdAt, String incorrectText, String proofText, String correctedText, Agreement agreement, CustomText customText) {
+    public AgreementIncorrectText(String position, Integer page, Double accuracy, LocalDateTime createdAt, String incorrectText, String proofText, String correctedText, Agreement agreement, CustomText customText) {
         this.position = position;
         this.page = page;
         this.accuracy = accuracy;
