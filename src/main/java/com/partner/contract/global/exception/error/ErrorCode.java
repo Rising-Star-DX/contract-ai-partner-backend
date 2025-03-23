@@ -41,6 +41,7 @@ public enum ErrorCode {
 
     // Analysis
     MISSING_FILE_FOR_ANALYSIS(HttpStatus.BAD_REQUEST, "AN001", "AI 분석을 수행하려면 파일이 필요합니다."),
+    AI_ANALYSIS_NOT_STARTED(HttpStatus.BAD_REQUEST, "AN002", "AI 분석이 아직 시작되지 않았습니다."),
 
     // Flask
     FLASK_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FL001", "Flask에서 반환된 데이터 형식이 올바르지 않습니다."),

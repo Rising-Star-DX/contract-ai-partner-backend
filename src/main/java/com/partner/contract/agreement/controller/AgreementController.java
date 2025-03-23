@@ -35,7 +35,7 @@ public class AgreementController {
     }
 
     @PostMapping("/upload/{category-id}")
-    public ResponseEntity<SuccessResponse<Map<String, Long>>> standardFileUpload(
+    public ResponseEntity<SuccessResponse<Map<String, Long>>> agreementFileUpload(
             @RequestPart("file") MultipartFile file,
             @PathVariable("category-id") Long categoryId) {
 
@@ -50,5 +50,12 @@ public class AgreementController {
         agreementService.deleteAgreement(id);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+    }
+
+    @GetMapping("/analysis/check/{id}")
+    public ResponseEntity<SuccessResponse<Map<String, Boolean>>> agreementCheckAnalysisCompletion(@PathVariable("id") Long id){
+        Boolean isCompleted = agreementService.checkAnalysisCompleted(id);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), Map.of("isCompletion", isCompleted)));
     }
 }
