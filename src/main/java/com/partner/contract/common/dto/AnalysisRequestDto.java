@@ -5,14 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class AnalysisFlaskRequestDto {
+public class AnalysisRequestDto {
     private Long id;
     private String url;
     private String categoryName;
     private FileType type;
 
     @Builder
-    public AnalysisFlaskRequestDto(Long id, String url, String categoryName, FileType type) {
+    public AnalysisRequestDto(Long id, String url, String categoryName, FileType type) {
         this.id = id;
         this.url = url;
         this.categoryName = categoryName;

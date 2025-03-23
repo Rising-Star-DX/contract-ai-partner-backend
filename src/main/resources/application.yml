@@ -20,9 +20,6 @@ spring:
         ddl-auto: none
       show-sql: true
 
-  jackson:
-    time-zone: Asia/Seoul
-
 server:
   port: 8080
 management:

@@ -2,7 +2,7 @@ package com.partner.contract.standard.service;
 
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
-import com.partner.contract.common.dto.AnalysisFlaskRequestDto;
+import com.partner.contract.common.dto.AnalysisRequestDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
@@ -136,7 +136,7 @@ public class StandardService {
         // Flask에 AI 분석 요청
         String url = FLASK_SERVER_IP + "/flask/standards/analysis";
 
-        AnalysisFlaskRequestDto analysisFlaskRequestDto = AnalysisFlaskRequestDto.builder()
+        AnalysisRequestDto analysisRequestDto = AnalysisRequestDto.builder()
                 .id(standard.getId())
                 .url(standard.getUrl())
                 .categoryName(standard.getCategory().getName())
@@ -148,7 +148,7 @@ public class StandardService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         // HTTP Request Body 설정
-        HttpEntity<AnalysisFlaskRequestDto> requestEntity = new HttpEntity<>(analysisFlaskRequestDto, headers);
+        HttpEntity<AnalysisRequestDto> requestEntity = new HttpEntity<>(analysisRequestDto, headers);
 
         FlaskResponseDto<String> body;
         try {
