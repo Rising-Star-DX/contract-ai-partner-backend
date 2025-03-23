@@ -1,5 +1,6 @@
 package com.partner.contract.agreement.controller;
 
+import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
 import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.service.AgreementService;
 import com.partner.contract.global.exception.dto.SuccessResponse;
@@ -26,6 +27,13 @@ public class AgreementController {
         List<AgreementListResponseDto> agreements = agreementService.findAgreementList(name, categoryId);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), agreements));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse<AgreementDetailsResponseDto>> agreementDetails(@PathVariable("id") Long id) {
+        AgreementDetailsResponseDto agreementDetails = agreementService.findAgreementDetailsById(id);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), agreementDetails));
     }
 
     @DeleteMapping("/upload/{id}")

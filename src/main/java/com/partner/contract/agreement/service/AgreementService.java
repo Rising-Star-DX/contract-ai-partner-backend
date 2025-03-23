@@ -1,6 +1,7 @@
 package com.partner.contract.agreement.service;
 
 import com.partner.contract.agreement.domain.Agreement;
+import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
 import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.category.domain.Category;
@@ -10,6 +11,7 @@ import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.enums.FileType;
 import com.partner.contract.common.service.S3Service;
+import com.partner.contract.common.utils.DocumentStatusUtil;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -117,5 +119,20 @@ public class AgreementService {
         } else {
             throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
         }
+    }
+
+    public AgreementDetailsResponseDto findAgreementDetailsById(Long id) {
+        Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
+        AgreementDetailsResponseDto agreementDetailsResponseDto = AgreementDetailsResponseDto.builder()
+                .id(agreement.getId())
+                .name(agreement.getName())
+                .type(agreement.getType())
+                .url(agreement.getUrl())
+                .status(DocumentStatusUtil.determineStatus(agreement.getFileStatus(), agreement.getAiStatus()))
+                .categoryName(agreement.getCategory().getName())
+                .incorrectTextResponseDtoList(agreementRepository.findIncorrectTextByAgreementId(id))
+                .build();
+
+        return agreementDetailsResponseDto;
     }
 }
