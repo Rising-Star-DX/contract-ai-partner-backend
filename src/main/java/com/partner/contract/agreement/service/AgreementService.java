@@ -6,7 +6,6 @@ import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
-import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.enums.FileType;
@@ -16,12 +15,8 @@ import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -85,26 +80,7 @@ public class AgreementService {
     public void deleteAgreement(Long id) {
         Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
 
-        String flaskUrl = FLASK_SERVER_IP + "/flask/agreements/" + id;
-
-        try {
-            ResponseEntity<FlaskResponseDto<String>> response = restTemplate.exchange(
-                    flaskUrl,
-                    HttpMethod.DELETE,
-                    null,
-                    new ParameterizedTypeReference<FlaskResponseDto<String>>() {} // ✅ 제네릭 타입 유지
-            );
-
-            FlaskResponseDto<String> body = response.getBody();
-
-            if (body != null && body.getData() != null && "success".equals(body.getData())) {
-                agreementRepository.delete(agreement);
-            } else {
-                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR, "fail");
-            }
-        } catch (RestClientException e) {
-            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR, e.getMessage());
-        }
+        agreementRepository.delete(agreement);
     }
 
     public void cancelFileUpload(Long id) {
