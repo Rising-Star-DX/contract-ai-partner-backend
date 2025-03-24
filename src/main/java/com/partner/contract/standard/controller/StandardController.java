@@ -68,4 +68,11 @@ public class StandardController {
                 SuccessCode.UPDATE_SUCCESS.getMessage(),
                 Map.of("id", id)));
     }
+
+    @GetMapping("/analysis/check/{id}")
+    public ResponseEntity<SuccessResponse<Map<String, Boolean>>> standardCheckAnalysisCompletion(@PathVariable("id") Long id){
+        Boolean isCompleted = standardService.checkAnalysisCompleted(id);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), Map.of("isCompletion", isCompleted)));
+    }
 }
