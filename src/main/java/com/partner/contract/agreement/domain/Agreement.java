@@ -55,6 +55,9 @@ public class Agreement {
     private List<AgreementIncorrectText> agreementIncorrectTextList;
 
     @OneToMany(mappedBy = "agreement", cascade = CascadeType.ALL)
+    private List<CustomText> customTextList;
+
+    @OneToMany(mappedBy = "agreement", cascade = CascadeType.ALL)
     private List<MemberAgreement> memberAgreementList;
 
     @Builder
