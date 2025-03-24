@@ -33,37 +33,42 @@ public class CategoryService {
         return categoryRepository.findWithStandardById(id) > 0;
     }
 
-    public void addCategory(Category category) {
-        Category existedCategory = categoryRepository.findByName(category.getName());
+    public void addCategory(String categoryName) {
+        Category existedCategory = categoryRepository.findByName(categoryName);
 
         if(existedCategory != null) {
             throw new ApplicationException(ErrorCode.CATEGORY_ALREADY_EXISTS_ERROR);
         }
 
+        Category category = Category.builder()
+                .name(categoryName)
+                .build();
+
         categoryRepository.save(category);
     }
 
 
-    public void modifyCategory(Long id, Category category) {
-        Category existingCategory = categoryRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
+    public void modifyCategory(Long id, String categoryName) {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
 
-        existingCategory.update(category.getName());
-        categoryRepository.save(existingCategory);
+        Category existedCategory = categoryRepository.findByName(categoryName);
+
+        if(existedCategory != null) {
+            throw new ApplicationException(ErrorCode.CATEGORY_ALREADY_EXISTS_ERROR);
+        }
+
+        category.update(categoryName);
+        categoryRepository.save(category);
     }
 
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
 
         List<Standard> standards = category.getStandardList();
-
-        for(Standard standard : standards) {
-            standardService.deleteStandard(standard.getId());
-        }
-
         List<Agreement> agreements = category.getAgreementList();
 
-        for(Agreement agreement : category.getAgreementList()) {
-            agreementService.deleteAgreement(agreement.getId());
+        if(!standards.isEmpty() || !agreements.isEmpty()) {
+            throw new ApplicationException(ErrorCode.CATEGORY_DOCUMENT_ALREADY_EXISTS_ERROR);
         }
 
         categoryRepository.deleteById(id);
