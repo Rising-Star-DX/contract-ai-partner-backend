@@ -8,14 +8,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface AgreementRepository extends JpaRepository<Agreement, Long> {
-    @Query("select a from Agreement a join fetch a.category c where a.name like %:name% order by a.createdAt desc")
+    @Query("select a from Agreement a join fetch a.category c where a.aiStatus is not null and a.name like %:name% order by a.createdAt desc")
     List<Agreement> findWithCategoryByNameContainingOrderByCreatedAtDesc(@Param("name") String name);
 
-    @Query("select a from Agreement a join fetch a.category c where a.name like %:name% and a.category.id = :categoryId order by a.createdAt desc")
+    @Query("select a from Agreement a join fetch a.category c where a.aiStatus is not null and a.name like %:name% and a.category.id = :categoryId order by a.createdAt desc")
     List<Agreement> findAgreementListOrderByCreatedAtDesc(@Param("name") String name, @Param("categoryId") Long categoryId);
 
     @Query("SELECT new com.partner.contract.agreement.dto.IncorrectTextResponseDto(" +
