@@ -118,4 +118,14 @@ public class AgreementService {
             throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
         }
     }
+
+    public Boolean checkAnalysisCompleted(Long id) {
+        Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
+
+        if (agreement.getAiStatus() == null){
+            throw new ApplicationException(ErrorCode.AI_ANALYSIS_NOT_STARTED);
+        }
+
+        return agreement.getAiStatus() != AiStatus.ANALYZING;
+    }
 }
