@@ -3,6 +3,7 @@ package com.partner.contract.member.domain;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +22,7 @@ public class Company {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
