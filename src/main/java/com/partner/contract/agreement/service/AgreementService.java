@@ -80,6 +80,11 @@ public class AgreementService {
     public void deleteAgreement(Long id) {
         Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
 
+        if(agreement.getFileStatus() == FileStatus.UPLOADING || agreement.getAiStatus() == AiStatus.ANALYZING) {
+            throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
+        }
+
+        s3Service.deleteFile(agreement.getUrl());
         agreementRepository.delete(agreement);
     }
 
