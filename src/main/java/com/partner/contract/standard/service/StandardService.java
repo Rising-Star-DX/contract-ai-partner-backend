@@ -197,4 +197,14 @@ public class StandardService {
             throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
         }
     }
+
+    public Boolean checkAnalysisCompleted(Long id) {
+        Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
+
+        if (standard.getAiStatus() == null){
+            throw new ApplicationException(ErrorCode.AI_ANALYSIS_NOT_STARTED);
+        }
+
+        return standard.getAiStatus() != AiStatus.ANALYZING;
+    }
 }
