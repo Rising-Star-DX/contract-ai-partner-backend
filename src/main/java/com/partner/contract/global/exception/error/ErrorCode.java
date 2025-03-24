@@ -24,6 +24,8 @@ public enum ErrorCode {
     // Category
     CATEGORY_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "C001", "해당 ID에 대응되는 카테고리가 없습니다."),
     CATEGORY_ALREADY_EXISTS_ERROR(HttpStatus.BAD_REQUEST, "C002", "이미 존재하는 카테고리 이름입니다."),
+    CATEGORY_DOCUMENT_ALREADY_EXISTS_ERROR(HttpStatus.CONFLICT, "C003", "해당 카테고리의 문서가 1개 이상 존재하여 삭제할 수 없습니다."),
+
     // STANDARD
     STANDARD_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "ST001", "해당 ID에 대응되는 기준문서가 없습니다."),
 
