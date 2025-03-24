@@ -47,4 +47,8 @@ public class Category {
         this.standardList = standardList;
         this.agreementList = agreementList;
     }
+
+    public void update(String name) {
+        this.name = name;
+    }
 }

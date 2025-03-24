@@ -1,6 +1,5 @@
 package com.partner.contract.category.controller;
 
-import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.dto.CategoryListResponseDto;
 import com.partner.contract.category.service.CategoryService;
 import com.partner.contract.global.exception.dto.SuccessResponse;
@@ -33,9 +32,23 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<SuccessResponse<String>> categoryAdd(@RequestBody Category category) {
-        categoryService.addCategory(category);
+    public ResponseEntity<SuccessResponse<String>> categoryAdd(@RequestBody String categoryName) {
+        categoryService.addCategory(categoryName);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.INSERT_SUCCESS.getCode(), SuccessCode.INSERT_SUCCESS.getMessage(), null));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<SuccessResponse<String>> categoryModify(@PathVariable("id") Long id, @RequestBody String categoryName) {
+        categoryService.modifyCategory(id, categoryName);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(), SuccessCode.UPDATE_SUCCESS.getMessage(), null));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<String>> categoryDelete(@PathVariable("id") Long id) {
+        categoryService.deleteCategory(id);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
     }
 }
