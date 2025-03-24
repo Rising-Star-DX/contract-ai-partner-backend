@@ -132,6 +132,8 @@ public class StandardService {
 
         if (standard.getFileStatus() != FileStatus.SUCCESS) {
             throw new ApplicationException(ErrorCode.MISSING_FILE_FOR_ANALYSIS);
+        } else if (standard.getAiStatus() == AiStatus.FAILED || standard.getAiStatus() == AiStatus.SUCCESS) { // 이미 분석이 완료된 경우
+            throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
         }
 
         // Flask에 AI 분석 요청

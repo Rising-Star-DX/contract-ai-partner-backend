@@ -1,8 +1,10 @@
 package com.partner.contract.agreement.service;
 
 import com.partner.contract.agreement.domain.Agreement;
+import com.partner.contract.agreement.domain.AgreementIncorrectText;
 import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
 import com.partner.contract.agreement.dto.AgreementListResponseDto;
+import com.partner.contract.agreement.repository.AgreementIncorrectTextRepository;
 import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class AgreementService {
     private final AgreementRepository agreementRepository;
+    private final AgreementIncorrectTextRepository agreementIncorrectTextRepository;
     private final CategoryRepository categoryRepository;
     private final S3Service s3Service;
     private final RestTemplate restTemplate;
@@ -125,5 +128,46 @@ public class AgreementService {
         }
 
         return agreement.getAiStatus() != AiStatus.ANALYZING;
+    }
+
+    public void analyze(Long id) {
+        Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
+
+        if (agreement.getFileStatus() != FileStatus.SUCCESS) {
+            throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
+        } else if (agreement.getAiStatus() == AiStatus.FAILED || agreement.getAiStatus() == AiStatus.SUCCESS) {
+            throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
+        }
+
+        // 프론트엔드를 위한 가짜 AI 분석 결과 저장
+        AgreementIncorrectText textInfo = AgreementIncorrectText.builder()
+                .accuracy(57.7)
+                .incorrectText("가맹사업과 관련하여 가맹본부로부터 가맹점운영권을 부여받은 사업자")
+                .agreement(agreement)
+                .page(1)
+                .proofText("위배 문구가 되는 근거입니다.")
+                .correctedText("이와 같이 수정하시면 됩니다.")
+                .build();
+        agreementIncorrectTextRepository.save(textInfo);
+
+        AgreementIncorrectText textInfo2 = AgreementIncorrectText.builder()
+                .accuracy(83.1)
+                .incorrectText("대통령령으로 정하는 사항을 수록한 문서")
+                .agreement(agreement)
+                .page(1)
+                .proofText("위배 문구가 되는 근거입니다.")
+                .correctedText("이와 같이 수정하시면 됩니다.")
+                .build();
+
+        agreementIncorrectTextRepository.save(textInfo2);
+
+        // delay
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        agreement.updateAiStatus(AiStatus.SUCCESS);
     }
 }
