@@ -73,7 +73,7 @@ public class AgreementService {
             throw e; // 예외 다시 던지기
         }
         String url = "s3://" + s3Service.getBucketName() + "/" + fileName;
-        agreement.updateFileStatus(url, FileStatus.SUCCESS, AiStatus.ANALYZING);
+        agreement.updateFileStatus(url, FileStatus.SUCCESS);
         return agreementRepository.save(agreement).getId();
     }
 
