@@ -72,9 +72,8 @@ public class Agreement {
         this.memberAgreementList = memberAgreementList;
     }
 
-    public void updateFileStatus(String url, FileStatus fileStatus, AiStatus aiStatus) {
+    public void updateFileStatus(String url, FileStatus fileStatus) {
         this.url = url;
         this.fileStatus = fileStatus;
-        this.aiStatus = aiStatus;
     }
 }

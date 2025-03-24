@@ -64,10 +64,9 @@ public class Standard {
         this.memberStandardList = memberStandardList;
     }
 
-    public void updateFileStatus(String url, FileStatus fileStatus, AiStatus aiStatus) {
+    public void updateFileStatus(String url, FileStatus fileStatus) {
         this.url = url;
         this.fileStatus = fileStatus;
-        this.aiStatus = aiStatus;
     }
 
     public void updateAiStatus(AiStatus aiStatus) {

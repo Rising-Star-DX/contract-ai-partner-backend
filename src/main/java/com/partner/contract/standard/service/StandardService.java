@@ -120,7 +120,7 @@ public class StandardService {
             throw e; // 예외 다시 던지기
         }
         String url = "s3://" + s3Service.getBucketName() + "/" + fileName;
-        standard.updateFileStatus(url, FileStatus.SUCCESS, AiStatus.ANALYZING);
+        standard.updateFileStatus(url, FileStatus.SUCCESS);
         return standardRepository.save(standard).getId();
     }
   
