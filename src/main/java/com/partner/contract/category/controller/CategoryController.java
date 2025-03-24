@@ -1,5 +1,6 @@
 package com.partner.contract.category.controller;
 
+import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.dto.CategoryListResponseDto;
 import com.partner.contract.category.service.CategoryService;
 import com.partner.contract.global.exception.dto.SuccessResponse;
@@ -29,5 +30,12 @@ public class CategoryController {
         Boolean existence = categoryService.checkStandardExistence(id);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), Map.of("result", existence)));
+    }
+
+    @PostMapping
+    public ResponseEntity<SuccessResponse<String>> categoryAdd(@RequestBody Category category) {
+        categoryService.addCategory(category);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.INSERT_SUCCESS.getCode(), SuccessCode.INSERT_SUCCESS.getMessage(), null));
     }
 }

@@ -1,5 +1,6 @@
 package com.partner.contract.category.service;
 
+import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.dto.CategoryListResponseDto;
 import com.partner.contract.category.repository.CategoryRepository;
 import com.partner.contract.global.exception.error.ApplicationException;
@@ -24,5 +25,15 @@ public class CategoryService {
         categoryRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.CATEGORY_NOT_FOUND_ERROR));
 
         return categoryRepository.findWithStandardById(id) > 0;
+    }
+
+    public void addCategory(Category category) {
+        Category existedCategory = categoryRepository.findByName(category.getName());
+
+        if(existedCategory != null) {
+            throw new ApplicationException(ErrorCode.CATEGORY_ALREADY_EXISTS_ERROR);
+        }
+
+        categoryRepository.save(category);
     }
 }
