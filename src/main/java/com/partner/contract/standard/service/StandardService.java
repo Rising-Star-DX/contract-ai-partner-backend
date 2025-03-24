@@ -92,6 +92,7 @@ public class StandardService {
 
         try {
             if ("success".equals(body.getData())) { // 기준문서 분석 성공
+                s3Service.deleteFile(standard.getUrl());
                 standardRepository.delete(standard);
             } else {
                 throw new ApplicationException(ErrorCode.FLASK_DELETE_ERROR);
