@@ -38,4 +38,18 @@ public class CategoryController {
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.INSERT_SUCCESS.getCode(), SuccessCode.INSERT_SUCCESS.getMessage(), null));
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<SuccessResponse<String>> categoryModify(@PathVariable("id") Long id, @RequestBody Category category) {
+        categoryService.modifyCategory(id, category);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(), SuccessCode.UPDATE_SUCCESS.getMessage(), null));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<SuccessResponse<String>> categoryDelete(@PathVariable("id") Long id) {
+        categoryService.deleteCategory(id);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.DELETE_SUCCESS.getCode(), SuccessCode.DELETE_SUCCESS.getMessage(), null));
+    }
 }
