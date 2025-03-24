@@ -66,4 +66,14 @@ public class AgreementController {
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), Map.of("isCompletion", isCompleted)));
     }
+
+    @PatchMapping("/analysis/{id}")
+    public ResponseEntity<SuccessResponse<Map<String, Long>>> agreementAnalysis(@PathVariable("id") Long id){
+
+        agreementService.analyze(id);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
+                SuccessCode.UPDATE_SUCCESS.getMessage(),
+                Map.of("id", id)));
+    }
 }

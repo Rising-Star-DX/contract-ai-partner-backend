@@ -1,12 +1,13 @@
 package com.partner.contract.agreement.service;
 
 import com.partner.contract.agreement.domain.Agreement;
+import com.partner.contract.agreement.domain.AgreementIncorrectText;
 import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
 import com.partner.contract.agreement.dto.AgreementListResponseDto;
+import com.partner.contract.agreement.repository.AgreementIncorrectTextRepository;
 import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
-import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.enums.FileType;
@@ -16,12 +17,8 @@ import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,6 +30,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class AgreementService {
     private final AgreementRepository agreementRepository;
+    private final AgreementIncorrectTextRepository agreementIncorrectTextRepository;
     private final CategoryRepository categoryRepository;
     private final S3Service s3Service;
     private final RestTemplate restTemplate;
@@ -85,26 +83,12 @@ public class AgreementService {
     public void deleteAgreement(Long id) {
         Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
 
-        String flaskUrl = FLASK_SERVER_IP + "/flask/agreements/" + id;
-
-        try {
-            ResponseEntity<FlaskResponseDto<String>> response = restTemplate.exchange(
-                    flaskUrl,
-                    HttpMethod.DELETE,
-                    null,
-                    new ParameterizedTypeReference<FlaskResponseDto<String>>() {} // ✅ 제네릭 타입 유지
-            );
-
-            FlaskResponseDto<String> body = response.getBody();
-
-            if (body != null && body.getData() != null && "success".equals(body.getData())) {
-                agreementRepository.delete(agreement);
-            } else {
-                throw new ApplicationException(ErrorCode.FLASK_SERVER_ERROR, "fail");
-            }
-        } catch (RestClientException e) {
-            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR, e.getMessage());
+        if(agreement.getFileStatus() == FileStatus.UPLOADING || agreement.getAiStatus() == AiStatus.ANALYZING) {
+            throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
         }
+
+        s3Service.deleteFile(agreement.getUrl());
+        agreementRepository.delete(agreement);
     }
 
     public void cancelFileUpload(Long id) {
@@ -144,5 +128,46 @@ public class AgreementService {
         }
 
         return agreement.getAiStatus() != AiStatus.ANALYZING;
+    }
+
+    public void analyze(Long id) {
+        Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
+
+        if (agreement.getFileStatus() != FileStatus.SUCCESS) {
+            throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
+        } else if (agreement.getAiStatus() == AiStatus.FAILED || agreement.getAiStatus() == AiStatus.SUCCESS) {
+            throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
+        }
+
+        // 프론트엔드를 위한 가짜 AI 분석 결과 저장
+        AgreementIncorrectText textInfo = AgreementIncorrectText.builder()
+                .accuracy(57.7)
+                .incorrectText("가맹사업과 관련하여 가맹본부로부터 가맹점운영권을 부여받은 사업자")
+                .agreement(agreement)
+                .page(1)
+                .proofText("위배 문구가 되는 근거입니다.")
+                .correctedText("이와 같이 수정하시면 됩니다.")
+                .build();
+        agreementIncorrectTextRepository.save(textInfo);
+
+        AgreementIncorrectText textInfo2 = AgreementIncorrectText.builder()
+                .accuracy(83.1)
+                .incorrectText("대통령령으로 정하는 사항을 수록한 문서")
+                .agreement(agreement)
+                .page(1)
+                .proofText("위배 문구가 되는 근거입니다.")
+                .correctedText("이와 같이 수정하시면 됩니다.")
+                .build();
+
+        agreementIncorrectTextRepository.save(textInfo2);
+
+        // delay
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        agreement.updateAiStatus(AiStatus.SUCCESS);
     }
 }

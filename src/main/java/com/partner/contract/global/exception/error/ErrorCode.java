@@ -24,6 +24,8 @@ public enum ErrorCode {
     // Category
     CATEGORY_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "C001", "해당 ID에 대응되는 카테고리가 없습니다."),
     CATEGORY_ALREADY_EXISTS_ERROR(HttpStatus.BAD_REQUEST, "C002", "이미 존재하는 카테고리 이름입니다."),
+    CATEGORY_DOCUMENT_ALREADY_EXISTS_ERROR(HttpStatus.CONFLICT, "C003", "해당 카테고리의 문서가 1개 이상 존재하여 삭제할 수 없습니다."),
+
     // STANDARD
     STANDARD_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "ST001", "해당 ID에 대응되는 기준문서가 없습니다."),
 
@@ -42,6 +44,7 @@ public enum ErrorCode {
     // Analysis
     MISSING_FILE_FOR_ANALYSIS(HttpStatus.BAD_REQUEST, "AN001", "AI 분석을 수행하려면 파일이 필요합니다."),
     AI_ANALYSIS_NOT_STARTED(HttpStatus.BAD_REQUEST, "AN002", "AI 분석이 아직 시작되지 않았습니다."),
+    AI_ANALYSIS_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "AN003", "이미 AI 분석이 완료된 문서입니다."),
 
     // Flask
     FLASK_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FL001", "Flask에서 반환된 데이터 형식이 올바르지 않습니다."),

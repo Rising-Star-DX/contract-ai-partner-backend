@@ -55,6 +55,9 @@ public class Agreement {
     private List<AgreementIncorrectText> agreementIncorrectTextList;
 
     @OneToMany(mappedBy = "agreement", cascade = CascadeType.ALL)
+    private List<CustomText> customTextList;
+
+    @OneToMany(mappedBy = "agreement", cascade = CascadeType.ALL)
     private List<MemberAgreement> memberAgreementList;
 
     @Builder
@@ -75,5 +78,9 @@ public class Agreement {
     public void updateFileStatus(String url, FileStatus fileStatus) {
         this.url = url;
         this.fileStatus = fileStatus;
+    }
+
+    public void updateAiStatus(AiStatus aiStatus) {
+        this.aiStatus = aiStatus;
     }
 }
