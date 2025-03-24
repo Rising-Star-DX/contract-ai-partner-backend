@@ -76,4 +76,8 @@ public class Agreement {
         this.url = url;
         this.fileStatus = fileStatus;
     }
+
+    public void updateAiStatus(AiStatus aiStatus) {
+        this.aiStatus = aiStatus;
+    }
 }
