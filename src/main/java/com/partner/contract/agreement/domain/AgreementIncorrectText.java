@@ -3,11 +3,14 @@ package com.partner.contract.agreement.domain;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class AgreementIncorrectText {
 
     @Id
@@ -23,6 +26,7 @@ public class AgreementIncorrectText {
     @Column(nullable = false)
     private Double accuracy;
 
+    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -40,7 +44,7 @@ public class AgreementIncorrectText {
     private Agreement agreement;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "custom_text_id", nullable = false)
+    @JoinColumn(name = "custom_text_id")
     private CustomText customText;
 
     @Builder
