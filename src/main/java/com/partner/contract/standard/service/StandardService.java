@@ -135,6 +135,9 @@ public class StandardService {
             throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
         }
 
+        standard.updateAiStatus(AiStatus.ANALYZING);
+        standardRepository.save(standard);
+
         // Flask에 AI 분석 요청
         String url = FLASK_SERVER_IP + "/flask/standards/analysis";
 
