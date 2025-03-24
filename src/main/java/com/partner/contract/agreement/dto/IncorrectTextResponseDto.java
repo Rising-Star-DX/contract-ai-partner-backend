@@ -1,10 +1,12 @@
 package com.partner.contract.agreement.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class IncorrectTextResponseDto {
     private Long id;
+    @JsonProperty("currentPage")
     private Integer page;
     private Double accuracy;
     private String incorrectText;

@@ -1,6 +1,7 @@
 package com.partner.contract.agreement.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.partner.contract.common.enums.FileType;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class AgreementDetailsResponseDto {
     private String url;
     private String status;
     private String categoryName;
+    @JsonProperty("IncorrectTexts")
     private List<IncorrectTextResponseDto> incorrectTextResponseDtoList;
 
     @Builder
