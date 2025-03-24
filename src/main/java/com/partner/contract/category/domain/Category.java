@@ -33,10 +33,10 @@ public class Category {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category")
     private List<Standard> standardList;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category")
     private List<Agreement> agreementList;
 
     @Builder
@@ -46,5 +46,9 @@ public class Category {
         this.updatedAt = updatedAt;
         this.standardList = standardList;
         this.agreementList = agreementList;
+    }
+
+    public void update(String name) {
+        this.name = name;
     }
 }
