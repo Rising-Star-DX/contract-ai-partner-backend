@@ -25,6 +25,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -209,5 +210,15 @@ public class StandardService {
         }
 
         return standard.getAiStatus() != AiStatus.ANALYZING;
+    }
+
+    public void updateExpiredAnalysisStatus() {
+        LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(5);
+        List<Standard> standards = standardRepository.findByAiStatusAndCreatedAtBefore(AiStatus.ANALYZING, fiveMinutesAgo);
+
+        for(Standard standard : standards) {
+            standard.updateAiStatus(AiStatus.FAILED);
+        }
+        standardRepository.saveAll(standards);
     }
 }
