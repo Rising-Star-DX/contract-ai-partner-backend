@@ -1,36 +1,50 @@
 package com.partner.contract.agreement.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.partner.contract.agreement.domain.Agreement;
 import com.partner.contract.agreement.domain.AgreementIncorrectText;
+import com.partner.contract.agreement.dto.AgreementAnalysisFlaskResponseDto;
+import com.partner.contract.agreement.dto.AgreementChunkDto;
 import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
 import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.repository.AgreementIncorrectTextRepository;
 import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
+import com.partner.contract.common.dto.AnalysisRequestDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
+import com.partner.contract.common.dto.GptMessageRequestDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.enums.FileType;
+import com.partner.contract.common.service.OpenAIService;
 import com.partner.contract.common.service.S3Service;
 import com.partner.contract.common.utils.DocumentStatusUtil;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class AgreementService {
@@ -38,6 +52,7 @@ public class AgreementService {
     private final AgreementIncorrectTextRepository agreementIncorrectTextRepository;
     private final CategoryRepository categoryRepository;
     private final S3Service s3Service;
+    private final OpenAIService openAIService;
     private final RestTemplate restTemplate;
 
     @Value("${secret.flask.ip}")
@@ -61,7 +76,7 @@ public class AgreementService {
                 .map(AgreementListResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
-  
+
     public Long uploadFile(MultipartFile file, Long categoryId) {
 
         Category category = categoryRepository.findById(categoryId)
@@ -138,7 +153,7 @@ public class AgreementService {
 
         return agreementDetailsResponseDto;
     }
-  
+
     public Boolean checkAnalysisCompleted(Long id) {
         Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
 
@@ -149,6 +164,7 @@ public class AgreementService {
         return agreement.getAiStatus() != AiStatus.ANALYZING;
     }
 
+    @Transactional(propagation = Propagation.NOT_SUPPORTED) // FAIL 예외 처리를 위해 NOT_SUPPORTED로 설정
     public void analyze(Long id) {
         Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
 
@@ -158,35 +174,130 @@ public class AgreementService {
             throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
         }
 
-        // 프론트엔드를 위한 가짜 AI 분석 결과 저장
-        AgreementIncorrectText textInfo = AgreementIncorrectText.builder()
-                .accuracy(57.7)
-                .incorrectText("가맹사업과 관련하여 가맹본부로부터 가맹점운영권을 부여받은 사업자")
-                .agreement(agreement)
-                .page(1)
-                .proofText("위배 문구가 되는 근거입니다.")
-                .correctedText("이와 같이 수정하시면 됩니다.")
-                .build();
-        agreementIncorrectTextRepository.save(textInfo);
+        agreement.updateAiStatus(AiStatus.ANALYZING);
+        agreementRepository.save(agreement);
 
-        AgreementIncorrectText textInfo2 = AgreementIncorrectText.builder()
-                .accuracy(83.1)
-                .incorrectText("대통령령으로 정하는 사항을 수록한 문서")
-                .agreement(agreement)
-                .page(1)
-                .proofText("위배 문구가 되는 근거입니다.")
-                .correctedText("이와 같이 수정하시면 됩니다.")
+        // Flask에 AI 분석 요청
+//        String url = FLASK_SERVER_IP + "/flask/agreements/analysis";
+        String url = "http://rising-star-alb-885642517.ap-northeast-2.elb.amazonaws.com:5000/flask/agreements/analysis";
+
+        AnalysisRequestDto analysisRequestDto = AnalysisRequestDto.builder()
+                .id(agreement.getId())
+                .url(agreement.getUrl())
+                .categoryName(agreement.getCategory().getName())
+                .type(agreement.getType())
                 .build();
 
-        agreementIncorrectTextRepository.save(textInfo2);
+        // HTTP Request Header 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        // delay
+        // HTTP Request Body 설정
+        HttpEntity<AnalysisRequestDto> requestEntity = new HttpEntity<>(analysisRequestDto, headers);
+
+        FlaskResponseDto<AgreementAnalysisFlaskResponseDto> body;
         try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            // Flask에 API 요청
+            ResponseEntity<FlaskResponseDto<AgreementAnalysisFlaskResponseDto>> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    requestEntity,
+                    new ParameterizedTypeReference<FlaskResponseDto<AgreementAnalysisFlaskResponseDto>>() {} // ✅ 제네릭 타입 유지
+            );
+
+            body = response.getBody();
+
+        } catch (RestClientException e) {
+            agreement.updateAiStatus(AiStatus.FAILED);
+            agreementRepository.save(agreement);
+            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR, e.getMessage());
         }
 
+        // Flask에서 넘어온 계약서 정보 data
+        AgreementAnalysisFlaskResponseDto data = body.getData();
+        AtomicInteger errorCount = new AtomicInteger(0);
+        int totalCount = data.getAgreementChunkDtoList().size();
+        System.out.printf("totalCount: %d\n", totalCount);
+
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        List<AgreementIncorrectText> agreementIncorrectTexts = new CopyOnWriteArrayList<>();
+
+        long startTime = System.nanoTime();
+
+        for (AgreementChunkDto chunkDto : data.getAgreementChunkDtoList()) {
+            String prompt = openAIService.makeAgreementAnalysisPrompt(
+                    data.getOriginalText(),
+                    chunkDto.getProofTexts(),
+                    chunkDto.getIncorrectTexts(),
+                    chunkDto.getCorrectedTexts()
+            );
+
+            List<GptMessageRequestDto> gptMessageRequestDtoList = new ArrayList<>();
+            gptMessageRequestDtoList.add(GptMessageRequestDto.builder().role("user").content(prompt).build());
+
+            CompletableFuture<Void> future = openAIService.callPrompt(gptMessageRequestDtoList)
+                    .thenAccept(response -> {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        try {
+                            // 전체 JSON 파싱
+                            JsonNode root = objectMapper.readTree(response);
+                            String content = root.path("choices").get(0).path("message").path("content").asText();
+
+                            // content 값은 JSON 문자열이므로 다시 파싱
+                            JsonNode contentJson = objectMapper.readTree(content);
+
+                            System.out.println("Corrected Text: " + contentJson.path("corrected_text").asText());
+                            System.out.println("Proof Text: " + contentJson.path("proof_text").asText());
+                            System.out.println("Accuracy: " + contentJson.path("accuracy").asDouble());
+
+//                            Double accuracy = contentJson.path("accuracy").asDouble();
+//
+//
+//                            if (accuracy >= 0.5){
+//                                String correctedText = contentJson.path("corrected_text").asText();
+//                                String proofText = contentJson.path("proof_text").asText();
+//
+//                                System.out.println("Corrected Text: " + correctedText);
+//                                System.out.println("Proof Text: " + proofText);
+//                                System.out.println("Accuracy: " + accuracy);
+//
+//                                AgreementIncorrectText agreementIncorrectText = AgreementIncorrectText.builder()
+//                                        .page(1) // 추후에 변경해야 함.
+//                                        .accuracy(accuracy)
+//                                        .incorrectText(chunkDto.getClauseContent())
+//                                        .proofText(proofText)
+//                                        .correctedText(correctedText)
+//                                        .agreement(agreement)
+//                                        .build();
+//
+//                                agreementIncorrectTexts.add(agreementIncorrectText);
+//                            }
+                        } catch (Exception e) {
+                            errorCount.incrementAndGet();
+                            log.error("GPT 분석 중 오류 발생", e);
+                            log.error("Thread Name: " + Thread.currentThread().getName());
+                        }
+                    });
+
+            futures.add(future);
+        }
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join(); // 모든 비동기 작업 완료 대기
+
+        // 실행 시간 측정을 위한 종료 시간 기록
+        long endTime = System.nanoTime();
+        log.info("전체 GPT 프롬프트 실행 시간: {} s", (endTime - startTime) / 1_000_000_000);
+
+        // 오류가 너무 많으면 실패 처리
+        if (errorCount.get() > totalCount / 2) {
+            agreement.updateAiStatus(AiStatus.FAILED);
+            agreementRepository.save(agreement);
+            throw new ApplicationException(ErrorCode.GPT_RESPONSE_TOO_MANY_ERRORS);
+        }
+
+        // 비동기 작업 완료 후 데이터 저장
+        agreementIncorrectTextRepository.saveAll(agreementIncorrectTexts);
         agreement.updateAiStatus(AiStatus.SUCCESS);
+        agreementRepository.save(agreement);
     }
 }
