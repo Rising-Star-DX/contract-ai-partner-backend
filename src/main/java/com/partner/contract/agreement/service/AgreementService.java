@@ -76,7 +76,7 @@ public class AgreementService {
         } catch (ApplicationException e) {
             throw e; // 예외 다시 던지기
         }
-        String url = "s3://" + s3Service.getBucketName() + "/" + fileName;
+        String url = "https://" + s3Service.getBucketName() + "/" + fileName;
         agreement.updateFileStatus(url, FileStatus.SUCCESS);
         return agreementRepository.save(agreement).getId();
     }
@@ -144,7 +144,7 @@ public class AgreementService {
         // 프론트엔드를 위한 가짜 AI 분석 결과 저장
         AgreementIncorrectText textInfo = AgreementIncorrectText.builder()
                 .accuracy(57.7)
-                .incorrectText("가맹사업과 관련하여 가맹본부로부터 가맹점운영권을 부여받은 사업자")
+                .incorrectText("근로조건은 근로자와 사용자가 동등한 지위에서 자유의사에 따라 결정")
                 .agreement(agreement)
                 .page(1)
                 .proofText("위배 문구가 되는 근거입니다.")
@@ -154,7 +154,7 @@ public class AgreementService {
 
         AgreementIncorrectText textInfo2 = AgreementIncorrectText.builder()
                 .accuracy(83.1)
-                .incorrectText("대통령으로 정하는 사항을 수록한 문서")
+                .incorrectText("폭행, 협박, 감금, 그 밖에 정신상 또는 신체상의 자유를 부당하게 구속하는 수단")
                 .agreement(agreement)
                 .page(1)
                 .proofText("위배 문구가 되는 근거입니다.")
