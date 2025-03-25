@@ -18,17 +18,19 @@ public class AgreementDetailsResponseDto {
     private String url;
     private String status;
     private String categoryName;
+    private Integer totalPage;
     @JsonProperty("IncorrectTexts")
     private List<IncorrectTextResponseDto> incorrectTextResponseDtoList;
 
     @Builder
-    public AgreementDetailsResponseDto(Long id, String name, FileType type, String url, String status, String categoryName, List<IncorrectTextResponseDto> incorrectTextResponseDtoList) {
+    public AgreementDetailsResponseDto(Long id, String name, FileType type, String url, String status, String categoryName, Integer totalPage, List<IncorrectTextResponseDto> incorrectTextResponseDtoList) {
         this.id = id;
         this.name = name;
         this.type = type;
         this.url = url;
         this.status = status;
         this.categoryName = categoryName;
+        this.totalPage = totalPage;
         this.incorrectTextResponseDtoList = incorrectTextResponseDtoList;
     }
 }
