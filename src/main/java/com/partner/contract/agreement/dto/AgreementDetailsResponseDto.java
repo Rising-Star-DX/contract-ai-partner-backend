@@ -19,7 +19,7 @@ public class AgreementDetailsResponseDto {
     private String status;
     private String categoryName;
     private Integer totalPage;
-    @JsonProperty("IncorrectTexts")
+    @JsonProperty("incorrectTexts")
     private List<IncorrectTextResponseDto> incorrectTextResponseDtoList;
 
     @Builder
