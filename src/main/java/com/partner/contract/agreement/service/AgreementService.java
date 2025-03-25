@@ -154,7 +154,7 @@ public class AgreementService {
 
         AgreementIncorrectText textInfo2 = AgreementIncorrectText.builder()
                 .accuracy(83.1)
-                .incorrectText("대통령령으로 정하는 사항을 수록한 문서")
+                .incorrectText("대통령으로 정하는 사항을 수록한 문서")
                 .agreement(agreement)
                 .page(1)
                 .proofText("위배 문구가 되는 근거입니다.")
