@@ -218,7 +218,7 @@ public class StandardService {
 
         for(Standard standard : standards) {
             standard.updateAiStatus(AiStatus.FAILED);
-            standardRepository.save(standard);
         }
+        standardRepository.saveAll(standards);
     }
 }

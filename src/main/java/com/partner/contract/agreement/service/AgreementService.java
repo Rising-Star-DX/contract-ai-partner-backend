@@ -178,7 +178,7 @@ public class AgreementService {
 
         for(Agreement agreement : agreements) {
             agreement.updateAiStatus(AiStatus.FAILED);
-            agreementRepository.save(agreement);
         }
+        agreementRepository.saveAll(agreements);
     }
 }
