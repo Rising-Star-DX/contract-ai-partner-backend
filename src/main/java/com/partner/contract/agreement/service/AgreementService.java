@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -169,5 +170,15 @@ public class AgreementService {
         }
 
         agreement.updateAiStatus(AiStatus.SUCCESS);
+    }
+
+    public void updateExpiredAnalysisStatus() {
+        LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(5);
+        List<Agreement> agreements = agreementRepository.findByAiStatusAndCreatedAtBefore(AiStatus.ANALYZING, fiveMinutesAgo);
+
+        for(Agreement agreement : agreements) {
+            agreement.updateAiStatus(AiStatus.FAILED);
+        }
+        agreementRepository.saveAll(agreements);
     }
 }

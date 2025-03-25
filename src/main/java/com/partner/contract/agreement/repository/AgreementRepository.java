@@ -2,11 +2,13 @@ package com.partner.contract.agreement.repository;
 
 import com.partner.contract.agreement.domain.Agreement;
 import com.partner.contract.agreement.dto.IncorrectTextResponseDto;
+import com.partner.contract.common.enums.AiStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -22,4 +24,6 @@ public interface AgreementRepository extends JpaRepository<Agreement, Long> {
             "FROM AgreementIncorrectText ait " +
             "WHERE ait.agreement.id = :agreementId")
     List<IncorrectTextResponseDto> findIncorrectTextByAgreementId(@Param("agreementId") Long agreementId);
+
+    List<Agreement> findByAiStatusAndCreatedAtBefore(AiStatus aiStatus, LocalDateTime fiveMinutesAgo);
 }
