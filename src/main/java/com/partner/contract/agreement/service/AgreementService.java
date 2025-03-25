@@ -140,47 +140,6 @@ public class AgreementService {
         return agreement.getAiStatus() != AiStatus.ANALYZING;
     }
 
-//    public void analyze(Long id) {
-//        Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
-//
-//        if (agreement.getFileStatus() != FileStatus.SUCCESS) {
-//            throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
-//        } else if (agreement.getAiStatus() == AiStatus.FAILED || agreement.getAiStatus() == AiStatus.SUCCESS) {
-//            throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
-//        }
-//
-//        // 프론트엔드를 위한 가짜 AI 분석 결과 저장
-//        AgreementIncorrectText textInfo = AgreementIncorrectText.builder()
-//                .accuracy(57.7)
-//                .incorrectText("근로조건은 근로자와 사용자가 동등한 지위에서 자유의사에 따라 결정")
-//                .agreement(agreement)
-//                .page(1)
-//                .proofText("위배 문구가 되는 근거입니다.")
-//                .correctedText("이와 같이 수정하시면 됩니다.")
-//                .build();
-//        agreementIncorrectTextRepository.save(textInfo);
-//
-//        AgreementIncorrectText textInfo2 = AgreementIncorrectText.builder()
-//                .accuracy(83.1)
-//                .incorrectText("폭행, 협박, 감금, 그 밖에 정신상 또는 신체상의 자유를 부당하게 구속하는 수단")
-//                .agreement(agreement)
-//                .page(1)
-//                .proofText("위배 문구가 되는 근거입니다.")
-//                .correctedText("이와 같이 수정하시면 됩니다.")
-//                .build();
-//
-//        agreementIncorrectTextRepository.save(textInfo2);
-//
-//        // delay
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//        agreement.updateAiStatus(AiStatus.SUCCESS);
-//    }
-
     public void updateExpiredAnalysisStatus() {
         LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(5);
         List<Agreement> agreements = agreementRepository.findByAiStatusAndCreatedAtBefore(AiStatus.ANALYZING, fiveMinutesAgo);
