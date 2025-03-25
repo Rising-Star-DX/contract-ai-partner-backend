@@ -70,13 +70,12 @@ public class AgreementService {
                 .build();
 
         // s3 파일 저장
-        String fileName = null;
+        String url = null;
         try {
-            fileName = s3Service.uploadFile(file, "agreements");
+            url = s3Service.uploadFile(file, "agreements");
         } catch (ApplicationException e) {
             throw e; // 예외 다시 던지기
         }
-        String url = "s3://" + s3Service.getBucketName() + "/" + fileName;
         agreement.updateFileStatus(url, FileStatus.SUCCESS);
         return agreementRepository.save(agreement).getId();
     }
