@@ -11,6 +11,7 @@ import com.partner.contract.category.repository.CategoryRepository;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.enums.FileType;
+import com.partner.contract.common.service.FileConversionService;
 import com.partner.contract.common.service.S3Service;
 import com.partner.contract.common.utils.DocumentStatusUtil;
 import com.partner.contract.global.exception.error.ApplicationException;
@@ -34,6 +35,7 @@ public class AgreementService {
     private final AgreementIncorrectTextRepository agreementIncorrectTextRepository;
     private final CategoryRepository categoryRepository;
     private final S3Service s3Service;
+    private final FileConversionService fileConversionService;
     private final RestTemplate restTemplate;
 
     @Value("${secret.flask.ip}")
@@ -65,10 +67,12 @@ public class AgreementService {
 
         Agreement agreement = Agreement.builder()
                 .name(file.getOriginalFilename())
-                .type(FileType.fromContentType(file.getContentType()))
+                .type(FileType.fromContentType(file.getOriginalFilename())) //file.getContentType()
                 .category(category)
                 .build();
-
+        if(agreement.getType() == FileType.DOC || agreement.getType() == FileType.DOCX) {
+            file = fileConversionService.convertFileToPdf(file);
+        }
         // s3 파일 저장
         String fileName = null;
         try {
