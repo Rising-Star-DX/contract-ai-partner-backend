@@ -14,7 +14,6 @@ import com.partner.contract.common.utils.DocumentStatusUtil;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -144,6 +143,8 @@ public class AgreementService {
             throw new ApplicationException(ErrorCode.MISSING_FILE_FOR_ANALYSIS);
         } else if (agreement.getAiStatus() == AiStatus.FAILED || agreement.getAiStatus() == AiStatus.SUCCESS) {
             throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
+        } else if (agreement.getAiStatus() == AiStatus.ANALYZING) {
+            throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_STARTED);
         }
 
         agreement.updateAiStatus(AiStatus.ANALYZING);
