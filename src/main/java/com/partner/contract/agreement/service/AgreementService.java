@@ -76,8 +76,8 @@ public class AgreementService {
         } catch (ApplicationException e) {
             throw e; // 예외 다시 던지기
         }
-        String url = "https://" + s3Service.getBucketName() + "/" + fileName;
-        agreement.updateFileStatus(url, FileStatus.SUCCESS);
+
+        agreement.updateFileStatus(fileName, FileStatus.SUCCESS);
         return agreementRepository.save(agreement).getId();
     }
 
