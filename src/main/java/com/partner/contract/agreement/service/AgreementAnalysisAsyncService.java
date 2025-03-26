@@ -73,8 +73,6 @@ public class AgreementAnalysisAsyncService {
             throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR, e.getMessage());
         }
 
-        System.out.println("body = " + body.getData());
-
         // Flask에서 넘어온 계약서 정보 data
         AgreementAnalysisFlaskResponseDto flaskResponseDto = body.getData();
         List<AgreementIncorrectTextDto> agreementIncorrectTextDtos = flaskResponseDto.getAgreementIncorrectTextDtos();
