@@ -2,6 +2,9 @@ package com.partner.contract.agreement.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
+
 @Data
 public class AgreementIncorrectTextDto {
     private Integer page;
@@ -10,5 +13,5 @@ public class AgreementIncorrectTextDto {
     private String proofText;
     private String correctedText;
     private Double accuracy;
-    private String position;
+    private List<String> position;
 }

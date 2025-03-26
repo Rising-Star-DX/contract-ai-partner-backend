@@ -1,17 +1,11 @@
 package com.partner.contract.agreement.service;
 
 import com.partner.contract.agreement.domain.Agreement;
-import com.partner.contract.agreement.domain.AgreementIncorrectText;
-import com.partner.contract.agreement.dto.AgreementAnalysisFlaskResponseDto;
 import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
-import com.partner.contract.agreement.dto.AgreementIncorrectTextDto;
 import com.partner.contract.agreement.dto.AgreementListResponseDto;
-import com.partner.contract.agreement.repository.AgreementIncorrectTextRepository;
 import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
-import com.partner.contract.common.dto.AnalysisRequestDto;
-import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.enums.FileType;
@@ -21,13 +15,9 @@ import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -38,14 +28,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class AgreementService {
+    private final AgreementAnalysisAsyncService agreementAnalysisAsyncService;
     private final AgreementRepository agreementRepository;
-    private final AgreementIncorrectTextRepository agreementIncorrectTextRepository;
     private final CategoryRepository categoryRepository;
     private final S3Service s3Service;
-    private final RestTemplate restTemplate;
-
-    @Value("${secret.flask.ip}")
-    private String FLASK_SERVER_IP;
 
     public List<AgreementListResponseDto> findAgreementList(String name, Long categoryId) {
         List<Agreement> agreements;
@@ -151,7 +137,7 @@ public class AgreementService {
     }
 
     @Transactional(propagation = Propagation.NOT_SUPPORTED) // FAIL 예외 처리를 위해 NOT_SUPPORTED로 설정
-    public void analyze(Long id) {
+    public void startAnalyze(Long id) {
         Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
 
         if (agreement.getFileStatus() != FileStatus.SUCCESS) {
@@ -163,65 +149,7 @@ public class AgreementService {
         agreement.updateAiStatus(AiStatus.ANALYZING);
         agreementRepository.save(agreement);
 
-        // Flask에 AI 분석 요청
-//        String url = FLASK_SERVER_IP + "/flask/agreements/analysis";
-        String url = "http://rising-star-alb-885642517.ap-northeast-2.elb.amazonaws.com:5000/flask/agreements/analysis";
-
-        AnalysisRequestDto analysisRequestDto = AnalysisRequestDto.builder()
-                .id(agreement.getId())
-                .url(agreement.getUrl())
-                .categoryName(agreement.getCategory().getName())
-                .type(agreement.getType())
-                .build();
-
-        // HTTP Request Header 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        // HTTP Request Body 설정
-        HttpEntity<AnalysisRequestDto> requestEntity = new HttpEntity<>(analysisRequestDto, headers);
-
-        FlaskResponseDto<AgreementAnalysisFlaskResponseDto> body;
-        try {
-            // Flask에 API 요청
-            ResponseEntity<FlaskResponseDto<AgreementAnalysisFlaskResponseDto>> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    requestEntity,
-                    new ParameterizedTypeReference<FlaskResponseDto<AgreementAnalysisFlaskResponseDto>>() {} // ✅ 제네릭 타입 유지
-            );
-
-            body = response.getBody();
-
-        } catch (RestClientException e) {
-            agreement.updateAiStatus(AiStatus.FAILED);
-            agreementRepository.save(agreement);
-            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR, e.getMessage());
-        }
-
-        // Flask에서 넘어온 계약서 정보 data
-        AgreementAnalysisFlaskResponseDto flaskResponseDto = body.getData();
-        List<AgreementIncorrectTextDto> agreementIncorrectTextDtos = flaskResponseDto.getAgreementIncorrectTextDtos();
-
-        // DTO -> Entity 변환 후
-        List<AgreementIncorrectText> incorrectTextEntities = agreementIncorrectTextDtos.stream()
-                .map(dto -> AgreementIncorrectText.builder()
-                        .position(dto.getPosition())
-                        .page(dto.getPage())
-                        .accuracy(dto.getAccuracy())
-                        .incorrectText(dto.getIncorrectText())
-                        .proofText(dto.getProofText())
-                        .correctedText(dto.getCorrectedText())
-                        .agreement(agreement)
-                        .build())
-                .collect(Collectors.toList());
-
-        agreementIncorrectTextRepository.saveAll(incorrectTextEntities);
-
-        // AI 상태 및 분석 정보 업데이트
-        agreement.updateAiStatus(AiStatus.SUCCESS);
-        agreement.updateAnalysisInfomation(flaskResponseDto.getTotalPage(), flaskResponseDto.getSummaryContent());
-
-        agreementRepository.save(agreement);
+        // 비동기로 분석 요청
+        agreementAnalysisAsyncService.analyze(agreement, agreement.getCategory().getName());
     }
 }

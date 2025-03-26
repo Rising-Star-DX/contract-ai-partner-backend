@@ -70,10 +70,10 @@ public class AgreementController {
     @PatchMapping("/analysis/{id}")
     public ResponseEntity<SuccessResponse<Map<String, Long>>> agreementAnalysis(@PathVariable("id") Long id){
 
-        agreementService.analyze(id);
+        agreementService.startAnalyze(id);
 
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
-                SuccessCode.UPDATE_SUCCESS.getMessage(),
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.ANALYSIS_REQUEST_ACCEPTED.getCode(),
+                SuccessCode.ANALYSIS_REQUEST_ACCEPTED.getMessage(),
                 Map.of("id", id)));
     }
 }
