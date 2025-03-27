@@ -67,11 +67,12 @@ public class AgreementService {
 
         Agreement agreement = Agreement.builder()
                 .name(file.getOriginalFilename())
-                .type(FileType.fromContentType(file.getOriginalFilename())) //file.getContentType()
+                .type(FileType.fromContentType(file.getContentType()))
                 .category(category)
                 .build();
+
         if(agreement.getType() == FileType.DOC || agreement.getType() == FileType.DOCX) {
-            file = fileConversionService.convertFileToPdf(file);
+            file = fileConversionService.convertFileToPdf(file, agreement.getType());
         }
         // s3 파일 저장
         String fileName = null;
