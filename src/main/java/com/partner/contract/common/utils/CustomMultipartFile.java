@@ -1,12 +1,9 @@
-package com.partner.contract.common.domain;
+package com.partner.contract.common.utils;
 
-import jakarta.servlet.http.Part;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 public class CustomMultipartFile implements MultipartFile {
