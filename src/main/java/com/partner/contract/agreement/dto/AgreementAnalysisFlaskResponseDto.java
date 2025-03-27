@@ -11,5 +11,5 @@ public class AgreementAnalysisFlaskResponseDto {
     private Integer totalPage;
 
     @JsonProperty("chunks")
-    private List<AgreementIncorrectTextDto> agreementIncorrectTextDtos;
+    private List<AgreementIncorrectDto> agreementIncorrectDtos;
 }

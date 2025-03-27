@@ -6,7 +6,7 @@ import java.util.List;
 
 
 @Data
-public class AgreementIncorrectTextDto {
+public class AgreementIncorrectDto {
     private Integer page;
     private Integer orderIndex;
     private String incorrectText;

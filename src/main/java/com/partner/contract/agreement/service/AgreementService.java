@@ -108,7 +108,7 @@ public class AgreementService {
                 .url(agreement.getUrl())
                 .status(DocumentStatusUtil.determineStatus(agreement.getFileStatus(), agreement.getAiStatus()))
                 .categoryName(agreement.getCategory().getName())
-                .totalPage(10) // 추후에 바꿔줘야 함.
+                .totalPage(agreement.getTotalPage())
                 .incorrectTextResponseDtoList(agreementRepository.findIncorrectTextByAgreementId(id))
                 .build();
 
