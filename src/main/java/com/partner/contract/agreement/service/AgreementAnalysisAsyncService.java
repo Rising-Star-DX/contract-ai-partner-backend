@@ -1,9 +1,11 @@
 package com.partner.contract.agreement.service;
 
 import com.partner.contract.agreement.domain.Agreement;
+import com.partner.contract.agreement.domain.AgreementIncorrectPosition;
 import com.partner.contract.agreement.domain.AgreementIncorrectText;
 import com.partner.contract.agreement.dto.AgreementAnalysisFlaskResponseDto;
-import com.partner.contract.agreement.dto.AgreementIncorrectTextDto;
+import com.partner.contract.agreement.dto.AgreementIncorrectDto;
+import com.partner.contract.agreement.repository.AgreementIncorrectPositionRepository;
 import com.partner.contract.agreement.repository.AgreementIncorrectTextRepository;
 import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.common.dto.AnalysisRequestDto;
@@ -30,6 +32,7 @@ public class AgreementAnalysisAsyncService {
 
     private final AgreementRepository agreementRepository;
     private final AgreementIncorrectTextRepository agreementIncorrectTextRepository;
+    private final AgreementIncorrectPositionRepository agreementIncorrectPositionRepository;
     private final RestTemplate restTemplate;
 
     @Value("${secret.flask.ip}")
@@ -75,22 +78,28 @@ public class AgreementAnalysisAsyncService {
 
         // Flask에서 넘어온 계약서 정보 data
         AgreementAnalysisFlaskResponseDto flaskResponseDto = body.getData();
-        List<AgreementIncorrectTextDto> agreementIncorrectTextDtos = flaskResponseDto.getAgreementIncorrectTextDtos();
+        List<AgreementIncorrectDto> agreementIncorrectDtos = flaskResponseDto.getAgreementIncorrectDtos();
 
-        // DTO -> Entity 변환 후
-        List<AgreementIncorrectText> incorrectTextEntities = agreementIncorrectTextDtos.stream()
-                .map(dto -> AgreementIncorrectText.builder()
-                        .position(dto.getPosition().toString())
-                        .page(dto.getPage())
-                        .accuracy(dto.getAccuracy())
-                        .incorrectText(dto.getIncorrectText())
-                        .proofText(dto.getProofText())
-                        .correctedText(dto.getCorrectedText())
-                        .agreement(agreement)
-                        .build())
-                .collect(Collectors.toList());
+        for (AgreementIncorrectDto agreementIncorrectDto : agreementIncorrectDtos) {
+            AgreementIncorrectText agreementIncorrectText = AgreementIncorrectText.builder()
+                    .accuracy(agreementIncorrectDto.getAccuracy())
+                    .incorrectText(agreementIncorrectDto.getIncorrectText())
+                    .proofText(agreementIncorrectDto.getProofText())
+                    .correctedText(agreementIncorrectDto.getCorrectedText())
+                    .agreement(agreement)
+                    .build();
 
-        agreementIncorrectTextRepository.saveAll(incorrectTextEntities);
+            agreementIncorrectTextRepository.save(agreementIncorrectText);
+
+            AgreementIncorrectPosition agreementIncorrectPosition = AgreementIncorrectPosition.builder()
+                    .position(agreementIncorrectDto.getPosition().toString())
+                    .page(agreementIncorrectDto.getPage())
+                    .orderIndex(agreementIncorrectDto.getOrderIndex())
+                    .agreementIncorrectText(agreementIncorrectText)
+                    .build();
+
+            agreementIncorrectPositionRepository.save(agreementIncorrectPosition);
+        }
 
         // AI 상태 및 분석 정보 업데이트
         agreement.updateAiStatus(AiStatus.SUCCESS);

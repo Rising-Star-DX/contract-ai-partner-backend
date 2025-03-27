@@ -19,10 +19,16 @@ public interface AgreementRepository extends JpaRepository<Agreement, Long> {
     @Query("select a from Agreement a join fetch a.category c where a.aiStatus is not null and a.name like %:name% and a.category.id = :categoryId order by a.createdAt desc")
     List<Agreement> findAgreementListOrderByCreatedAtDesc(@Param("name") String name, @Param("categoryId") Long categoryId);
 
-    @Query("SELECT new com.partner.contract.agreement.dto.IncorrectTextResponseDto(" +
-            "ait.id, ait.page, ait.accuracy, ait.incorrectText, ait.proofText, ait.correctedText) " +
-            "FROM AgreementIncorrectText ait " +
-            "WHERE ait.agreement.id = :agreementId")
+    @Query("""
+        select new com.partner.contract.agreement.dto.IncorrectTextResponseDto(
+            ait.id, aip.page, ait.accuracy, ait.incorrectText, ait.proofText, ait.correctedText, aip.position
+        )
+        from AgreementIncorrectText ait
+        join AgreementIncorrectPosition aip
+        on ait.id = aip.agreementIncorrectText.id
+        where ait.agreement.id = :agreementId
+        order by aip.page, aip.orderIndex
+    """)
     List<IncorrectTextResponseDto> findIncorrectTextByAgreementId(@Param("agreementId") Long agreementId);
 
     List<Agreement> findByAiStatusAndCreatedAtBefore(AiStatus aiStatus, LocalDateTime fiveMinutesAgo);
