@@ -6,12 +6,18 @@ WORKDIR /app
 ENV OFFICE_HOME=/opt/libreoffice25.2
 ENV PATH=$PATH:/opt/libreoffice25.2/program
 
+#test
+RUN echo "OFFICE_HOME=$OFFICE_HOME"
+RUN echo "PATH=$PATH"
+
 # Copy only the necessary files to take advantage of Docker cache
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
 
+#test
+RUN /opt/libreoffice25.2/program/soffice --headless --version
 # Download dependencies to cache them
 RUN ./gradlew dependencies --no-daemon
 
@@ -31,6 +37,10 @@ WORKDIR /app
 
 ENV OFFICE_HOME=${OFFICE_HOME}
 ENV PATH=${PATH}
+
+#test
+RUN echo "OFFICE_HOME=$OFFICE_HOME"
+RUN echo "PATH=$PATH"
 
 # Copy the jar file from the builder image
 COPY --from=builder /app/build/libs/*.jar app.jar
