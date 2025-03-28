@@ -3,8 +3,6 @@ package com.partner.contract.standard.service;
 import com.partner.contract.common.dto.AnalysisRequestDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
-import com.partner.contract.global.exception.error.ApplicationException;
-import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
 import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;

@@ -12,8 +12,6 @@ import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.common.dto.AnalysisRequestDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
-import com.partner.contract.global.exception.error.ApplicationException;
-import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -97,6 +95,7 @@ public class AgreementAnalysisAsyncService {
                 for(IncorrectClauseDataDto incorrectClauseDataDto : agreementIncorrectDto.getIncorrectClauseDataDtoList()) {
                     if (incorrectClauseDataDto.getPosition() == null || incorrectClauseDataDto.getPosition().isEmpty()) {
                         log.error("위배 문구의 위치 정보가 비어있습니다.");
+                        return;
                     }
 
                     AgreementIncorrectPosition agreementIncorrectPosition = AgreementIncorrectPosition.builder()
