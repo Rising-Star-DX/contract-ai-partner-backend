@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -16,12 +17,6 @@ public class AgreementIncorrectText {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column
-    private String position;
-
-    @Column(nullable = false)
-    private Integer page;
 
     @Column(nullable = false)
     private Double accuracy;
@@ -47,10 +42,11 @@ public class AgreementIncorrectText {
     @JoinColumn(name = "custom_text_id")
     private CustomText customText;
 
+    @OneToMany(mappedBy = "agreementIncorrectText", cascade = CascadeType.ALL)
+    private List<AgreementIncorrectPosition> agreementIncorrectPositionList;
+
     @Builder
-    public AgreementIncorrectText(String position, Integer page, Double accuracy, LocalDateTime createdAt, String incorrectText, String proofText, String correctedText, Agreement agreement, CustomText customText) {
-        this.position = position;
-        this.page = page;
+    public AgreementIncorrectText(Double accuracy, LocalDateTime createdAt, String incorrectText, String proofText, String correctedText, Agreement agreement, CustomText customText, List<AgreementIncorrectPosition> agreementIncorrectPositionList) {
         this.accuracy = accuracy;
         this.createdAt = createdAt;
         this.incorrectText = incorrectText;
@@ -58,5 +54,6 @@ public class AgreementIncorrectText {
         this.correctedText = correctedText;
         this.agreement = agreement;
         this.customText = customText;
+        this.agreementIncorrectPositionList = agreementIncorrectPositionList;
     }
 }

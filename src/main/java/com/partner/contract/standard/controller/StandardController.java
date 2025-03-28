@@ -62,10 +62,10 @@ public class StandardController {
     @PatchMapping("/analysis/{id}")
     public ResponseEntity<SuccessResponse<Map<String, Long>>> standardAnalysis(@PathVariable("id") Long id){
 
-        standardService.analyze(id);
+        standardService.startAnalyze(id);
 
-        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(),
-                SuccessCode.UPDATE_SUCCESS.getMessage(),
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.ANALYSIS_REQUEST_ACCEPTED.getCode(),
+                SuccessCode.ANALYSIS_REQUEST_ACCEPTED.getMessage(),
                 Map.of("id", id)));
     }
 

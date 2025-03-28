@@ -43,7 +43,7 @@ public class FlaskController {
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity<Map<String, String>> entity = new HttpEntity<>(request, headers);
-            System.out.println(flaskUrl);
+
             // 추후에 저장할 dto 타입으로 변경해야함
             ResponseEntity<Map> response = restTemplate.exchange(flaskUrl, HttpMethod.POST, entity, Map.class);
 

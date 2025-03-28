@@ -25,6 +25,9 @@ public class S3Service {
     @Value("${secret.aws.s3.bucket-name}")
     private String bucketName;
 
+    @Value("${secret.aws.s3.region}")
+    private String region;
+
     public String getBucketName() {
         return bucketName;
     }
@@ -46,7 +49,7 @@ public class S3Service {
             );
 
             if (response.sdkHttpResponse().isSuccessful()) {
-                return fileName;
+                return makeFileURL(fileName);
             } else {
                 throw new ApplicationException(ErrorCode.S3_FILE_UPLOAD_ERROR);
             }
@@ -58,7 +61,7 @@ public class S3Service {
     }
 
     public void deleteFile(String url) {
-        String filePath = url.split(getBucketName())[1].substring(1);
+        String filePath = url.split(".amazonaws.com")[1].substring(1);
 
         if (!isFileExists(filePath)) {
             throw new ApplicationException(ErrorCode.S3_FILE_NOT_FOUND_ERROR);
@@ -90,5 +93,9 @@ public class S3Service {
         } catch (S3Exception e) {
             throw new ApplicationException(ErrorCode.S3_CONNECTION_ERROR);
         }
+    }
+
+    private String makeFileURL(String fileName) {
+        return "https://" + bucketName + ".s3."+ region +  ".amazonaws.com/" + fileName;
     }
 }

@@ -1,10 +1,8 @@
 package com.partner.contract.agreement.service;
 
 import com.partner.contract.agreement.domain.Agreement;
-import com.partner.contract.agreement.domain.AgreementIncorrectText;
 import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
 import com.partner.contract.agreement.dto.AgreementListResponseDto;
-import com.partner.contract.agreement.repository.AgreementIncorrectTextRepository;
 import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
@@ -17,10 +15,8 @@ import com.partner.contract.common.utils.DocumentStatusUtil;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -31,15 +27,11 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional
 public class AgreementService {
+    private final AgreementAnalysisAsyncService agreementAnalysisAsyncService;
     private final AgreementRepository agreementRepository;
-    private final AgreementIncorrectTextRepository agreementIncorrectTextRepository;
     private final CategoryRepository categoryRepository;
     private final S3Service s3Service;
     private final FileConversionService fileConversionService;
-    private final RestTemplate restTemplate;
-
-    @Value("${secret.flask.ip}")
-    private String FLASK_SERVER_IP;
 
     public List<AgreementListResponseDto> findAgreementList(String name, Long categoryId) {
         List<Agreement> agreements;
@@ -81,8 +73,8 @@ public class AgreementService {
         } catch (ApplicationException e) {
             throw e; // 예외 다시 던지기
         }
-        String url = "https://" + s3Service.getBucketName() + "/" + fileName;
-        agreement.updateFileStatus(url, FileStatus.SUCCESS);
+
+        agreement.updateFileStatus(fileName, FileStatus.SUCCESS);
         return agreementRepository.save(agreement).getId();
     }
 
@@ -120,7 +112,7 @@ public class AgreementService {
                 .url(agreement.getUrl())
                 .status(DocumentStatusUtil.determineStatus(agreement.getFileStatus(), agreement.getAiStatus()))
                 .categoryName(agreement.getCategory().getName())
-                .totalPage(10) // 추후에 바꿔줘야 함.
+                .totalPage(agreement.getTotalPage())
                 .incorrectTextResponseDtoList(agreementRepository.findIncorrectTextByAgreementId(id))
                 .build();
 
@@ -137,47 +129,6 @@ public class AgreementService {
         return agreement.getAiStatus() != AiStatus.ANALYZING;
     }
 
-    public void analyze(Long id) {
-        Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
-
-        if (agreement.getFileStatus() != FileStatus.SUCCESS) {
-            throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
-        } else if (agreement.getAiStatus() == AiStatus.FAILED || agreement.getAiStatus() == AiStatus.SUCCESS) {
-            throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
-        }
-
-        // 프론트엔드를 위한 가짜 AI 분석 결과 저장
-        AgreementIncorrectText textInfo = AgreementIncorrectText.builder()
-                .accuracy(57.7)
-                .incorrectText("근로조건은 근로자와 사용자가 동등한 지위에서 자유의사에 따라 결정")
-                .agreement(agreement)
-                .page(1)
-                .proofText("위배 문구가 되는 근거입니다.")
-                .correctedText("이와 같이 수정하시면 됩니다.")
-                .build();
-        agreementIncorrectTextRepository.save(textInfo);
-
-        AgreementIncorrectText textInfo2 = AgreementIncorrectText.builder()
-                .accuracy(83.1)
-                .incorrectText("폭행, 협박, 감금, 그 밖에 정신상 또는 신체상의 자유를 부당하게 구속하는 수단")
-                .agreement(agreement)
-                .page(1)
-                .proofText("위배 문구가 되는 근거입니다.")
-                .correctedText("이와 같이 수정하시면 됩니다.")
-                .build();
-
-        agreementIncorrectTextRepository.save(textInfo2);
-
-        // delay
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        agreement.updateAiStatus(AiStatus.SUCCESS);
-    }
-
     public void updateExpiredAnalysisStatus() {
         LocalDateTime fiveMinutesAgo = LocalDateTime.now().minusMinutes(5);
         List<Agreement> agreements = agreementRepository.findByAiStatusAndCreatedAtBefore(AiStatus.ANALYZING, fiveMinutesAgo);
@@ -186,5 +137,24 @@ public class AgreementService {
             agreement.updateAiStatus(AiStatus.FAILED);
         }
         agreementRepository.saveAll(agreements);
+    }
+
+    @Transactional
+    public void startAnalyze(Long id) {
+        Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
+
+        if (agreement.getFileStatus() != FileStatus.SUCCESS) {
+            throw new ApplicationException(ErrorCode.MISSING_FILE_FOR_ANALYSIS);
+        } else if (agreement.getAiStatus() == AiStatus.FAILED || agreement.getAiStatus() == AiStatus.SUCCESS) {
+            throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
+        } else if (agreement.getAiStatus() == AiStatus.ANALYZING) {
+            throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_STARTED);
+        }
+
+        agreement.updateAiStatus(AiStatus.ANALYZING);
+        agreementRepository.save(agreement);
+
+        // 비동기로 분석 요청
+        agreementAnalysisAsyncService.analyze(agreement, agreement.getCategory().getName());
     }
 }

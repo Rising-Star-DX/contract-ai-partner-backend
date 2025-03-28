@@ -83,4 +83,9 @@ public class Agreement {
     public void updateAiStatus(AiStatus aiStatus) {
         this.aiStatus = aiStatus;
     }
+
+    public void updateAnalysisInfomation(Integer totalPage, String summaryContent) {
+        this.totalPage = totalPage;
+        this.summaryContent = summaryContent;
+    }
 }
