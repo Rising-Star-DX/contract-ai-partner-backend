@@ -39,6 +39,6 @@ schedule:
 
 libreoffice:
 #  home: "C:\\Program Files\\LibreOffice"
-  home : "/opt/libreoffice25.2"
+  home : "${OFFICE_HOME:/opt/libreoffice25.2}"
   port : 2002
 
