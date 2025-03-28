@@ -14,15 +14,15 @@ RUN apt-get update && apt-get install -y \
     && wget https://download.documentfoundation.org/libreoffice/stable/25.2.1/rpm/x86_64/LibreOffice_25.2.1_Linux_x86-64_rpm.tar.gz \
     && tar xzvf LibreOffice_25.2.1_Linux_x86-64_rpm.tar.gz -C /opt
 
-ENV OFFICE_HOME=/opt/libreoffice25.2
-ENV PATH=$PATH:/opt/libreoffice25.2/program
+ENV OFFICE_HOME=/opt/libreoffice
+ENV PATH=$PATH:/opt/libreoffice/program
 
 #test
 RUN echo "OFFICE_HOME=$OFFICE_HOME"
 RUN echo "PATH=$PATH"
-RUN ls -al /opt/libreoffice25.2
-RUN find /opt/libreoffice25.2 -name soffice
-RUN /opt/libreoffice25.2/program/soffice --headless --version
+RUN ls -al /opt/libreoffice
+RUN find /opt/libreoffice -name soffice
+RUN /opt/libreoffice/program/soffice --headless --version
 
 # Copy only the necessary files to take advantage of Docker cache
 COPY gradlew .
