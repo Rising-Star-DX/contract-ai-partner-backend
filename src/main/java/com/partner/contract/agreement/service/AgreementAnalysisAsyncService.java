@@ -5,6 +5,7 @@ import com.partner.contract.agreement.domain.AgreementIncorrectPosition;
 import com.partner.contract.agreement.domain.AgreementIncorrectText;
 import com.partner.contract.agreement.dto.AgreementAnalysisFlaskResponseDto;
 import com.partner.contract.agreement.dto.AgreementIncorrectDto;
+import com.partner.contract.agreement.dto.IncorrectClauseDataDto;
 import com.partner.contract.agreement.repository.AgreementIncorrectPositionRepository;
 import com.partner.contract.agreement.repository.AgreementIncorrectTextRepository;
 import com.partner.contract.agreement.repository.AgreementRepository;
@@ -91,14 +92,20 @@ public class AgreementAnalysisAsyncService {
 
             agreementIncorrectTextRepository.save(agreementIncorrectText);
 
-            AgreementIncorrectPosition agreementIncorrectPosition = AgreementIncorrectPosition.builder()
-                    .position(agreementIncorrectDto.getPosition().toString())
-                    .page(agreementIncorrectDto.getPage())
-                    .orderIndex(agreementIncorrectDto.getOrderIndex())
-                    .agreementIncorrectText(agreementIncorrectText)
-                    .build();
+            for(IncorrectClauseDataDto incorrectClauseDataDto : agreementIncorrectDto.getIncorrectClauseDataDtoList()) {
+                if (incorrectClauseDataDto.getPosition() == null || incorrectClauseDataDto.getPosition().isEmpty()) {
+                    throw new ApplicationException(ErrorCode.AI_ANALYSIS_POSITION_EMPTY_ERROR);
+                }
 
-            agreementIncorrectPositionRepository.save(agreementIncorrectPosition);
+                AgreementIncorrectPosition agreementIncorrectPosition = AgreementIncorrectPosition.builder()
+                        .position(incorrectClauseDataDto.getPosition().toString())
+                        .page(incorrectClauseDataDto.getPage())
+                        .orderIndex(incorrectClauseDataDto.getOrderIndex())
+                        .agreementIncorrectText(agreementIncorrectText)
+                        .build();
+
+                agreementIncorrectPositionRepository.save(agreementIncorrectPosition);
+            }
         }
 
         // AI 상태 및 분석 정보 업데이트
