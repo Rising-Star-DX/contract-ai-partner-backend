@@ -18,6 +18,10 @@ ENV OFFICE_HOME=/opt/libreoffice25.2
 ENV PATH=$PATH:/opt/libreoffice25.2/program
 
 #test
+RUN echo "OFFICE_HOME=$OFFICE_HOME"
+RUN echo "PATH=$PATH"
+RUN ls -al /opt/libreoffice25.2
+RUN find /opt/libreoffice25.2 -name soffice
 RUN /opt/libreoffice25.2/program/soffice --headless --version
 
 # Copy only the necessary files to take advantage of Docker cache
