@@ -8,6 +8,7 @@ import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
 import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -18,6 +19,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class StandardAnalysisAsyncService {
 
@@ -36,7 +38,7 @@ public class StandardAnalysisAsyncService {
         AnalysisRequestDto analysisRequestDto = AnalysisRequestDto.builder()
                 .id(standard.getId())
                 .url(standard.getUrl())
-                .categoryName(standard.getCategory().getName())
+                .categoryName(categoryName)
                 .type(standard.getType())
                 .build();
 
@@ -47,7 +49,7 @@ public class StandardAnalysisAsyncService {
         // HTTP Request Body 설정
         HttpEntity<AnalysisRequestDto> requestEntity = new HttpEntity<>(analysisRequestDto, headers);
 
-        FlaskResponseDto<String> body;
+        FlaskResponseDto<String> body = null;
         try {
             // Flask에 API 요청
             ResponseEntity<FlaskResponseDto<String>> response = restTemplate.exchange(
@@ -62,7 +64,7 @@ public class StandardAnalysisAsyncService {
         } catch (RestClientException e) {
             standard.updateAiStatus(AiStatus.FAILED);
             standardRepository.save(standard);
-            throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR, e.getMessage());
+            log.error("Flask 서버 연결 오류 : {}", e.getMessage(), e);
         }
 
         try {
@@ -72,12 +74,12 @@ public class StandardAnalysisAsyncService {
             } else {
                 standard.updateAiStatus(AiStatus.FAILED);
                 standardRepository.save(standard);
-                throw new ApplicationException(ErrorCode.FLASK_ANALYSIS_ERROR);
+                log.error("Flask에서 AI 분석에 실패했습니다.");
             }
         } catch (NullPointerException e) {
             standard.updateAiStatus(AiStatus.FAILED);
             standardRepository.save(standard);
-            throw new ApplicationException(ErrorCode.FLASK_RESPONSE_NULL_ERROR, e.getMessage());
+            log.error("Flask에서 응답한 data가 null입니다. : {}", e.getMessage(), e);
         }
     }
 }

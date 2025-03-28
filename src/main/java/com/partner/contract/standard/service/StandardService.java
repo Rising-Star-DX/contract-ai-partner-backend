@@ -129,7 +129,7 @@ public class StandardService {
 
     @Async
     @Transactional(propagation = Propagation.NOT_SUPPORTED) // FAIL 예외 처리를 위해 NOT_SUPPORTED로 설정
-    public void analyze(Long id) {
+    public void startAnalyze(Long id) {
         Standard standard = standardRepository.findWithCategoryById(id)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
 
