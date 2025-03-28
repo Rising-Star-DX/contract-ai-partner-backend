@@ -17,8 +17,8 @@ RUN apt-get update && apt-get install -y \
     && apt-get install -y alien \
     && alien -i *.rpm
 
-ENV OFFICE_HOME=/opt/libreoffice
-ENV PATH=$PATH:/opt/libreoffice/program
+ENV OFFICE_HOME=/opt/libreoffice25.2
+ENV PATH=$PATH:/opt/libreoffice25.2/program
 
 #test
 RUN echo "OFFICE_HOME=$OFFICE_HOME"
