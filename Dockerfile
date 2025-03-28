@@ -12,7 +12,9 @@ RUN apt-get update && apt-get install -y \
     libx11-xcb1 \
     fonts-noto-cjk \
     && wget https://download.documentfoundation.org/libreoffice/stable/25.2.1/rpm/x86_64/LibreOffice_25.2.1_Linux_x86-64_rpm.tar.gz \
-    && tar xzvf LibreOffice_25.2.1_Linux_x86-64_rpm.tar.gz -C /opt
+    && tar xzvf LibreOffice_25.2.1_Linux_x86-64_rpm.tar.gz -C /opt \
+    && cd /opt/LibreOffice_25.2.1.2_Linux_x86-64_rpm/RPMS \
+    && yum localinstall -y *.rpm \
 
 ENV OFFICE_HOME=/opt/libreoffice
 ENV PATH=$PATH:/opt/libreoffice/program
