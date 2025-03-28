@@ -3,6 +3,9 @@ FROM gradle:8.12.1-jdk21 AS builder
 
 WORKDIR /app
 
+ENV OFFICE_HOME=/opt/libreoffice25.2
+ENV PATH=$PATH:/opt/libreoffice25.2/program
+
 # Copy only the necessary files to take advantage of Docker cache
 COPY gradlew .
 COPY gradle gradle
