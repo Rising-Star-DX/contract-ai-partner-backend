@@ -18,7 +18,6 @@ public enum FileType {
             throw new ApplicationException(ErrorCode.FILE_TYPE_ERROR);
         }
 
-        //String extension = contentType.split("/")[1].toUpperCase();
         String extension = getExtension(contentType.split("/")).toUpperCase();
         try {
             return FileType.valueOf(extension);

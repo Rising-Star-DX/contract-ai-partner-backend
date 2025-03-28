@@ -30,7 +30,6 @@ public class FileConversionService {
             if(fileName == null) {
                 throw new ApplicationException(ErrorCode.FILE_TYPE_ERROR);
             }
-           // File outputFile = new File(fileName.split("\\.")[0] + ".pdf");
 
             if(!officeManager.isRunning()) {
                 officeManager.start();
