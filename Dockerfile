@@ -21,7 +21,7 @@ ENV PATH=$PATH:/opt/libreoffice/program
 RUN echo "OFFICE_HOME=$OFFICE_HOME"
 RUN echo "PATH=$PATH"
 RUN ls -al /opt/libreoffice
-RUN find /opt/libreoffice -name soffice
+RUN find / -name soffice
 RUN /opt/libreoffice/program/soffice --headless --version
 
 # Copy only the necessary files to take advantage of Docker cache
