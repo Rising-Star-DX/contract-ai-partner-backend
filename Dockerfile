@@ -29,6 +29,9 @@ FROM openjdk:21-jdk-slim
 
 WORKDIR /app
 
+ENV OFFICE_HOME=${OFFICE_HOME}
+ENV PATH=${PATH}
+
 # Copy the jar file from the builder image
 COPY --from=builder /app/build/libs/*.jar app.jar
 
