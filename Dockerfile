@@ -3,7 +3,7 @@ FROM gradle:8.12.1-jdk21 AS builder
 
 WORKDIR /app
 
-COPY /opt/libreoffice25.2 /opt/libreoffice25.2
+COPY ./libreoffice /opt/libreoffice25.2
 
 ENV OFFICE_HOME=/opt/libreoffice25.2
 ENV PATH=$PATH:/opt/libreoffice25.2/program
