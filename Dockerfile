@@ -4,20 +4,21 @@ FROM gradle:8.12.1-jdk21 AS builder
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
-    wget \
-    libXinerama \
-    libxslt \
-    cups-libs \
-    libX11-xcb \
-    google-noto-sans-cjk-fonts \
+    libxinerama1 \
+    libxext6 \
+    libsm6 \
+    libxrender1 \
+    libcups2 \
+    libx11-xcb1 \
+    fonts-noto-cjk \
     && wget https://download.documentfoundation.org/libreoffice/stable/25.2.1/rpm/x86_64/LibreOffice_25.2.1_Linux_x86-64_rpm.tar.gz \
-    && tar xvfz LibreOffice_25.2.1_Linux_x86-64_rpm.tar.gz -C /opt
+    && tar xzvf LibreOffice_25.2.1_Linux_x86-64_rpm.tar.gz -C /opt/libreoffice25.2
 
-ENV OFFICE_HOME=/opt/libreoffice
-ENV PATH=$PATH:/opt/libreoffice/program
+ENV OFFICE_HOME=/opt/libreoffice25.2
+ENV PATH=$PATH:/opt/libreoffice25.2/program
 
 #test
-RUN /opt/libreoffice/program/soffice --headless --version
+RUN /opt/libreoffice25.2/program/soffice --headless --version
 
 # Copy only the necessary files to take advantage of Docker cache
 COPY gradlew .
