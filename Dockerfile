@@ -3,12 +3,13 @@ FROM gradle:8.12.1-jdk21 AS builder
 
 WORKDIR /app
 
+COPY /opt/libreoffice25.2 /opt/libreoffice25.2
+
 ENV OFFICE_HOME=/opt/libreoffice25.2
 ENV PATH=$PATH:/opt/libreoffice25.2/program
 
 #test
-RUN echo "OFFICE_HOME=$OFFICE_HOME"
-RUN echo "PATH=$PATH"
+RUN /opt/libreoffice25.2/program/soffice --headless --version
 
 # Copy only the necessary files to take advantage of Docker cache
 COPY gradlew .
@@ -16,8 +17,6 @@ COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
 
-#test
-RUN /opt/libreoffice25.2/program/soffice --headless --version
 # Download dependencies to cache them
 RUN ./gradlew dependencies --no-daemon
 
