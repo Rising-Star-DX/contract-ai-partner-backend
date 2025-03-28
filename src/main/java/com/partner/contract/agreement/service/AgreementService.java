@@ -9,6 +9,7 @@ import com.partner.contract.category.repository.CategoryRepository;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.enums.FileType;
+import com.partner.contract.common.service.FileConversionService;
 import com.partner.contract.common.service.S3Service;
 import com.partner.contract.common.utils.DocumentStatusUtil;
 import com.partner.contract.global.exception.error.ApplicationException;
@@ -30,6 +31,7 @@ public class AgreementService {
     private final AgreementRepository agreementRepository;
     private final CategoryRepository categoryRepository;
     private final S3Service s3Service;
+    private final FileConversionService fileConversionService;
 
     public List<AgreementListResponseDto> findAgreementList(String name, Long categoryId) {
         List<Agreement> agreements;
@@ -61,6 +63,9 @@ public class AgreementService {
                 .category(category)
                 .build();
 
+        if(agreement.getType() == FileType.DOC || agreement.getType() == FileType.DOCX) {
+            file = fileConversionService.convertFileToPdf(file, agreement.getType());
+        }
         // s3 파일 저장
         String fileName = null;
         try {

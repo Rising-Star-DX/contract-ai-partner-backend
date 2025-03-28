@@ -6,6 +6,7 @@ import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.enums.FileType;
+import com.partner.contract.common.service.FileConversionService;
 import com.partner.contract.common.service.S3Service;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
@@ -38,6 +39,7 @@ public class StandardService {
     private final CategoryRepository categoryRepository;
     private final RestTemplate restTemplate;
     private final S3Service s3Service;
+    private final FileConversionService fileConversionService;
 
     @Value("${secret.flask.ip}")
     private String FLASK_SERVER_IP;
@@ -114,6 +116,10 @@ public class StandardService {
                 .type(FileType.fromContentType(file.getContentType()))
                 .category(category)
                 .build();
+
+        if(standard.getType() == FileType.DOC || standard.getType() == FileType.DOCX) {
+            file = fileConversionService.convertFileToPdf(file, standard.getType());
+        }
 
         // S3 파일 저장
         String url = null;

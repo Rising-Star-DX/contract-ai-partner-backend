@@ -36,3 +36,9 @@ management:
 schedule:
   cron: "0 0/5 * * * *"
   use: true
+
+libreoffice:
+  #  home: "C:\\Program Files\\LibreOffice"
+  home : "${OFFICE_HOME:/opt/libreoffice25.2}"
+  port : 2002
+
