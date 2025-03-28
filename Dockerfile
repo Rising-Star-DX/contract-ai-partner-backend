@@ -23,9 +23,9 @@ ENV PATH=$PATH:/opt/libreoffice/program
 #test
 RUN echo "OFFICE_HOME=$OFFICE_HOME"
 RUN echo "PATH=$PATH"
-RUN ls -al /opt/libreoffice
+#RUN ls -al /opt/libreoffice
 RUN find / -name soffice
-RUN /opt/libreoffice/program/soffice --headless --version
+#RUN /opt/libreoffice/program/soffice --headless --version
 
 # Copy only the necessary files to take advantage of Docker cache
 COPY gradlew .
