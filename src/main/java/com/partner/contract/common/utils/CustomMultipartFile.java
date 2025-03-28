@@ -1,59 +1,57 @@
 package com.partner.contract.common.utils;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 
+@RequiredArgsConstructor
 public class CustomMultipartFile implements MultipartFile {
-    private final File file;
-
-    public CustomMultipartFile(File file) {
-        this.file = file;
-    }
+    //private final File file;
+    private final byte[] fileContent;
+    private final String fileName;
+    private final String contentType;
 
     @Override
     public String getName() {
-        return file.getName();
+        return fileName;
     }
 
     @Override
     public String getOriginalFilename() {
-        return file.getName();
+        return fileName;
     }
 
     @Override
     public String getContentType() {
-        try {
-            return Files.probeContentType(file.toPath());
-        } catch (IOException e) {
-            return null;
-        }
+        return contentType;
     }
 
     @Override
     public boolean isEmpty() {
-        return file.length() == 0;
+        return fileContent.length == 0;
     }
 
     @Override
     public long getSize() {
-        return file.length();
+        return fileContent.length;
     }
 
     @Override
-    public byte[] getBytes() throws IOException {
-        return Files.readAllBytes(file.toPath());
+    public byte[] getBytes() {
+        return (fileContent!=null) ? fileContent : new byte[0];
     }
 
     @Override
-    public InputStream getInputStream() throws IOException {
-        return new FileInputStream(file);
+    public InputStream getInputStream() {
+        return (fileContent!=null) ? new ByteArrayInputStream(fileContent) : new ByteArrayInputStream(new byte[0]);
     }
 
     @Override
-    public void transferTo(File dest) throws IOException, IllegalStateException {
-        Files.copy(file.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    public void transferTo(File dest) throws IOException {
+        byte[] dataToWrite = (fileContent!=null) ? fileContent : new byte[0];
+        try (FileOutputStream fos = new FileOutputStream(dest)) {
+            fos.write(dataToWrite);
+        }
     }
 }
