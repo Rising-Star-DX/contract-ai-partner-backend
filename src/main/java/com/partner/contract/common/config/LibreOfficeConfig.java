@@ -8,35 +8,49 @@ import org.jodconverter.core.office.OfficeManager;
 import org.jodconverter.local.office.LocalOfficeManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+
+import java.util.Optional;
 
 @Configuration
-@Profile("ec2")
 public class LibreOfficeConfig {
 
     private OfficeManager officeManager;
 
     @Bean
-    public OfficeManager officeManager() {
-        officeManager = LocalOfficeManager.builder().build();
-        try {
-            if (!officeManager.isRunning()) {
-                officeManager.start();
+    public Optional<OfficeManager> officeManager() {
+        if (isLibreOfficeInstalled()) {
+            officeManager = LocalOfficeManager.builder().build();
+            try {
+                if (officeManager != null && !officeManager.isRunning()) {
+                    officeManager.start();
+                }
+            } catch (OfficeException e) {
+                throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
             }
-        } catch (OfficeException e) {
-            throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
         }
-        return officeManager;
+        return Optional.ofNullable(officeManager);
     }
 
     @PreDestroy
     public void destroy() {
         try {
-            if (officeManager.isRunning()) {
-                officeManager.stop();
+            if(isLibreOfficeInstalled()) {
+                if (officeManager != null && officeManager.isRunning()) {
+                    officeManager.stop();
+                }
             }
         } catch (OfficeException e) {
             throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
+        }
+    }
+
+    private boolean isLibreOfficeInstalled() {
+        try {
+            Process process = new ProcessBuilder("soffice", "--version").start();
+            int exitCode = process.waitFor();
+            return exitCode == 0;
+        } catch (Exception e) {
+            return false;
         }
     }
 }
