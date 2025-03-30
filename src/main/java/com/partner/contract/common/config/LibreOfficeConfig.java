@@ -9,29 +9,26 @@ import org.jodconverter.local.office.LocalOfficeManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Optional;
+
 @Configuration
 public class LibreOfficeConfig {
 
     private OfficeManager officeManager;
 
     @Bean
-    public OfficeManager officeManager() {
-//        officeManager = LocalOfficeManager.builder()
-//                .officeHome(libreofficeHome)
-//                .portNumbers(libreofficePort)
-//                .build();
-        officeManager = LocalOfficeManager.builder().build();
-
-        try {
-            if(isLibreOfficeInstalled()) {
+    public Optional<OfficeManager> officeManager() {
+        if (isLibreOfficeInstalled()) {
+            officeManager = LocalOfficeManager.builder().build();
+            try {
                 if (officeManager != null && !officeManager.isRunning()) {
                     officeManager.start();
                 }
+            } catch (OfficeException e) {
+                throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
             }
-        } catch (OfficeException e) {
-            throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
         }
-        return officeManager;
+        return Optional.ofNullable(officeManager);
     }
 
     @PreDestroy
@@ -55,6 +52,7 @@ public class LibreOfficeConfig {
             System.out.println(exitCode);
             return exitCode == 0; // 명령어 실행 성공 여부 (0이면 설치됨)
         } catch (Exception e) {
+            System.err.println("LibreOffice installation check failed: " + e.getMessage());
             return false; // 예외가 발생하면 설치되지 않은 것으로 간주
         }
     }
