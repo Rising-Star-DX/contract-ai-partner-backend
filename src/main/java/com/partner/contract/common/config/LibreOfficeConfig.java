@@ -21,9 +21,12 @@ public class LibreOfficeConfig {
 //                .portNumbers(libreofficePort)
 //                .build();
         officeManager = LocalOfficeManager.builder().build();
+
         try {
-            if(officeManager != null) {
-                officeManager.start();
+            if(isLibreOfficeInstalled()) {
+                if (officeManager != null && !officeManager.isRunning()) {
+                    officeManager.start();
+                }
             }
         } catch (OfficeException e) {
             throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
@@ -34,11 +37,25 @@ public class LibreOfficeConfig {
     @PreDestroy
     public void destroy() {
         try {
-            if(officeManager != null) {
-                officeManager.stop();
+            if(isLibreOfficeInstalled()) {
+                if (officeManager != null && officeManager.isRunning()) {
+                    officeManager.stop();
+                }
             }
         } catch (OfficeException e) {
             throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
+        }
+    }
+
+    private boolean isLibreOfficeInstalled() {
+        try {
+            // "libreoffice --version" 명령어를 실행하여 설치 여부를 확인
+            Process process = new ProcessBuilder("libreoffice", "--version").start();
+            int exitCode = process.waitFor();
+            System.out.println(exitCode);
+            return exitCode == 0; // 명령어 실행 성공 여부 (0이면 설치됨)
+        } catch (Exception e) {
+            return false; // 예외가 발생하면 설치되지 않은 것으로 간주
         }
     }
 }
