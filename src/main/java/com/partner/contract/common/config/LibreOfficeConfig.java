@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jodconverter.core.office.OfficeException;
 import org.jodconverter.core.office.OfficeManager;
 import org.jodconverter.local.office.LocalOfficeManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +16,9 @@ import java.util.Optional;
 @Configuration
 @Slf4j
 public class LibreOfficeConfig {
+
+    @Value("${libreoffice.path}")
+    private String libreOfficePath;
 
     private OfficeManager officeManager;
 
@@ -48,7 +52,7 @@ public class LibreOfficeConfig {
 
     private boolean isLibreOfficeInstalled() {
         try {
-            Process process = new ProcessBuilder("soffice", "--version").start();
+            Process process = new ProcessBuilder(libreOfficePath, "--version").start();
             int exitCode = process.waitFor();
             return exitCode == 0;
         } catch (Exception e) {
