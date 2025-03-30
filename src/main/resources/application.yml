@@ -37,7 +37,3 @@ schedule:
   cron: "0 0/5 * * * *"
   use: true
 
-libreoffice:
-  path: "soffice"
-#  path: "/opt/libreoffice25.2/program/soffice"
-
