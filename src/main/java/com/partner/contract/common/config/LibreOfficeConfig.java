@@ -6,17 +6,18 @@ import jakarta.annotation.PreDestroy;
 import org.jodconverter.core.office.OfficeException;
 import org.jodconverter.core.office.OfficeManager;
 import org.jodconverter.local.office.LocalOfficeManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class LibreOfficeConfig {
 
-//    @Value("${libreoffice.home}")
-//    private String libreofficeHome;
-//
-//    @Value("${libreoffice.port}")
-//    private Integer libreofficePort;
+    @Value("${libreoffice.home}")
+    private String libreofficeHome;
+
+    @Value("${libreoffice.port}")
+    private Integer libreofficePort;
 
     private OfficeManager officeManager;
 
@@ -26,11 +27,11 @@ public class LibreOfficeConfig {
 //                .officeHome(libreofficeHome)
 //                .portNumbers(libreofficePort)
 //                .build();
-        officeManager = LocalOfficeManager.builder()
-                .install()
-                .build();
+        officeManager = LocalOfficeManager.builder().build();
         try {
-            officeManager.start();
+            if(officeManager != null && !officeManager.isRunning()) {
+                officeManager.start();
+            }
         } catch (OfficeException e) {
             throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
         }
