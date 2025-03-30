@@ -22,7 +22,7 @@ public class LibreOfficeConfig {
 //                .build();
         officeManager = LocalOfficeManager.builder().build();
         try {
-            if(officeManager != null && !officeManager.isRunning()) {
+            if(officeManager != null) {
                 officeManager.start();
             }
         } catch (OfficeException e) {
@@ -34,7 +34,7 @@ public class LibreOfficeConfig {
     @PreDestroy
     public void destroy() {
         try {
-            if(officeManager != null && officeManager.isRunning()) {
+            if(officeManager != null) {
                 officeManager.stop();
             }
         } catch (OfficeException e) {
