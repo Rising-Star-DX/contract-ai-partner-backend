@@ -2,7 +2,6 @@ package com.partner.contract.common.config;
 
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
-import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.jodconverter.core.office.OfficeException;
 import org.jodconverter.core.office.OfficeManager;
@@ -30,18 +29,12 @@ public class LibreOfficeConfig {
         officeManager = LocalOfficeManager.builder()
                 .install()
                 .build();
-        return officeManager;
-    }
-
-    @PostConstruct
-    public void init() {
         try {
-            if(officeManager != null) {
-                officeManager.start();
-            }
+            officeManager.start();
         } catch (OfficeException e) {
             throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
         }
+        return officeManager;
     }
 
     @PreDestroy
