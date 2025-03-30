@@ -52,7 +52,9 @@ public class LibreOfficeConfig {
 
     private boolean isLibreOfficeInstalled() {
         try {
-            Process process = new ProcessBuilder(libreOfficePath, "--version").start();
+            ProcessBuilder processBuilder = new ProcessBuilder(libreOfficePath, "--version");
+            processBuilder.environment().put("PATH", "/opt/libreoffice25.2/program:" + System.getenv("PATH"));
+            Process process = processBuilder.start();
             int exitCode = process.waitFor();
             return exitCode == 0;
         } catch (Exception e) {
