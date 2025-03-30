@@ -8,10 +8,12 @@ import org.jodconverter.core.office.OfficeManager;
 import org.jodconverter.local.office.LocalOfficeManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.util.Optional;
 
 @Configuration
+@Profile("ec2")
 public class LibreOfficeConfig {
 
     private OfficeManager officeManager;

@@ -1,6 +1,8 @@
 spring:
   config:
     import: "application-secret.yml"
+  profiles:
+    active: ec2
 
   servlet:
     multipart:
