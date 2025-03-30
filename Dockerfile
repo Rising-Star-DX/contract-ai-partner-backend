@@ -3,24 +3,6 @@ FROM gradle:8.12.1-jdk21 AS builder
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
-    libxinerama1 \
-    libxext6 \
-    libsm6 \
-    libxrender1 \
-    libcups2 \
-    libx11-xcb1 \
-    fonts-noto-cjk \
-    && wget https://download.documentfoundation.org/libreoffice/stable/25.2.1/rpm/x86_64/LibreOffice_25.2.1_Linux_x86-64_rpm.tar.gz \
-    && tar xzvf LibreOffice_25.2.1_Linux_x86-64_rpm.tar.gz -C /opt \
-    && cd /opt/LibreOffice_25.2.1.2_Linux_x86-64_rpm/RPMS \
-    && apt-get install -y alien \
-    && alien -i *.rpm \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /opt/*.tar.gz
-
-ENV OFFICE_HOME=/opt/libreoffice25.2
-ENV PATH=$PATH:/opt/libreoffice25.2/program
-
 # Copy only the necessary files to take advantage of Docker cache
 COPY gradlew .
 COPY gradle gradle
@@ -43,9 +25,6 @@ RUN ./gradlew build --no-daemon
 FROM openjdk:21-jdk-slim
 
 WORKDIR /app
-
-ENV OFFICE_HOME=${OFFICE_HOME}
-ENV PATH=${PATH}
 
 # Copy the jar file from the builder image
 COPY --from=builder /app/build/libs/*.jar app.jar
