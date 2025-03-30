@@ -34,7 +34,7 @@ public class LibreOfficeConfig {
     @PreDestroy
     public void destroy() {
         try {
-            if(officeManager != null && !officeManager.isRunning()) {
+            if(officeManager != null && officeManager.isRunning()) {
                 officeManager.stop();
             }
         } catch (OfficeException e) {
