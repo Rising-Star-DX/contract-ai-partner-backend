@@ -7,7 +7,6 @@ import java.util.List;
 
 @Data
 public class AgreementAnalysisFlaskResponseDto {
-    private String summaryContent;
     private Integer totalPage;
 
     @JsonProperty("chunks")
