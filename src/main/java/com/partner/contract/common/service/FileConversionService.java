@@ -4,7 +4,9 @@ import com.partner.contract.common.enums.FileType;
 import com.partner.contract.common.utils.CustomMultipartFile;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jodconverter.core.DocumentConverter;
 import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
 import org.jodconverter.core.office.OfficeException;
@@ -16,23 +18,26 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FileConversionService {
-    private final Optional<OfficeManager> officeManager;
+    @Nullable
+    private final OfficeManager officeManager;
 
     public MultipartFile convertFileToPdf(MultipartFile file, FileType fileType) {
-            try(InputStream inputStream = file.getInputStream();
+        log.info("convertFileToPdf 실행 - officeManager 존재 여부: {}", officeManager != null);
+        try(InputStream inputStream = file.getInputStream();
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 String fileName = file.getOriginalFilename();
                 if(fileName == null) {
                     throw new ApplicationException(ErrorCode.FILE_TYPE_ERROR);
                 }
 
-                officeManager.ifPresent(officeManager -> {
+                if(officeManager != null) {
                     try {
+                        log.info("officeManager 시작");
                         if (!officeManager.isRunning()) {
                             officeManager.start();
                         }
@@ -44,7 +49,7 @@ public class FileConversionService {
                     } catch (OfficeException e) {
                         throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
                     }
-                });
+                }
                 return new CustomMultipartFile(outputStream.toByteArray(), fileName.split("\\.")[0] + ".pdf", "application/pdf");
             } catch (IOException e) {
                 throw new ApplicationException(ErrorCode.FILE_PROCESSING_ERROR);

@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Optional;
-
 @Configuration
 @Slf4j
 public class LibreOfficeConfig {
@@ -23,18 +21,21 @@ public class LibreOfficeConfig {
     private OfficeManager officeManager;
 
     @Bean
-    public Optional<OfficeManager> officeManager() {
+    public OfficeManager officeManager() {
         if (isLibreOfficeInstalled()) {
             officeManager = LocalOfficeManager.builder().build();
             try {
                 if (officeManager != null && !officeManager.isRunning()) {
+                    log.info("officeManager 시작");
                     officeManager.start();
                 }
             } catch (OfficeException e) {
                 throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
             }
+            log.info("officeManager 생성 - officeManager 존재 여부: {}", officeManager != null);
+            return officeManager;
         }
-        return Optional.ofNullable(officeManager);
+        return null;
     }
 
     @PreDestroy
@@ -54,9 +55,10 @@ public class LibreOfficeConfig {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(libreOfficePath, "--version");
             processBuilder.environment().put("PATH", "/opt/libreoffice25.2/program:" + System.getenv("PATH"));
-            log.info("현재 PATH 환경변수: {}", System.getenv("PATH"));
+            log.info("현재 PATH 환경변수: {}", processBuilder.environment().get("PATH"));
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
+            log.info("LibreOffice 설치 여부: {}", exitCode);
             return exitCode == 0;
         } catch (Exception e) {
             log.error("LibreOffice 명령어 실행 요청 중 문제가 발생했습니다. {}", e.getMessage(), e);
