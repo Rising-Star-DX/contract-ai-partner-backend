@@ -54,6 +54,7 @@ public class LibreOfficeConfig {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(libreOfficePath, "--version");
             processBuilder.environment().put("PATH", "/opt/libreoffice25.2/program:" + System.getenv("PATH"));
+            log.info("현재 PATH 환경변수: {}", System.getenv("PATH"));
             Process process = processBuilder.start();
             int exitCode = process.waitFor();
             return exitCode == 0;
