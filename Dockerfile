@@ -32,7 +32,5 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 # Expose the port the app will run on
 EXPOSE 8080
 
-VOLUME /opt/libreoffice25.2
-
 # Run the application
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
