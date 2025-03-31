@@ -43,8 +43,6 @@ public class Agreement {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    private String summaryContent;
-
     private Integer totalPage;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -61,14 +59,13 @@ public class Agreement {
     private List<MemberAgreement> memberAgreementList;
 
     @Builder
-    public Agreement(String name, FileType type, String url, FileStatus fileStatus, AiStatus aiStatus, LocalDateTime createdAt, String summaryContent, Integer totalPage, Category category, List<AgreementIncorrectText> agreementIncorrectTextList, List<MemberAgreement> memberAgreementList) {
+    public Agreement(String name, FileType type, String url, FileStatus fileStatus, AiStatus aiStatus, LocalDateTime createdAt, Integer totalPage, Category category, List<AgreementIncorrectText> agreementIncorrectTextList, List<MemberAgreement> memberAgreementList) {
         this.name = name;
         this.type = type;
         this.url = url;
         this.fileStatus = fileStatus;
         this.aiStatus = aiStatus;
         this.createdAt = createdAt;
-        this.summaryContent = summaryContent;
         this.totalPage = totalPage;
         this.category = category;
         this.agreementIncorrectTextList = agreementIncorrectTextList;
