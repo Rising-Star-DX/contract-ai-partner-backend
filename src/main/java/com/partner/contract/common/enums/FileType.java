@@ -10,7 +10,9 @@ public enum FileType {
     JPEG,
     JPG,
     PNG,
-    TXT
+    TXT,
+    XLS,
+    XLSX
     ;
 
     public static FileType fromContentType(String contentType) {

@@ -53,15 +53,15 @@ public class LibreOfficeConfig {
 
     private boolean isLibreOfficeInstalled() {
         try {
-            ProcessBuilder processBuilder = new ProcessBuilder(libreOfficePath, "--version");
-            processBuilder.environment().put("PATH", "/opt/libreoffice25.2/program:" + System.getenv("PATH"));
-            processBuilder.environment().put("LD_LIBRARY_PATH", "/opt/libreoffice25.2/lib:" + System.getenv("LD_LIBRARY_PATH"));
-            log.info("현재 PATH 환경변수: {}", processBuilder.environment().get("PATH"));
-            log.info("현재 LD_LIBRARY_PATH 환경변수: {}", processBuilder.environment().get("LD_LIBRARY_PATH"));
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-            log.info("LibreOffice 설치 여부: {}", exitCode);
-            return exitCode == 0;
+//            ProcessBuilder processBuilder = new ProcessBuilder(libreOfficePath, "--version");
+//            processBuilder.environment().put("PATH", "/opt/libreoffice25.2/program:" + System.getenv("PATH"));
+//            processBuilder.environment().put("LD_LIBRARY_PATH", "/opt/libreoffice25.2/lib:" + System.getenv("LD_LIBRARY_PATH"));
+//            log.info("현재 PATH 환경변수: {}", processBuilder.environment().get("PATH"));
+//            log.info("현재 LD_LIBRARY_PATH 환경변수: {}", processBuilder.environment().get("LD_LIBRARY_PATH"));
+//            Process process = processBuilder.start();
+//            int exitCode = process.waitFor();
+//            log.info("LibreOffice 설치 여부: {}", exitCode);
+            return false;
         } catch (Exception e) {
             log.error("LibreOffice 명령어 실행 요청 중 문제가 발생했습니다. {}", e.getMessage(), e);
             return false;

@@ -40,6 +40,7 @@ public enum ErrorCode {
     S3_FILE_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FI005", "S3 파일 삭제 중 에러가 발생했습니다."),
     S3_FILE_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "FI006", "S3에 현재 URL에 대응되는 파일이 존재하지 않습니다."),
     S3_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "S3C001", "S3 통신 중 문제가 발생했습니다."),
+    FILE_CONVERSION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FC001", "PDF 변환 중 에러가 발생했습니다."),
 
     // Analysis
     MISSING_FILE_FOR_ANALYSIS(HttpStatus.BAD_REQUEST, "AN001", "AI 분석을 수행하려면 파일이 필요합니다."),

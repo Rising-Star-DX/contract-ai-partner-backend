@@ -30,6 +30,24 @@ dependencies {
 	implementation 'software.amazon.awssdk:s3:2.20.160'
 	implementation 'org.jodconverter:jodconverter-spring-boot-starter:4.4.6'
 	implementation 'org.jodconverter:jodconverter-local:4.4.6'
+
+	//implementation 'org.docx4j:docx4j-core:8.3.9'
+	//implementation 'org.docx4j:docx4j-export-fo:8.3.9'
+	//implementation 'javax.xml.bind:jaxb-api:2.3.1'
+	//implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+	//	NoClassDefFoundError: jakarta/xml/bind/ValidationEventHandler 대응
+	//implementation 'org.docx4j:docx4j-JAXB-ReferenceImpl:11.4.9'
+	//implementation 'org.docx4j:docx4j-JAXB-MOXy:11.4.9'
+	//implementation group: 'jakarta.xml.bind', name: 'jakarta.xml.bind-api', version: '4.0.0'
+	//implementation "org.glassfish.jaxb:jaxb-runtime:4.0.0"
+	//implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+	//implementation group: 'jakarta.activation', name: 'jakarta.activation-api', version: '2.1.2'
+	//implementation group: 'org.docx4j', name: 'docx4j-core', version: '11.4.9'
+
+	implementation 'org.apache.poi:poi:5.2.3'
+	implementation 'org.apache.poi:poi-ooxml:5.2.3'
+	implementation 'org.apache.xmlgraphics:fop:2.8'
+	implementation 'fr.opensagres.xdocreport:fr.opensagres.poi.xwpf.converter.pdf:2.1.0'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
