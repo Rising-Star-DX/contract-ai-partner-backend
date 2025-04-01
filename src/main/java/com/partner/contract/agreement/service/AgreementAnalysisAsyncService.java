@@ -75,6 +75,7 @@ public class AgreementAnalysisAsyncService {
                 agreement.updateAiStatus(AiStatus.FAILED);
                 agreementRepository.save(agreement);
                 log.error("Flask API 요청 중 문제가 발생했습니다. {}", e.getMessage(), e);
+                return;
             }
 
             // Flask에서 넘어온 계약서 정보 data
@@ -83,7 +84,7 @@ public class AgreementAnalysisAsyncService {
 
             for (AgreementIncorrectDto agreementIncorrectDto : agreementIncorrectDtos) {
                 AgreementIncorrectText agreementIncorrectText = AgreementIncorrectText.builder()
-                        .accuracy(agreementIncorrectDto.getAccuracy())
+                        .accuracy(agreementIncorrectDto.getAccuracy() * 100)
                         .incorrectText(agreementIncorrectDto.getIncorrectText())
                         .proofText(agreementIncorrectDto.getProofText())
                         .correctedText(agreementIncorrectDto.getCorrectedText())
@@ -94,6 +95,8 @@ public class AgreementAnalysisAsyncService {
 
                 for(IncorrectClauseDataDto incorrectClauseDataDto : agreementIncorrectDto.getIncorrectClauseDataDtoList()) {
                     if (incorrectClauseDataDto.getPosition() == null || incorrectClauseDataDto.getPosition().isEmpty()) {
+                        agreement.updateAiStatus(AiStatus.FAILED);
+                        agreementRepository.save(agreement);
                         log.error("위배 문구의 위치 정보가 비어있습니다.");
                         return;
                     }
@@ -111,7 +114,7 @@ public class AgreementAnalysisAsyncService {
 
             // AI 상태 및 분석 정보 업데이트
             agreement.updateAiStatus(AiStatus.SUCCESS);
-            agreement.updateAnalysisInfomation(flaskResponseDto.getTotalPage(), flaskResponseDto.getSummaryContent());
+            agreement.updateAnalysisInfomation(flaskResponseDto.getTotalPage());
             agreementRepository.save(agreement);
 
         } catch (Exception e) {
