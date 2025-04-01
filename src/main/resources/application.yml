@@ -19,6 +19,10 @@ spring:
       hibernate:
         ddl-auto: none
       show-sql: true
+    hikari:
+      idle-timeout: 300000  # 커넥션 유휴 시간 (밀리초)
+      max-lifetime: 600000  # 커넥션 풀 커넥션 최대 수명
+
   jackson:
     time-zone: Asia/Seoul
 
