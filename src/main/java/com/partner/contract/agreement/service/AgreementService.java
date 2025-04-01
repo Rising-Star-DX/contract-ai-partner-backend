@@ -14,6 +14,7 @@ import com.partner.contract.common.service.S3Service;
 import com.partner.contract.common.utils.DocumentStatusUtil;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
+import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 public class AgreementService {
     private final AgreementAnalysisAsyncService agreementAnalysisAsyncService;
     private final AgreementRepository agreementRepository;
+    private final StandardRepository standardRepository;
     private final CategoryRepository categoryRepository;
     private final S3Service s3Service;
     private final FileConversionService fileConversionService;
@@ -142,6 +144,11 @@ public class AgreementService {
     @Transactional
     public void startAnalyze(Long id) {
         Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
+
+        Boolean fileExists = standardRepository.existsByCategoryIdAndAiStatus(agreement.getCategory().getId(), AiStatus.SUCCESS);
+        if (!fileExists) { // 학습된 파일이 존재하지 않는 경우
+            throw new ApplicationException(ErrorCode.NO_ANALYSIS_STANDARD_DOCUMENT);
+        }
 
         if (agreement.getFileStatus() != FileStatus.SUCCESS) {
             throw new ApplicationException(ErrorCode.MISSING_FILE_FOR_ANALYSIS);

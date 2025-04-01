@@ -47,6 +47,7 @@ public enum ErrorCode {
     AI_ANALYSIS_ALREADY_COMPLETED(HttpStatus.BAD_REQUEST, "AN003", "이미 AI 분석이 완료된 문서입니다."),
     AI_ANALYSIS_ALREADY_STARTED(HttpStatus.BAD_REQUEST, "AN004", "이미 AI 분석이 진행 중인 문서입니다."),
     AI_ANALYSIS_POSITION_EMPTY_ERROR(HttpStatus.BAD_REQUEST, "AN005", "위배 문구의 위치 정보가 비어있습니다."),
+    NO_ANALYSIS_STANDARD_DOCUMENT(HttpStatus.BAD_REQUEST, "AN006", "동일 카테고리 내에 학습된 기준 문서가 없습니다."),
 
     // Flask
     FLASK_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FL001", "Flask에서 반환된 데이터 형식이 올바르지 않습니다."),
