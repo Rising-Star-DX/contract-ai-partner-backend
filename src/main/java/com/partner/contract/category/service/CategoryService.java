@@ -20,8 +20,6 @@ import java.util.List;
 @Transactional
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-    private final StandardService standardService;
-    private final AgreementService agreementService;
 
     public List<CategoryListResponseDto> findCategoryList(String name) {
         return categoryRepository.findCategoryListOrderByName(name);
