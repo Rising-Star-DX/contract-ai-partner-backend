@@ -38,6 +38,6 @@ management:
       show-details: always
 
 schedule:
-  cron: "0 0/5 * * * *"
+  cron: "0 0/1 * * * *"
   use: true
 
