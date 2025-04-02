@@ -141,20 +141,28 @@ public class AgreementService {
         agreementRepository.saveAll(agreements);
     }
 
-    @Transactional
+    @Transactional(noRollbackFor = ApplicationException.class)
     public void startAnalyze(Long id) {
         Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
 
         Boolean fileExists = standardRepository.existsByCategoryIdAndAiStatus(agreement.getCategory().getId(), AiStatus.SUCCESS);
         if (!fileExists) { // 학습된 파일이 존재하지 않는 경우
+            agreement.updateAiStatus(AiStatus.FAILED);
+            agreementRepository.save(agreement);
             throw new ApplicationException(ErrorCode.NO_ANALYSIS_STANDARD_DOCUMENT);
         }
 
         if (agreement.getFileStatus() != FileStatus.SUCCESS) {
+            agreement.updateAiStatus(AiStatus.FAILED);
+            agreementRepository.save(agreement);
             throw new ApplicationException(ErrorCode.MISSING_FILE_FOR_ANALYSIS);
         } else if (agreement.getAiStatus() == AiStatus.FAILED || agreement.getAiStatus() == AiStatus.SUCCESS) {
+            agreement.updateAiStatus(AiStatus.FAILED);
+            agreementRepository.save(agreement);
             throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_COMPLETED);
         } else if (agreement.getAiStatus() == AiStatus.ANALYZING) {
+            agreement.updateAiStatus(AiStatus.FAILED);
+            agreementRepository.save(agreement);
             throw new ApplicationException(ErrorCode.AI_ANALYSIS_ALREADY_STARTED);
         }
 

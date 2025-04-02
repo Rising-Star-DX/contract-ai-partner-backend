@@ -12,6 +12,8 @@ import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.common.dto.AnalysisRequestDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
+import com.partner.contract.global.exception.error.ApplicationException;
+import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +41,7 @@ public class AgreementAnalysisAsyncService {
     private String FLASK_SERVER_IP;
 
     @Async
-    @Transactional
+    @Transactional(noRollbackFor = ApplicationException.class)
     public void analyze(Agreement agreement, String categoryName){
         try {
             // Flask에 AI 분석 요청
@@ -74,8 +76,7 @@ public class AgreementAnalysisAsyncService {
             } catch (RestClientException e) {
                 agreement.updateAiStatus(AiStatus.FAILED);
                 agreementRepository.save(agreement);
-                log.error("Flask API 요청 중 문제가 발생했습니다. {}", e.getMessage(), e);
-                return;
+                throw new ApplicationException(ErrorCode.FLASK_SERVER_CONNECTION_ERROR);
             }
 
             // Flask에서 넘어온 계약서 정보 data
@@ -97,8 +98,7 @@ public class AgreementAnalysisAsyncService {
                     if (incorrectClauseDataDto.getPosition() == null || incorrectClauseDataDto.getPosition().isEmpty()) {
                         agreement.updateAiStatus(AiStatus.FAILED);
                         agreementRepository.save(agreement);
-                        log.error("위배 문구의 위치 정보가 비어있습니다.");
-                        return;
+                        throw new ApplicationException(ErrorCode.AI_ANALYSIS_POSITION_EMPTY_ERROR);
                     }
 
                     AgreementIncorrectPosition agreementIncorrectPosition = AgreementIncorrectPosition.builder()
@@ -120,7 +120,7 @@ public class AgreementAnalysisAsyncService {
         } catch (Exception e) {
             agreement.updateAiStatus(AiStatus.FAILED);
             agreementRepository.save(agreement);
-            log.error("AI 분석 중 문제가 발생했습니다. {}", e.getMessage(), e);
+            throw new ApplicationException(ErrorCode.FLASK_ANALYSIS_ERROR);
         }
     }
 }
