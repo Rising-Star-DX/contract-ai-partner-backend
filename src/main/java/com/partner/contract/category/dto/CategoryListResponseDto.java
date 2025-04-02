@@ -1,28 +1,32 @@
 package com.partner.contract.category.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @NoArgsConstructor
 public class CategoryListResponseDto {
-    private Long id;
+    private Integer id;
     private String name;
-    private Long countOfStandards;
-    private Long countOfAgreements;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
-    private LocalDateTime createdAt;
+    private Integer countOfStandards;
+    private Integer countOfAgreements;
+    private String createdAt;
 
     @Builder
-    public CategoryListResponseDto(Long id, String name, Long countOfStandards, Long countOfAgreements, LocalDateTime createdAt) {
+    public CategoryListResponseDto(Integer id, String name, Integer countOfStandards, Integer countOfAgreements, Timestamp createdAt) {
         this.id = id;
         this.name = name;
         this.countOfStandards = countOfStandards;
         this.countOfAgreements = countOfAgreements;
-        this.createdAt = createdAt;
+        this.createdAt = convertTimestampToLocalDateTime(createdAt);
+    }
+
+    private String convertTimestampToLocalDateTime(Timestamp timestamp) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+        return timestamp.toLocalDateTime().format(formatter);
     }
 }
