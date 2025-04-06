@@ -3,8 +3,6 @@ FROM gradle:8.12.1-jdk21 AS builder
 
 WORKDIR /app
 
-ENV PATH="/opt/libreoffice25.2/program:${PATH}"
-
 # Copy only the necessary files to take advantage of Docker cache
 COPY gradlew .
 COPY gradle gradle
@@ -30,6 +28,10 @@ WORKDIR /app
 
 # Copy the jar file from the builder image
 COPY --from=builder /app/build/libs/*.jar app.jar
+
+ENV PATH="/opt/libreoffice25.2/program:${PATH}"
+
+RUN echo "PATH is: $PATH"
 
 # Expose the port the app will run on
 EXPOSE 8080
