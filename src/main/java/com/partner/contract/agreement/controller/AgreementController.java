@@ -1,5 +1,6 @@
 package com.partner.contract.agreement.controller;
 
+import com.partner.contract.agreement.dto.AgreementAnalysisStartResponseDto;
 import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
 import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.service.AgreementService;
@@ -68,12 +69,11 @@ public class AgreementController {
     }
 
     @PatchMapping("/analysis/{id}")
-    public ResponseEntity<SuccessResponse<Map<String, Long>>> agreementAnalysis(@PathVariable("id") Long id){
+    public ResponseEntity<SuccessResponse<AgreementAnalysisStartResponseDto>> agreementAnalysis(@PathVariable("id") Long id){
 
-        agreementService.startAnalyze(id);
+        AgreementAnalysisStartResponseDto agreementAnalysisStartResponseDto = agreementService.startAnalyze(id);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.ANALYSIS_REQUEST_ACCEPTED.getCode(),
-                SuccessCode.ANALYSIS_REQUEST_ACCEPTED.getMessage(),
-                Map.of("id", id)));
+                SuccessCode.ANALYSIS_REQUEST_ACCEPTED.getMessage(), agreementAnalysisStartResponseDto));
     }
 }
