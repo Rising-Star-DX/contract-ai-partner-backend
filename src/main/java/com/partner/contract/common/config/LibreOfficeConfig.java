@@ -6,7 +6,6 @@ import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.jodconverter.core.office.OfficeException;
 import org.jodconverter.core.office.OfficeManager;
-import org.jodconverter.local.office.LocalOfficeManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,23 +21,24 @@ public class LibreOfficeConfig {
 
     @Bean
     public OfficeManager officeManager() {
-        if (isLibreOfficeInstalled()) {
-            officeManager = LocalOfficeManager.builder().build();
-            if (officeManager != null && !officeManager.isRunning()) {
-                log.info("officeManager 시작");
-                //officeManager.start();
-            }
-//            try {
-//                if (officeManager != null && !officeManager.isRunning()) {
-//                    log.info("officeManager 시작");
-//                    //officeManager.start();
-//                }
-//            } catch (OfficeException e) {
-//                throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
+//        if (isLibreOfficeInstalled()) {
+//            officeManager = LocalOfficeManager.builder().build();
+//            if (officeManager != null && !officeManager.isRunning()) {
+//                log.info("officeManager 시작");
+//                //officeManager.start();
 //            }
-            log.info("officeManager 생성 - officeManager 존재 여부: {}", officeManager != null);
-            return officeManager;
-        }
+////            try {
+////                if (officeManager != null && !officeManager.isRunning()) {
+////                    log.info("officeManager 시작");
+////                    //officeManager.start();
+////                }
+////            } catch (OfficeException e) {
+////                throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
+////            }
+//            log.info("officeManager 생성 - officeManager 존재 여부: {}", officeManager != null);
+//            return officeManager;
+//        }
+//        return null;
         return null;
     }
 
@@ -56,7 +56,8 @@ public class LibreOfficeConfig {
     }
 
     private boolean isLibreOfficeInstalled() {
-        try {
+        return true;
+//        try {
 //            ProcessBuilder processBuilder = new ProcessBuilder(libreOfficePath, "--version");
 //            processBuilder.environment().put("PATH", "/opt/libreoffice25.2/program:" + System.getenv("PATH"));
 //            processBuilder.environment().put("LD_LIBRARY_PATH", "/opt/libreoffice25.2/lib:" + System.getenv("LD_LIBRARY_PATH"));
@@ -66,10 +67,9 @@ public class LibreOfficeConfig {
 //            int exitCode = process.waitFor();
 //            log.info("LibreOffice 설치 여부: {}", exitCode);
 //            return exitCode == 0;
-            return true;
-        } catch (Exception e) {
-            log.error("LibreOffice 명령어 실행 요청 중 문제가 발생했습니다. {}", e.getMessage(), e);
-            return false;
-        }
+//        } catch (Exception e) {
+//            log.error("LibreOffice 명령어 실행 요청 중 문제가 발생했습니다. {}", e.getMessage(), e);
+//            return false;
+//        }
     }
 }
