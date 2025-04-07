@@ -1,6 +1,7 @@
 package com.partner.contract.agreement.service;
 
 import com.partner.contract.agreement.domain.Agreement;
+import com.partner.contract.agreement.dto.AgreementAnalysisStartResponseDto;
 import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
 import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.repository.AgreementRepository;
@@ -142,7 +143,7 @@ public class AgreementService {
     }
 
     @Transactional(noRollbackFor = ApplicationException.class)
-    public void startAnalyze(Long id) {
+    public AgreementAnalysisStartResponseDto startAnalyze(Long id) {
         Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
 
         Boolean fileExists = standardRepository.existsByCategoryIdAndAiStatus(agreement.getCategory().getId(), AiStatus.SUCCESS);
@@ -171,5 +172,7 @@ public class AgreementService {
 
         // 비동기로 분석 요청
         agreementAnalysisAsyncService.analyze(agreement, agreement.getCategory().getName());
+
+        return new AgreementAnalysisStartResponseDto(id, agreement.getUrl());
     }
 }
