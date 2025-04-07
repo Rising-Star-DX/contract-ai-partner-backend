@@ -32,9 +32,9 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 # install libreoffice library and remove cache files
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libxinerama1 libxext6 libsm6 libxrender1 libx11-6 libx11-xcb1 \
-    libcups2 libxml2 libxslt1.1 libnss3 libnspr4 libnssutil3 libssl3 libsmime3 \
+    libcups2 libxml2 libxslt1.1 libnss3 libnspr4 libssl3 \
     libcairo2 libfreetype6 libfontconfig1 \
-    libglib2.0-0 libgobject-2.0-0 libgio-2.0-0 \
+    libglib2.0-0 \
     libdbus-1-3 \
     fonts-noto-cjk \
  && rm -rf /var/lib/apt/lists/*
