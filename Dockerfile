@@ -30,21 +30,22 @@ WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 
 ## install libreoffice library and remove cache files
-#RUN apt-get update && apt-get install -y --no-install-recommends \
-#    libxinerama1 libxext6 libsm6 libxrender1 libx11-6 libx11-xcb1 \
-#    libcups2 libxml2 libxslt1.1 libnss3 libnspr4 libssl3 \
-#    libcairo2 libfreetype6 libfontconfig1 \
-#    libglib2.0-0 \
-#    libdbus-1-3 \
-#    fonts-noto-cjk \
-# && echo "LibreOffice-related library sizes:" \
-# && du -sh /usr/lib /usr/share /usr/lib/x86_64-linux-gnu 2>/dev/null || true \
-# && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y libxinerama1 \
- && echo "✅ libxinerama1 설치됨" \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libxinerama1 libxext6 libsm6 libxrender1 libx11-6 libx11-xcb1 \
+    libcups2 libxml2 libxslt1.1 libnss3 libnspr4 libssl3 \
+    libcairo2 libfreetype6 libfontconfig1 \
+    libglib2.0-0 \
+    libdbus-1-3 \
+    fonts-noto-cjk \
+ && echo "✅ LibreOffice-related libs 설치됨" \
  && dpkg -l | grep libxinerama \
- && ls -l /lib/x86_64-linux-gnu/libXinerama.so.1
+ && ls -l /lib/x86_64-linux-gnu/libXinerama.so.1 \
+ && rm -rf /var/lib/apt/lists/*
+
+#RUN apt-get update && apt-get install -y libxinerama1 \
+# && echo "✅ libxinerama1 설치됨" \
+# && dpkg -l | grep libxinerama \
+# && ls -l /lib/x86_64-linux-gnu/libXinerama.so.1
 
 ENV PATH="/opt/libreoffice25.2/program:${PATH}"
 
