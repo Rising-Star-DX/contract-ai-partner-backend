@@ -42,7 +42,10 @@ public class FileConversionService {
              ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
             // OfficeManager를 매번 생성해서 사용하고 바로 종료
-            OfficeManager officeManager = LocalOfficeManager.builder().build();
+            OfficeManager officeManager = LocalOfficeManager
+                    .builder()
+                    .officeHome(new File(libreOfficePath).getParentFile().getParentFile())
+                    .build();
 
             try {
                 officeManager.start();
