@@ -44,7 +44,7 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 RUN apt-get update && apt-get install -y libxinerama1 \
  && echo "✅ libxinerama1 설치됨" \
  && dpkg -l | grep libxinerama \
- && ls -l /lib/x86_64-linux-gnu/libXinerama.so.1 \
+ && ls -l /lib/x86_64-linux-gnu/libXinerama.so.1
 
 ENV PATH="/opt/libreoffice25.2/program:${PATH}"
 
