@@ -37,7 +37,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     libdbus-1-3 \
     fonts-noto-cjk \
- && echo "After:" && du -sh / && rm -rf /var/lib/apt/lists/*
+ && echo "LibreOffice-related library sizes:" \
+ && du -sh /usr/lib /usr/share /usr/lib/x86_64-linux-gnu 2>/dev/null || true \
+ && rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/opt/libreoffice25.2/program:${PATH}"
 
