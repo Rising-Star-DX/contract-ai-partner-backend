@@ -35,17 +35,13 @@ public class FileConversionService {
         File outputPdfFile = null;
 
         try {
-            // 임시 디렉토리 경로 가져오기
-            Path tempDir = Files.createTempDirectory("libreoffice-temp");
+            Path tempDir = Files.createTempDirectory("libreoffice-tmp");
 
-            // 원래 파일명을 유지한 파일 경로 만들기
             Path inputFilePath = tempDir.resolve(fileName);
 
-            // 파일로 저장
             tempInputFile = inputFilePath.toFile();
-            file.transferTo(tempInputFile); // MultipartFile -> File
+            file.transferTo(tempInputFile);
 
-            // 2. CLI 실행
             File outputDir = new File("/tmp");
             String[] command = {
                     libreOfficePath,
@@ -55,17 +51,13 @@ public class FileConversionService {
                     "--outdir", outputDir.getAbsolutePath()
             };
 
-//            log.info("실행 명령어: {}", String.join(" ", command));
             ProcessBuilder pb = new ProcessBuilder(command);
-//            pb.environment().put("PATH", "/opt/libreoffice25.2/program:" + System.getenv("PATH"));
-//            pb.environment().put("LD_LIBRARY_PATH", "/opt/libreoffice25.2/lib:" + System.getenv("LD_LIBRARY_PATH"));
             Process process = pb.start();
 
             if (process.waitFor() != 0) {
                 throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
             }
 
-            // 3. 변환된 PDF 파일 로딩
             String outputFileName =  fileName.split("\\.")[0] + ".pdf";
             outputPdfFile = new File(outputDir, outputFileName);
 
@@ -75,7 +67,6 @@ public class FileConversionService {
 
             byte[] pdfBytes = Files.readAllBytes(outputPdfFile.toPath());
 
-            // 4. 반환
             return new CustomMultipartFile(pdfBytes, outputFileName, "application/pdf");
 
         } catch (IOException | InterruptedException e) {
