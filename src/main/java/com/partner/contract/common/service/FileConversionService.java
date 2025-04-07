@@ -5,20 +5,14 @@ import com.partner.contract.common.utils.CustomMultipartFile;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
-import org.jodconverter.core.DocumentConverter;
-import org.jodconverter.core.document.DefaultDocumentFormatRegistry;
-import org.jodconverter.core.office.OfficeException;
-import org.jodconverter.core.office.OfficeManager;
-import org.jodconverter.local.LocalConverter;
-import org.jodconverter.local.office.LocalOfficeManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 @Service
 @Slf4j
@@ -33,42 +27,62 @@ public class FileConversionService {
             throw new ApplicationException(ErrorCode.FILE_TYPE_ERROR);
         }
 
-        // LibreOffice 설치 여부 확인
         if (!isLibreOfficeAvailable()) {
             throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
         }
 
-        try (InputStream inputStream = file.getInputStream();
-             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+        File tempInputFile = null;
+        File outputPdfFile = null;
 
-            // OfficeManager를 매번 생성해서 사용하고 바로 종료
-            OfficeManager officeManager = LocalOfficeManager
-                    .builder()
-                    .officeHome(new File(libreOfficePath).getParentFile().getParentFile())
-                    .build();
+        try {
+            // 임시 디렉토리 경로 가져오기
+            Path tempDir = Files.createTempDirectory("libreoffice-temp");
 
-            try {
-                officeManager.start();
-                DocumentConverter converter = LocalConverter.make(officeManager);
+            // 원래 파일명을 유지한 파일 경로 만들기
+            Path inputFilePath = tempDir.resolve(fileName);
 
-                converter.convert(inputStream)
-                        .to(outputStream)
-                        .as(DefaultDocumentFormatRegistry.PDF)
-                        .execute();
+            // 파일로 저장
+            tempInputFile = inputFilePath.toFile();
+            file.transferTo(tempInputFile); // MultipartFile -> File
 
-            } catch (OfficeException e) {
+            // 2. CLI 실행
+            File outputDir = new File("/tmp");
+            String[] command = {
+                    libreOfficePath,
+                    "--headless",
+                    "--convert-to", "pdf",
+                    tempInputFile.getAbsolutePath(),
+                    "--outdir", outputDir.getAbsolutePath()
+            };
+
+            log.info("실행 명령어: {}", String.join(" ", command));
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.environment().put("PATH", "/opt/libreoffice25.2/program:" + System.getenv("PATH"));
+            pb.environment().put("LD_LIBRARY_PATH", "/opt/libreoffice25.2/lib:" + System.getenv("LD_LIBRARY_PATH"));
+            Process process = pb.start();
+
+            if (process.waitFor() != 0) {
                 throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
-            } finally {
-                try {
-                    officeManager.stop();
-                } catch (OfficeException e) {
-                    log.warn("LibreOffice 종료 실패: {}", e.getMessage());
-                }
             }
 
-            return new CustomMultipartFile(outputStream.toByteArray(), fileName.split("\\.")[0] + ".pdf", "application/pdf");
-        } catch (IOException e) {
+            // 3. 변환된 PDF 파일 로딩
+            String outputFileName =  fileName.split("\\.")[0] + ".pdf";
+            outputPdfFile = new File(outputDir, outputFileName);
+
+            if (!outputPdfFile.exists()) {
+                throw new ApplicationException(ErrorCode.FILE_PROCESSING_ERROR);
+            }
+
+            byte[] pdfBytes = Files.readAllBytes(outputPdfFile.toPath());
+
+            // 4. 반환
+            return new CustomMultipartFile(pdfBytes, outputFileName, "application/pdf");
+
+        } catch (IOException | InterruptedException e) {
             throw new ApplicationException(ErrorCode.FILE_PROCESSING_ERROR);
+        } finally {
+            if (tempInputFile != null && tempInputFile.exists()) tempInputFile.delete();
+            if (outputPdfFile != null && outputPdfFile.exists()) outputPdfFile.delete();
         }
     }
 
