@@ -24,14 +24,18 @@ public class LibreOfficeConfig {
     public OfficeManager officeManager() {
         if (isLibreOfficeInstalled()) {
             officeManager = LocalOfficeManager.builder().build();
-            try {
-                if (officeManager != null && !officeManager.isRunning()) {
-                    log.info("officeManager 시작");
-                    officeManager.start();
-                }
-            } catch (OfficeException e) {
-                throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
+            if (officeManager != null && !officeManager.isRunning()) {
+                log.info("officeManager 시작");
+                //officeManager.start();
             }
+//            try {
+//                if (officeManager != null && !officeManager.isRunning()) {
+//                    log.info("officeManager 시작");
+//                    //officeManager.start();
+//                }
+//            } catch (OfficeException e) {
+//                throw new ApplicationException(ErrorCode.OFFICE_CONNECTION_ERROR);
+//            }
             log.info("officeManager 생성 - officeManager 존재 여부: {}", officeManager != null);
             return officeManager;
         }
