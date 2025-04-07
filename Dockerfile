@@ -37,9 +37,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     libdbus-1-3 \
     fonts-noto-cjk \
- && echo "✅ LibreOffice-related libs 설치됨" \
- && dpkg -l | grep libxinerama \
- && ls -l /lib/x86_64-linux-gnu/libXinerama.so.1 \
+# && echo "✅ LibreOffice-related libs 설치됨" \
+# && dpkg -l | grep libxinerama \
+# && ls -l /lib/x86_64-linux-gnu/libXinerama.so.1 \
  && rm -rf /var/lib/apt/lists/*
 
 #RUN apt-get update && apt-get install -y libxinerama1 \
@@ -49,7 +49,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ENV PATH="/opt/libreoffice25.2/program:${PATH}"
 
-RUN echo "PATH is: $PATH"
+#RUN echo "PATH is: $PATH"
 
 # Expose the port the app will run on
 EXPOSE 8080

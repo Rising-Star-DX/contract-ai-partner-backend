@@ -55,10 +55,10 @@ public class FileConversionService {
                     "--outdir", outputDir.getAbsolutePath()
             };
 
-            log.info("실행 명령어: {}", String.join(" ", command));
+//            log.info("실행 명령어: {}", String.join(" ", command));
             ProcessBuilder pb = new ProcessBuilder(command);
-            pb.environment().put("PATH", "/opt/libreoffice25.2/program:" + System.getenv("PATH"));
-            pb.environment().put("LD_LIBRARY_PATH", "/opt/libreoffice25.2/lib:" + System.getenv("LD_LIBRARY_PATH"));
+//            pb.environment().put("PATH", "/opt/libreoffice25.2/program:" + System.getenv("PATH"));
+//            pb.environment().put("LD_LIBRARY_PATH", "/opt/libreoffice25.2/lib:" + System.getenv("LD_LIBRARY_PATH"));
             Process process = pb.start();
 
             if (process.waitFor() != 0) {
