@@ -117,7 +117,7 @@ public class StandardService {
                 .category(category)
                 .build();
 
-        if(standard.getType() == FileType.DOC || standard.getType() == FileType.DOCX) {
+        if(standard.getType().isConvertiblePdf()) {
             file = fileConversionService.convertFileToPdf(file, standard.getType());
         }
 

@@ -66,7 +66,7 @@ public class AgreementService {
                 .category(category)
                 .build();
 
-        if(agreement.getType() == FileType.DOC || agreement.getType() == FileType.DOCX) {
+        if(agreement.getType().isConvertiblePdf()) {
             file = fileConversionService.convertFileToPdf(file, agreement.getType());
         }
         // s3 파일 저장
