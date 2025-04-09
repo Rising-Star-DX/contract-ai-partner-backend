@@ -1,19 +1,19 @@
 package com.partner.contract.category.service;
 
 import com.partner.contract.agreement.domain.Agreement;
-import com.partner.contract.agreement.service.AgreementService;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.dto.CategoryListResponseDto;
+import com.partner.contract.category.dto.CategoryNameListResponseDto;
 import com.partner.contract.category.repository.CategoryRepository;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
-import com.partner.contract.standard.service.StandardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +23,15 @@ public class CategoryService {
 
     public List<CategoryListResponseDto> findCategoryList(String name) {
         return categoryRepository.findCategoryListOrderByName(name);
+    }
+
+
+    public List<CategoryNameListResponseDto> findCategoryNameList() {
+        return categoryRepository
+                .findCategoryNameListOrderByName()
+                .stream()
+                .map(CategoryNameListResponseDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     public Boolean checkStandardExistence(Long id) {
