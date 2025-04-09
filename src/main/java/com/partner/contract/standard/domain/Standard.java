@@ -45,6 +45,8 @@ public class Standard {
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
+    private Integer totalPage;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
@@ -52,16 +54,21 @@ public class Standard {
     @OneToMany(mappedBy = "standard", cascade = CascadeType.ALL)
     private List<MemberStandard> memberStandardList;
 
+    @OneToMany(mappedBy = "standard", cascade = CascadeType.ALL)
+    private List<StandardContent> standardContentList;
+
     @Builder
-    public Standard(String name, FileType type, String url, FileStatus fileStatus, AiStatus aiStatus, LocalDateTime createdAt, Category category, List<MemberStandard> memberStandardList) {
+    public Standard(String name, FileType type, String url, FileStatus fileStatus, AiStatus aiStatus, LocalDateTime createdAt, Integer totalPage, Category category, List<MemberStandard> memberStandardList, List<StandardContent> standardContentList) {
         this.name = name;
         this.type = type;
         this.url = url;
         this.fileStatus = fileStatus;
         this.aiStatus = aiStatus;
         this.createdAt = createdAt;
+        this.totalPage = totalPage;
         this.category = category;
         this.memberStandardList = memberStandardList;
+        this.standardContentList = standardContentList;
     }
 
     public void updateFileStatus(String url, FileStatus fileStatus) {
