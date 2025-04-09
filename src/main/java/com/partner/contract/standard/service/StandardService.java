@@ -75,7 +75,7 @@ public class StandardService {
             throw new ApplicationException(ErrorCode.FILE_DELETE_ERROR);
         }
 
-        String flaskUrl = FLASK_SERVER_IP + "/flask/standards/" + id;
+        String flaskUrl = FLASK_SERVER_IP + "/flask/standards/" + standard.getCategory().getName() + "/" + id;
 
         FlaskResponseDto<String> body;
 
