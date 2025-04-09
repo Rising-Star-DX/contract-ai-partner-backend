@@ -1,6 +1,7 @@
 package com.partner.contract.category.controller;
 
 import com.partner.contract.category.dto.CategoryListResponseDto;
+import com.partner.contract.category.dto.CategoryNameListResponseDto;
 import com.partner.contract.category.service.CategoryService;
 import com.partner.contract.global.exception.dto.SuccessResponse;
 import com.partner.contract.global.exception.error.SuccessCode;
@@ -22,6 +23,13 @@ public class CategoryController {
         List<CategoryListResponseDto> categories = categoryService.findCategoryList(name);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), categories));
+    }
+
+    @GetMapping("/names")
+    public ResponseEntity<SuccessResponse<List<CategoryNameListResponseDto>>> categoryNameList() {
+        List<CategoryNameListResponseDto> categoryNames = categoryService.findCategoryNameList();
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), categoryNames));
     }
 
     @GetMapping("/{id}")
