@@ -45,6 +45,8 @@ public class Agreement {
 
     private Integer totalPage;
 
+    private Integer totalChunks;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
@@ -53,13 +55,10 @@ public class Agreement {
     private List<AgreementIncorrectText> agreementIncorrectTextList;
 
     @OneToMany(mappedBy = "agreement", cascade = CascadeType.ALL)
-    private List<CustomText> customTextList;
-
-    @OneToMany(mappedBy = "agreement", cascade = CascadeType.ALL)
     private List<MemberAgreement> memberAgreementList;
 
     @Builder
-    public Agreement(String name, FileType type, String url, FileStatus fileStatus, AiStatus aiStatus, LocalDateTime createdAt, Integer totalPage, Category category, List<AgreementIncorrectText> agreementIncorrectTextList, List<MemberAgreement> memberAgreementList) {
+    public Agreement(String name, FileType type, String url, FileStatus fileStatus, AiStatus aiStatus, LocalDateTime createdAt, Integer totalPage, Integer totalChunks, Category category, List<AgreementIncorrectText> agreementIncorrectTextList, List<MemberAgreement> memberAgreementList) {
         this.name = name;
         this.type = type;
         this.url = url;
@@ -67,6 +66,7 @@ public class Agreement {
         this.aiStatus = aiStatus;
         this.createdAt = createdAt;
         this.totalPage = totalPage;
+        this.totalChunks = totalChunks;
         this.category = category;
         this.agreementIncorrectTextList = agreementIncorrectTextList;
         this.memberAgreementList = memberAgreementList;
