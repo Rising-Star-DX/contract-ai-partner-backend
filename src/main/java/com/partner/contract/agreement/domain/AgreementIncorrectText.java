@@ -38,22 +38,17 @@ public class AgreementIncorrectText {
     @JoinColumn(name = "agreement_id", nullable = false)
     private Agreement agreement;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "custom_text_id")
-    private CustomText customText;
-
     @OneToMany(mappedBy = "agreementIncorrectText", cascade = CascadeType.ALL)
     private List<AgreementIncorrectPosition> agreementIncorrectPositionList;
 
     @Builder
-    public AgreementIncorrectText(Double accuracy, LocalDateTime createdAt, String incorrectText, String proofText, String correctedText, Agreement agreement, CustomText customText, List<AgreementIncorrectPosition> agreementIncorrectPositionList) {
+    public AgreementIncorrectText(Double accuracy, LocalDateTime createdAt, String incorrectText, String proofText, String correctedText, Agreement agreement, List<AgreementIncorrectPosition> agreementIncorrectPositionList) {
         this.accuracy = accuracy;
         this.createdAt = createdAt;
         this.incorrectText = incorrectText;
         this.proofText = proofText;
         this.correctedText = correctedText;
         this.agreement = agreement;
-        this.customText = customText;
         this.agreementIncorrectPositionList = agreementIncorrectPositionList;
     }
 }
