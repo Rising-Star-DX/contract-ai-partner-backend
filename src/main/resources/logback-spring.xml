@@ -1,21 +1,7 @@
 <configuration>
-    <!-- Spring Boot 기본 로깅 설정 -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml" />
 
-    <springProperty name="DISCORD_WEBHOOK_URL" source="discord.webhook.url"/>
-
-    <!-- 디스코드로 로그를 전송하는 Appender 설정 -->
-    <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">
-        <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <pattern>### 📢 [%-5level] 문제 발생\n- 시간: %d{HH:mm:ss}\n- 위치: [%thread] %logger{36}\n- 에러 코드: `%msg`%n```%ex{full}```</pattern>
-        </layout>
-        <username>에러 났어 개발자야</username>
-         <avatarUrl>https://i.namu.wiki/i/74_Qdq--rrYR8ENP2KYS2RLQe__bOjz6Pm1cg6tKaySicyTctS3kXpN7-XXjTjp-s3unVNtbce0avBP-6dMRzH349Hh7ihF_cyxlFHrjZNVu4ewcu-tmI89i4C2O_2sRDFoUQaFWgPK8kXcDXeTx8g.webp</avatarUrl>
-        <tts>false</tts>
-    </appender>
-
-    <!-- 콘솔 로그 출력 형식은 Spring Boot 기본 패턴 사용 -->
+    <!-- 공통: 콘솔 Appender -->
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
@@ -23,15 +9,40 @@
         </encoder>
     </appender>
 
-    <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="DISCORD"/>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>WARN</level>
-        </filter>
-    </appender>
+    <!-- prod 프로파일 전용 설정 -->
+    <springProfile name="prod">
+        <!-- Spring application.yml로부터 환경변수 가져오기 -->
+        <springProperty name="DISCORD_WEBHOOK_URL" source="discord.webhook.url"/>
 
-    <root level="INFO">
-        <appender-ref ref="ASYNC_DISCORD"/>
-        <appender-ref ref="Console"/>
-    </root>
+        <!-- 디스코드 Appender -->
+        <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">
+            <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>### 📢 [%-5level] 문제 발생\n- 시간: %d{HH:mm:ss}\n- 위치: [%thread] %logger{36}\n- 에러 코드: `%msg`%n```%ex{full}```</pattern>
+            </layout>
+            <username>에러 났어 개발자야</username>
+            <avatarUrl>https://i.namu.wiki/i/74_Qdq--rrYR8ENP2KYS2RLQe__bOjz6Pm1cg6tKaySicyTctS3kXpN7-XXjTjp-s3unVNtbce0avBP-6dMRzH349Hh7ihF_cyxlFHrjZNVu4ewcu-tmI89i4C2O_2sRDFoUQaFWgPK8kXcDXeTx8g.webp</avatarUrl>
+            <tts>false</tts>
+        </appender>
+
+        <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
+            <appender-ref ref="DISCORD"/>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>WARN</level>
+            </filter>
+        </appender>
+
+        <!-- prod에서는 Discord + Console -->
+        <root level="INFO">
+            <appender-ref ref="ASYNC_DISCORD"/>
+            <appender-ref ref="Console"/>
+        </root>
+    </springProfile>
+
+    <!-- prod 외 환경 (dev, local 등)에서는 Console만 출력 -->
+    <springProfile name="!prod">
+        <root level="INFO">
+            <appender-ref ref="Console"/>
+        </root>
+    </springProfile>
 </configuration>

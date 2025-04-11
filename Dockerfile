@@ -45,4 +45,4 @@ ENV PATH="/opt/libreoffice25.2/program:${PATH}"
 EXPOSE 8080
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.profiles.active=prod"]
