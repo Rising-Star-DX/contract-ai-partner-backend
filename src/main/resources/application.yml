@@ -18,7 +18,11 @@ spring:
       database-platform: org.hibernate.dialect.SQLServerDialect
       hibernate:
         ddl-auto: none
-      show-sql: true
+#      show-sql: true
+#      properties:
+#        hibernate:
+#          format_sql: true  # SQL 예쁘게 출력
+      open-in-view: false  # JPA 세션 오픈 범위 제한 (N+1 찾을 때 이게 도움이 될 수 있음)
     hikari:
       idle-timeout: 300000  # 커넥션 유휴 시간 (밀리초)
       max-lifetime: 600000  # 커넥션 풀 커넥션 최대 수명
@@ -41,3 +45,15 @@ schedule:
   cron: "0 0/1 * * * *"
   use: true
 
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: OFF
+
+# 개발환경
+#logging:
+#  level:
+#    root: DEBUG
+#    org.hibernate.SQL: DEBUG
+#    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
