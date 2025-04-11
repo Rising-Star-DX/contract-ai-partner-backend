@@ -14,18 +14,20 @@ spring:
     username: ${secret.mssql.username}
     password: ${secret.mssql.password}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    jpa:
-      database-platform: org.hibernate.dialect.SQLServerDialect
-      hibernate:
-        ddl-auto: none
+    hikari:
+      idle-timeout: 300000  # 커넥션 유휴 시간 (밀리초)
+      max-lifetime: 600000  # 커넥션 풀 커넥션 최대 수명
+
+  jpa:
+    database-platform: org.hibernate.dialect.SQLServerDialect
+    hibernate:
+      ddl-auto: none
 #      show-sql: true
 #      properties:
 #        hibernate:
 #          format_sql: true  # SQL 예쁘게 출력
-      open-in-view: false  # JPA 세션 오픈 범위 제한 (N+1 찾을 때 이게 도움이 될 수 있음)
-    hikari:
-      idle-timeout: 300000  # 커넥션 유휴 시간 (밀리초)
-      max-lifetime: 600000  # 커넥션 풀 커넥션 최대 수명
+    open-in-view: false  # JPA 세션 오픈 범위 제한 (N+1 찾을 때 이게 도움이 될 수 있음)
+
 
   jackson:
     time-zone: Asia/Seoul
