@@ -21,6 +21,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -30,6 +31,10 @@ dependencies {
 	implementation 'software.amazon.awssdk:s3:2.20.160'
 	implementation 'org.jodconverter:jodconverter-spring-boot-starter:4.4.6'
 	implementation 'org.jodconverter:jodconverter-local:4.4.6'
+
+	// 디스코드 에러 로깅
+	implementation 'com.github.napstr:logback-discord-appender:1.0.0'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
