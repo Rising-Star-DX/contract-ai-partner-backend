@@ -21,7 +21,6 @@ spring:
       max-lifetime: 600000  # 커넥션 풀 커넥션 최대 수명
 
   jpa:
-    database-platform: org.hibernate.dialect.SQLServerDialect
     hibernate:
       ddl-auto: none
 #      show-sql: true
