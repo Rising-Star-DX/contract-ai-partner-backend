@@ -23,6 +23,8 @@ public class StandardContent {
     @Column(nullable = false)
     private Integer page;
 
+    private String content;
+
     @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -35,8 +37,9 @@ public class StandardContent {
     private Standard standard;
 
     @Builder
-    public StandardContent(Integer page, LocalDateTime createdAt, LocalDateTime updatedAt, Standard standard) {
+    public StandardContent(Integer page, String content, LocalDateTime createdAt, LocalDateTime updatedAt, Standard standard) {
         this.page = page;
+        this.content = content;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.standard = standard;
