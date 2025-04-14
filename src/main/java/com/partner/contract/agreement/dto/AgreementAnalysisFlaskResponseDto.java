@@ -9,6 +9,8 @@ import java.util.List;
 public class AgreementAnalysisFlaskResponseDto {
     private Integer totalPage;
 
+    private Integer totalChunks;
+
     @JsonProperty("chunks")
     private List<AgreementIncorrectDto> agreementIncorrectDtos;
 }
