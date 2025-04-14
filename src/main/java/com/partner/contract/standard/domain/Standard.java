@@ -79,4 +79,8 @@ public class Standard {
     public void updateAiStatus(AiStatus aiStatus) {
         this.aiStatus = aiStatus;
     }
+
+    public void updateTotalPage(Integer totalPage) {
+        this.totalPage = totalPage;
+    }
 }
