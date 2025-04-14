@@ -2,12 +2,12 @@ package com.partner.contract.standard.repository;
 
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.standard.domain.Standard;
+import com.partner.contract.standard.dto.StandardContentResponseDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,4 +26,13 @@ public interface StandardRepository extends JpaRepository<Standard, Long> {
     List<Standard> findByAiStatusAndCreatedAtBefore(AiStatus aiStatus, LocalDateTime fiveMinutesAgo);
 
     Boolean existsByCategoryIdAndAiStatus(Long categoryId, AiStatus aiStatus);
+
+    @Query("""
+        select new com.partner.contract.standard.dto.StandardContentResponseDto(
+            sc.page, sc.content
+        )
+        from StandardContent sc
+        where sc.standard.id = :id
+""")
+    List<StandardContentResponseDto> findstandardContentResponseByStandardId(@Param("id") Long id);
 }
