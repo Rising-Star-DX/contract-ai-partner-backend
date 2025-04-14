@@ -3,8 +3,8 @@ package com.partner.contract.standard.controller;
 import com.partner.contract.global.exception.dto.SuccessResponse;
 import com.partner.contract.global.exception.error.SuccessCode;
 import com.partner.contract.standard.dto.StandardListResponseDto;
-import com.partner.contract.standard.dto.StandardResponseDto;
-import com.partner.contract.standard.dto.StandardResponseForAdminDto;
+import com.partner.contract.standard.dto.StandardDetailsResponseDto;
+import com.partner.contract.standard.dto.StandardDetailsResponseForAdminDto;
 import com.partner.contract.standard.service.StandardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,14 +36,14 @@ public class StandardController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessResponse<StandardResponseDto>> standardById(@PathVariable("id") Long id) {
-        StandardResponseDto standard = standardService.findStandardById(id);
+    public ResponseEntity<SuccessResponse<StandardDetailsResponseDto>> standardById(@PathVariable("id") Long id) {
+        StandardDetailsResponseDto standard = standardService.findStandardById(id);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), standard));
     }
 
     @GetMapping("/admin/{id}")
-    public ResponseEntity<SuccessResponse<StandardResponseForAdminDto>> standardByIdForAdmin(@PathVariable("id") Long id) {
-        StandardResponseForAdminDto standard = standardService.findStandardByIdForAdmin(id);
+    public ResponseEntity<SuccessResponse<StandardDetailsResponseForAdminDto>> standardByIdForAdmin(@PathVariable("id") Long id) {
+        StandardDetailsResponseForAdminDto standard = standardService.findStandardByIdForAdmin(id);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), standard));
     }
 

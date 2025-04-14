@@ -12,7 +12,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class StandardResponseForAdminDto {
+public class StandardDetailsResponseForAdminDto {
 
     private Long id;
     private String name;
@@ -26,7 +26,7 @@ public class StandardResponseForAdminDto {
     private List<StandardContentResponseDto> standardContentResponseDtoList;
 
     @Builder
-    public StandardResponseForAdminDto(Long id, String name, FileType type, String url, String status, LocalDateTime createdAt, String categoryName, List<StandardContentResponseDto> standardContentResponseDtoList) {
+    public StandardDetailsResponseForAdminDto(Long id, String name, FileType type, String url, String status, LocalDateTime createdAt, String categoryName, List<StandardContentResponseDto> standardContentResponseDtoList) {
         this.id = id;
         this.name = name;
         this.type = type;

@@ -1,7 +1,7 @@
 package com.partner.contract.standard.service;
 
 import com.partner.contract.common.dto.AnalysisRequestDto;
-import com.partner.contract.common.dto.FlaskContentResponseDto;
+import com.partner.contract.common.dto.FlaskStandardContentsResponseDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.standard.domain.Standard;
@@ -53,14 +53,14 @@ public class StandardAnalysisAsyncService {
         // HTTP Request Body 설정
         HttpEntity<AnalysisRequestDto> requestEntity = new HttpEntity<>(analysisRequestDto, headers);
 
-        FlaskResponseDto<FlaskContentResponseDto> body = null;
+        FlaskResponseDto<FlaskStandardContentsResponseDto> body = null;
         try {
             // Flask에 API 요청
-            ResponseEntity<FlaskResponseDto<FlaskContentResponseDto>> response = restTemplate.exchange(
+            ResponseEntity<FlaskResponseDto<FlaskStandardContentsResponseDto>> response = restTemplate.exchange(
                     url,
                     HttpMethod.POST,
                     requestEntity,
-                    new ParameterizedTypeReference<FlaskResponseDto<FlaskContentResponseDto>>() {} // ✅ 제네릭 타입 유지
+                    new ParameterizedTypeReference<FlaskResponseDto<FlaskStandardContentsResponseDto>>() {} // ✅ 제네릭 타입 유지
             );
 
             body = response.getBody();

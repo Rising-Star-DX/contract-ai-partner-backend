@@ -13,8 +13,8 @@ import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
 import com.partner.contract.standard.dto.StandardListResponseDto;
-import com.partner.contract.standard.dto.StandardResponseDto;
-import com.partner.contract.standard.dto.StandardResponseForAdminDto;
+import com.partner.contract.standard.dto.StandardDetailsResponseDto;
+import com.partner.contract.standard.dto.StandardDetailsResponseForAdminDto;
 import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,14 +65,15 @@ public class StandardService {
                 .collect(Collectors.toList());
     }
 
-    public StandardResponseDto findStandardById(Long id) {
+    public StandardDetailsResponseDto findStandardById(Long id) {
         Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
-        return StandardResponseDto.fromEntity(standard);
+        return StandardDetailsResponseDto.fromEntity(standard);
     }
 
-    public StandardResponseForAdminDto findStandardByIdForAdmin(Long id) {
+    public StandardDetailsResponseForAdminDto findStandardByIdForAdmin(Long id) {
         Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
-        StandardResponseForAdminDto standardResponseForAdminDto = StandardResponseForAdminDto.builder()
+
+        return StandardDetailsResponseForAdminDto.builder()
                 .id(standard.getId())
                 .name(standard.getName())
                 .type(standard.getType())
@@ -82,8 +83,6 @@ public class StandardService {
                 .categoryName(standard.getCategory().getName())
                 .standardContentResponseDtoList(standardRepository.findstandardContentResponseByStandardId(standard.getId()))
                 .build();
-
-        return standardResponseForAdminDto;
     }
 
     public void deleteStandard(Long id) {
