@@ -81,7 +81,8 @@ public class Agreement {
         this.aiStatus = aiStatus;
     }
 
-    public void updateAnalysisInfomation(Integer totalPage) {
+    public void updateAnalysisInfomation(Integer totalPage, Integer totalChunks) {
         this.totalPage = totalPage;
+        this.totalChunks = totalChunks;
     }
 }
