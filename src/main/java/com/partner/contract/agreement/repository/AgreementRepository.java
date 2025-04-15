@@ -1,7 +1,7 @@
 package com.partner.contract.agreement.repository;
 
 import com.partner.contract.agreement.domain.Agreement;
-import com.partner.contract.agreement.dto.IncorrectTextAnalysisResponseDto;
+import com.partner.contract.agreement.dto.IncorrectTextAnalysisReportResponseDto;
 import com.partner.contract.agreement.dto.IncorrectTextResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -55,7 +55,7 @@ public interface AgreementRepository extends JpaRepository<Agreement, Long> {
             ON ait.id = aip.agreement_incorrect_text_id
         ORDER BY aip.page, aip.order_index
     """, nativeQuery = true)
-    List<IncorrectTextAnalysisResponseDto> findIncorrectTextAnalysisByAgreementId(@Param("agreementId") Long agreementId);
+    List<IncorrectTextAnalysisReportResponseDto> findIncorrectTextAnalysisReportByAgreementId(@Param("agreementId") Long agreementId);
 
     List<Agreement> findByAiStatusAndCreatedAtBefore(AiStatus aiStatus, LocalDateTime fiveMinutesAgo);
 }

@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class AgreementDetailsAnalysisResponseDto {
+public class AgreementAnalysisReportDetailsResponseDto {
 
     private Long id;
     private String name;
@@ -16,16 +16,16 @@ public class AgreementDetailsAnalysisResponseDto {
     private Integer totalChunks;
     private Integer countOfIncorrectTexts;
     @JsonProperty("incorrectTexts")
-    private List<IncorrectTextAnalysisResponseDto> incorrectTextAnalysisResponseDtoList;
+    private List<IncorrectTextAnalysisReportResponseDto> incorrectTextAnalysisReportResponseDtoList;
 
     @Builder
-    public AgreementDetailsAnalysisResponseDto(Long id, String name, String categoryName, Integer totalPage, Integer totalChunks, List<IncorrectTextAnalysisResponseDto> incorrectTextResponseDtoList) {
+    public AgreementAnalysisReportDetailsResponseDto(Long id, String name, String categoryName, Integer totalPage, Integer totalChunks, List<IncorrectTextAnalysisReportResponseDto> incorrectTextAnalysisReportResponseDtoList) {
         this.id = id;
         this.name = name;
         this.categoryName = categoryName;
         this.totalPage = totalPage;
         this.totalChunks = totalChunks;
-        this.countOfIncorrectTexts = incorrectTextResponseDtoList.size();
-        this.incorrectTextAnalysisResponseDtoList = incorrectTextResponseDtoList;
+        this.countOfIncorrectTexts = incorrectTextAnalysisReportResponseDtoList.size();
+        this.incorrectTextAnalysisReportResponseDtoList = incorrectTextAnalysisReportResponseDtoList;
     }
 }
