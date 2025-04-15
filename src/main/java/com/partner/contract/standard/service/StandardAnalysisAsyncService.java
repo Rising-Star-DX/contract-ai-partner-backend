@@ -1,9 +1,12 @@
 package com.partner.contract.standard.service;
 
 import com.partner.contract.common.dto.AnalysisRequestDto;
+import com.partner.contract.common.dto.FlaskStandardContentsResponseDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.standard.domain.Standard;
+import com.partner.contract.standard.domain.StandardContent;
+import com.partner.contract.standard.repository.StandardContentRepository;
 import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +19,15 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class StandardAnalysisAsyncService {
 
     private final StandardRepository standardRepository;
+    private final StandardContentRepository standardContentRepository;
     private final RestTemplate restTemplate;
 
     @Value("${secret.flask.ip}")
@@ -47,14 +53,14 @@ public class StandardAnalysisAsyncService {
         // HTTP Request Body 설정
         HttpEntity<AnalysisRequestDto> requestEntity = new HttpEntity<>(analysisRequestDto, headers);
 
-        FlaskResponseDto<String> body = null;
+        FlaskResponseDto<FlaskStandardContentsResponseDto> body = null;
         try {
             // Flask에 API 요청
-            ResponseEntity<FlaskResponseDto<String>> response = restTemplate.exchange(
+            ResponseEntity<FlaskResponseDto<FlaskStandardContentsResponseDto>> response = restTemplate.exchange(
                     url,
                     HttpMethod.POST,
                     requestEntity,
-                    new ParameterizedTypeReference<FlaskResponseDto<String>>() {} // ✅ 제네릭 타입 유지
+                    new ParameterizedTypeReference<FlaskResponseDto<FlaskStandardContentsResponseDto>>() {} // ✅ 제네릭 타입 유지
             );
 
             body = response.getBody();
@@ -66,9 +72,21 @@ public class StandardAnalysisAsyncService {
         }
 
         try {
-            if ("success".equals(body.getData())) { // 기준문서 분석 성공
+            if ("success".equals(body.getData().getResult())) { // 기준문서 분석 성공
                 standard.updateAiStatus(AiStatus.SUCCESS);
+                standard.updateTotalPage(body.getData().getContents().size());
                 standardRepository.save(standard);
+
+                List<String> contents = body.getData().getContents();
+                for(int i=0; i<contents.size(); i++) {
+                    StandardContent standardContent = StandardContent.builder()
+                            .page(i+1)
+                            .content(contents.get(i))
+                            .standard(standard)
+                            .build();
+
+                    standardContentRepository.save(standardContent);
+                }
             } else {
                 standard.updateAiStatus(AiStatus.FAILED);
                 standardRepository.save(standard);

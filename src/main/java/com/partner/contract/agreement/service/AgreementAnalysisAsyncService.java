@@ -114,7 +114,7 @@ public class AgreementAnalysisAsyncService {
 
             // AI 상태 및 분석 정보 업데이트
             agreement.updateAiStatus(AiStatus.SUCCESS);
-            agreement.updateAnalysisInfomation(flaskResponseDto.getTotalPage());
+            agreement.updateAnalysisInfomation(flaskResponseDto.getTotalPage(), flaskResponseDto.getTotalChunks());
             agreementRepository.save(agreement);
 
         } catch (Exception e) {

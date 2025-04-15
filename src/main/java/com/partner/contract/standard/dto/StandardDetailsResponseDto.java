@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class StandardResponseDto {
+public class StandardDetailsResponseDto {
 
     private Long id;
     private String name;
@@ -24,7 +24,7 @@ public class StandardResponseDto {
     private String categoryName;
 
     @Builder
-    public StandardResponseDto(Long id, String name, FileType type, String url, String status, LocalDateTime createdAt, String categoryName) {
+    public StandardDetailsResponseDto(Long id, String name, FileType type, String url, String status, LocalDateTime createdAt, String categoryName) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -34,8 +34,8 @@ public class StandardResponseDto {
         this.categoryName = categoryName;
     }
 
-    public static StandardResponseDto fromEntity(Standard standard) {
-        return StandardResponseDto.builder()
+    public static StandardDetailsResponseDto fromEntity(Standard standard) {
+        return StandardDetailsResponseDto.builder()
                 .id(standard.getId())
                 .name(standard.getName())
                 .type(standard.getType())

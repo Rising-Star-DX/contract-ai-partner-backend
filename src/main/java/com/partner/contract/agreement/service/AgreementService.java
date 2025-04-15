@@ -2,6 +2,7 @@ package com.partner.contract.agreement.service;
 
 import com.partner.contract.agreement.domain.Agreement;
 import com.partner.contract.agreement.dto.AgreementAnalysisStartResponseDto;
+import com.partner.contract.agreement.dto.AgreementAnalysisReportDetailsResponseDto;
 import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
 import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.repository.AgreementRepository;
@@ -174,5 +175,18 @@ public class AgreementService {
         agreementAnalysisAsyncService.analyze(agreement, agreement.getCategory().getName());
 
         return new AgreementAnalysisStartResponseDto(id, agreement.getUrl());
+    }
+
+    public AgreementAnalysisReportDetailsResponseDto findAgreementAnalysisReportDetails(Long id) {
+        Agreement agreement = agreementRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.AGREEMENT_NOT_FOUND_ERROR));
+
+        return AgreementAnalysisReportDetailsResponseDto.builder()
+                .id(agreement.getId())
+                .name(agreement.getName())
+                .categoryName(agreement.getCategory().getName())
+                .totalPage(agreement.getTotalPage())
+                .totalChunks(agreement.getTotalChunks())
+                .incorrectTextAnalysisReportResponseDtoList(agreementRepository.findIncorrectTextAnalysisReportByAgreementId(id))
+                .build();
     }
 }

@@ -8,11 +8,13 @@ import com.partner.contract.common.enums.FileStatus;
 import com.partner.contract.common.enums.FileType;
 import com.partner.contract.common.service.FileConversionService;
 import com.partner.contract.common.service.S3Service;
+import com.partner.contract.common.utils.DocumentStatusUtil;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
 import com.partner.contract.standard.dto.StandardListResponseDto;
-import com.partner.contract.standard.dto.StandardResponseDto;
+import com.partner.contract.standard.dto.StandardDetailsResponseDto;
+import com.partner.contract.standard.dto.StandardDetailsResponseForAdminDto;
 import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,9 +65,24 @@ public class StandardService {
                 .collect(Collectors.toList());
     }
 
-    public StandardResponseDto findStandardById(Long id) {
+    public StandardDetailsResponseDto findStandardById(Long id) {
         Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
-        return StandardResponseDto.fromEntity(standard);
+        return StandardDetailsResponseDto.fromEntity(standard);
+    }
+
+    public StandardDetailsResponseForAdminDto findStandardByIdForAdmin(Long id) {
+        Standard standard = standardRepository.findById(id).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
+
+        return StandardDetailsResponseForAdminDto.builder()
+                .id(standard.getId())
+                .name(standard.getName())
+                .type(standard.getType())
+                .url(standard.getUrl())
+                .status(DocumentStatusUtil.determineStatus(standard.getFileStatus(), standard.getAiStatus()))
+                .createdAt(standard.getCreatedAt())
+                .categoryName(standard.getCategory().getName())
+                .standardContentResponseDtoList(standardRepository.findstandardContentResponseByStandardId(standard.getId()))
+                .build();
     }
 
     public void deleteStandard(Long id) {
