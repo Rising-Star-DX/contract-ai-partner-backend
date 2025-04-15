@@ -1,6 +1,7 @@
 package com.partner.contract.agreement.controller;
 
 import com.partner.contract.agreement.dto.AgreementAnalysisStartResponseDto;
+import com.partner.contract.agreement.dto.AgreementDetailsAnalysisResponseDto;
 import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
 import com.partner.contract.agreement.dto.AgreementListResponseDto;
 import com.partner.contract.agreement.service.AgreementService;
@@ -35,6 +36,13 @@ public class AgreementController {
         AgreementDetailsResponseDto agreementDetails = agreementService.findAgreementDetailsById(id);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), agreementDetails));
+    }
+
+    @GetMapping("/analysis/{id}")
+    public ResponseEntity<SuccessResponse<AgreementDetailsAnalysisResponseDto>> agreementDetailsAnalysis(@PathVariable("id") Long id) {
+        AgreementDetailsAnalysisResponseDto agreementDetailsAnalysis = agreementService.findAgreementDetailsAnalysis(id);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), agreementDetailsAnalysis));
     }
 
     @DeleteMapping("/upload/{id}")
