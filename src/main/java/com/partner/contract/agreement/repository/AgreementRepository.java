@@ -1,6 +1,7 @@
 package com.partner.contract.agreement.repository;
 
 import com.partner.contract.agreement.domain.Agreement;
+import com.partner.contract.agreement.dto.IncorrectTextAnalysisResponseDto;
 import com.partner.contract.agreement.dto.IncorrectTextResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,17 +20,42 @@ public interface AgreementRepository extends JpaRepository<Agreement, Long> {
     @Query("select a from Agreement a join fetch a.category c where a.aiStatus is not null and a.name like %:name% and a.category.id = :categoryId order by a.createdAt desc")
     List<Agreement> findAgreementListOrderByCreatedAtDesc(@Param("name") String name, @Param("categoryId") Long categoryId);
 
-    @Query("""
-        select new com.partner.contract.agreement.dto.IncorrectTextResponseDto(
-            ait.id, aip.page, ait.accuracy, ait.incorrectText, ait.proofText, ait.correctedText, aip.position
-        )
-        from AgreementIncorrectText ait
-        join AgreementIncorrectPosition aip
-        on ait.id = aip.agreementIncorrectText.id
-        where ait.agreement.id = :agreementId
-        order by aip.page, aip.orderIndex
-    """)
+    @Query(value = """
+        SELECT 
+            ait.id AS id,
+            aip.page AS page,
+            ait.accuracy AS accuracy,
+            ait.incorrect_text AS incorrectText,
+            ait.proof_text AS proofText,
+            ait.corrected_text AS correctedText,
+            aip.position AS position
+        FROM (
+            SELECT * FROM agreement_incorrect_text 
+            WHERE agreement_id = :agreementId
+        ) ait
+        JOIN agreement_incorrect_position aip 
+            ON ait.id = aip.agreement_incorrect_text_id
+        ORDER BY aip.page, aip.order_index
+    """, nativeQuery = true)
     List<IncorrectTextResponseDto> findIncorrectTextByAgreementId(@Param("agreementId") Long agreementId);
+
+    @Query(value = """
+        SELECT 
+            ait.id AS id,
+            aip.page AS page,
+            ait.accuracy AS accuracy,
+            ait.incorrect_text AS incorrectText,
+            ait.proof_text AS proofText,
+            ait.corrected_text AS correctedText
+        FROM (
+            SELECT * FROM agreement_incorrect_text 
+            WHERE agreement_id = :agreementId
+        ) ait
+        JOIN agreement_incorrect_position aip 
+            ON ait.id = aip.agreement_incorrect_text_id
+        ORDER BY aip.page, aip.order_index
+    """, nativeQuery = true)
+    List<IncorrectTextAnalysisResponseDto> findIncorrectTextAnalysisByAgreementId(@Param("agreementId") Long agreementId);
 
     List<Agreement> findByAiStatusAndCreatedAtBefore(AiStatus aiStatus, LocalDateTime fiveMinutesAgo);
 }
