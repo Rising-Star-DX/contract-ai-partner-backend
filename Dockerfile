@@ -41,12 +41,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ENV PATH="/opt/libreoffice25.2/program:${PATH}"
 
-RUN echo '  <item oor:path="/org.openoffice.VCL/FontSubstitutions">' >> /root/.config/libreoffice/4/user/registrymodifications.xcu && \
-    echo '    <prop oor:name="FontSubstitutions" oor:op="replace">' >> /root/.config/libreoffice/4/user/registrymodifications.xcu && \
-    echo '      <value>Malgun Gothic;Noto Sans CJK KR</value>' >> /root/.config/libreoffice/4/user/registrymodifications.xcu && \
-    echo '    </prop>' >> /root/.config/libreoffice/4/user/registrymodifications.xcu && \
-    echo '  </item>' >> /root/.config/libreoffice/4/user/registrymodifications.xcu \
-
 # Expose the port the app will run on
 EXPOSE 8080
 
