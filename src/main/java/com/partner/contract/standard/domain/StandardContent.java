@@ -45,5 +45,8 @@ public class StandardContent {
         this.standard = standard;
     }
 
+    public void updateContent(String content) {
+        this.content = content;
+    }
 
 }
