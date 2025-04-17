@@ -40,15 +40,15 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<SuccessResponse<String>> categoryAdd(@RequestBody String categoryName) {
-        categoryService.addCategory(categoryName);
+    public ResponseEntity<SuccessResponse<String>> categoryAdd(@RequestBody Map<String, String> categoryName) {
+        categoryService.addCategory(categoryName.get("name"));
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.INSERT_SUCCESS.getCode(), SuccessCode.INSERT_SUCCESS.getMessage(), null));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<SuccessResponse<String>> categoryModify(@PathVariable("id") Long id, @RequestBody String categoryName) {
-        categoryService.modifyCategory(id, categoryName);
+    public ResponseEntity<SuccessResponse<String>> categoryModify(@PathVariable("id") Long id, @RequestBody Map<String, String> categoryName) {
+        categoryService.modifyCategory(id, categoryName.get("name"));
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(), SuccessCode.UPDATE_SUCCESS.getMessage(), null));
     }
