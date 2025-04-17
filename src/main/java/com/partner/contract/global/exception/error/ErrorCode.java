@@ -28,7 +28,7 @@ public enum ErrorCode {
 
     // STANDARD
     STANDARD_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "ST001", "해당 ID에 대응되는 기준문서가 없습니다."),
-
+    STANDARDCONTENT_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "STC001", "해당 ID에 대응되는 기준문서 페이지별 내용이 없습니다."),
     // AGREEMENT
     AGREEMENT_NOT_FOUND_ERROR(HttpStatus.NOT_FOUND, "A001", "해당 ID에 대응되는 계약서가 없습니다."),
 

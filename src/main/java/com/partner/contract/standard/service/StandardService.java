@@ -12,9 +12,12 @@ import com.partner.contract.common.utils.DocumentStatusUtil;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
-import com.partner.contract.standard.dto.StandardListResponseDto;
+import com.partner.contract.standard.domain.StandardContent;
+import com.partner.contract.standard.dto.StandardContentRequestDto;
 import com.partner.contract.standard.dto.StandardDetailsResponseDto;
 import com.partner.contract.standard.dto.StandardDetailsResponseForAdminDto;
+import com.partner.contract.standard.dto.StandardListResponseDto;
+import com.partner.contract.standard.repository.StandardContentRepository;
 import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +40,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class StandardService {
     private final StandardRepository standardRepository;
+    private final StandardContentRepository standardContentRepository;
     private final StandardAnalysisAsyncService standardAnalysisAsyncService;
     private final CategoryRepository categoryRepository;
     private final RestTemplate restTemplate;
@@ -202,5 +206,45 @@ public class StandardService {
             standard.updateAiStatus(AiStatus.FAILED);
         }
         standardRepository.saveAll(standards);
+    }
+
+    public void modifyStandard(Long id, List<StandardContentRequestDto> contents) {
+        Standard standard = standardRepository.findById(id)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
+        for(StandardContentRequestDto content : contents) {
+            StandardContent standardContent = standardContentRepository.findById(content.getId())
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.STANDARDCONTENT_NOT_FOUND_ERROR));
+
+            standardContent.updateContent(content.getContent());
+            standardContentRepository.save(standardContent);
+        }
+
+        // 1. txt 파일로 변환
+        List<String> contentList = standard.getStandardContentList()
+                .stream()
+                .map(StandardContent::getContent)
+                .collect(Collectors.toList());
+
+        MultipartFile contentsTxt = fileConversionService.convertStringToTxt(standard.getName().substring(0, standard.getName().lastIndexOf(".")), contentList);
+
+        // 2. pdf 변환
+        MultipartFile file = fileConversionService.convertFileToPdf(contentsTxt, FileType.TXT);
+
+        // 3. s3 기존 파일 지우고, 업로드
+        String url = null;
+        try {
+            s3Service.deleteFile(standard.getUrl());
+            url = s3Service.uploadFile(file, "standards");
+        } catch (ApplicationException e) {
+            throw e; // 예외 다시 던지기
+        }
+
+        // 4. url 및 상태 업데이트
+        standard.updateFileStatus(url, FileStatus.SUCCESS);
+        standard.updateAiStatus(null);
+        standardRepository.save(standard).getId();
+
+        // 5. ai 분석 요청
+        startAnalyze(standard.getId());
     }
 }

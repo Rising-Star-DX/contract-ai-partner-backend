@@ -6,13 +6,16 @@ import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -80,6 +83,30 @@ public class FileConversionService {
     private boolean isLibreOfficeAvailable() {
         File libreOffice = new File(libreOfficePath);
         return libreOffice.exists() && libreOffice.canExecute();
+    }
+
+    public MultipartFile convertStringToTxt(String name, List<String> contents) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < contents.size(); i++) {
+                sb.append(contents.get(i));
+                if (i < contents.size() - 1) {
+                    sb.append("\f");
+                }
+            }
+
+            byte[] contentBytes = sb.toString().getBytes("UTF-8");
+
+            return new MockMultipartFile(
+                    "file",
+                    name + ".txt",
+                    "text/plain",
+                    new ByteArrayInputStream(contentBytes)
+            );
+
+        } catch (IOException e) {
+            throw new ApplicationException(ErrorCode.FILE_PROCESSING_ERROR);
+        }
     }
 }
 

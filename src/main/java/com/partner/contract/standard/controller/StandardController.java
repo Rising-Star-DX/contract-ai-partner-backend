@@ -2,6 +2,7 @@ package com.partner.contract.standard.controller;
 
 import com.partner.contract.global.exception.dto.SuccessResponse;
 import com.partner.contract.global.exception.error.SuccessCode;
+import com.partner.contract.standard.dto.StandardContentRequestDto;
 import com.partner.contract.standard.dto.StandardListResponseDto;
 import com.partner.contract.standard.dto.StandardDetailsResponseDto;
 import com.partner.contract.standard.dto.StandardDetailsResponseForAdminDto;
@@ -80,5 +81,11 @@ public class StandardController {
         Boolean isCompleted = standardService.checkAnalysisCompleted(id);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), Map.of("isCompletion", isCompleted)));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<SuccessResponse<Map<String, Long>>> standardModify(@PathVariable("id") Long id, @RequestBody List<StandardContentRequestDto> contents) {
+        standardService.modifyStandard(id, contents);
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.UPDATE_SUCCESS.getCode(), SuccessCode.UPDATE_SUCCESS.getMessage(), Map.of("id", id)));
     }
 }

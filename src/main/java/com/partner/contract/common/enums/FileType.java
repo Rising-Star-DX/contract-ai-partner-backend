@@ -12,7 +12,7 @@ public enum FileType {
     JPEG(false),
     JPG(false),
     PNG(false),
-    TXT(false)
+    TXT(true)
     ;
 
     private final boolean convertiblePdf;
