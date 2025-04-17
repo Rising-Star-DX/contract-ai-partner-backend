@@ -75,8 +75,8 @@ public class FileConversionService {
         } catch (IOException | InterruptedException e) {
             throw new ApplicationException(ErrorCode.FILE_PROCESSING_ERROR);
         } finally {
-            //if (tempInputFile != null && tempInputFile.exists()) tempInputFile.delete();
-            //if (outputPdfFile != null && outputPdfFile.exists()) outputPdfFile.delete();
+            if (tempInputFile != null && tempInputFile.exists()) tempInputFile.delete();
+            if (outputPdfFile != null && outputPdfFile.exists()) outputPdfFile.delete();
         }
     }
 
@@ -91,7 +91,7 @@ public class FileConversionService {
             for (int i = 0; i < contents.size(); i++) {
                 sb.append(contents.get(i));
                 if (i < contents.size() - 1) {
-                    sb.append("\f"); // 페이지별 구분을 위해 \f(Form Feed) 문자 사용
+                    sb.append("\f");
                 }
             }
 
