@@ -2,6 +2,7 @@ package com.partner.contract.standard.controller;
 
 import com.partner.contract.global.exception.dto.SuccessResponse;
 import com.partner.contract.global.exception.error.SuccessCode;
+import com.partner.contract.standard.dto.StandardListRequestForAndroidDto;
 import com.partner.contract.standard.dto.StandardListResponseDto;
 import com.partner.contract.standard.dto.StandardDetailsResponseDto;
 import com.partner.contract.standard.dto.StandardDetailsResponseForAdminDto;
@@ -25,6 +26,13 @@ public class StandardController {
             @RequestParam(name = "name", required = false, defaultValue = "") String name,
             @RequestParam(name = "category-id", required = false) Long categoryId) {
         List<StandardListResponseDto> standards = standardService.findStandardList(name, categoryId);
+
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), standards));
+    }
+
+    @GetMapping("/android")
+    public ResponseEntity<SuccessResponse<List<StandardListResponseDto>>> standardListAndroid(@ModelAttribute StandardListRequestForAndroidDto requestForAndroidDto) {
+        List<StandardListResponseDto> standards = standardService.findStandardListForAndroid(requestForAndroidDto);
 
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), standards));
     }

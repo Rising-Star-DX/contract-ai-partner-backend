@@ -12,9 +12,10 @@ import com.partner.contract.common.utils.DocumentStatusUtil;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
-import com.partner.contract.standard.dto.StandardListResponseDto;
 import com.partner.contract.standard.dto.StandardDetailsResponseDto;
 import com.partner.contract.standard.dto.StandardDetailsResponseForAdminDto;
+import com.partner.contract.standard.dto.StandardListRequestForAndroidDto;
+import com.partner.contract.standard.dto.StandardListResponseDto;
 import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,6 +61,13 @@ public class StandardService {
         }
 
         return standards
+                .stream()
+                .map(StandardListResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<StandardListResponseDto> findStandardListForAndroid(StandardListRequestForAndroidDto requestForAndroidDto) {
+        return standardRepository.findAllByConditions(requestForAndroidDto)
                 .stream()
                 .map(StandardListResponseDto::fromEntity)
                 .collect(Collectors.toList());
