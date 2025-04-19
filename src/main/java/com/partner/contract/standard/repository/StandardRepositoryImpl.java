@@ -75,10 +75,10 @@ public class StandardRepositoryImpl implements StandardRepositoryCustom {
         if(requestForAndroidDto.getSortBy() != null && !requestForAndroidDto.getSortBy().isEmpty()){
             for(int i=0; i<requestForAndroidDto.getSortBy().size(); i++){
                 String sortKey = requestForAndroidDto.getSortBy().get(i);
-                Boolean ascending = requestForAndroidDto.getAsc() != null
+                Boolean asc = requestForAndroidDto.getAsc() != null
                         && requestForAndroidDto.getSortBy().size() == requestForAndroidDto.getAsc().size()
                         && Boolean.TRUE.equals(requestForAndroidDto.getAsc().get(i));
-                OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sortKey, ascending, qStandard);
+                OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sortKey, asc, qStandard);
                 if(orderSpecifier != null){
                     query.orderBy(orderSpecifier);
                 }
@@ -90,10 +90,10 @@ public class StandardRepositoryImpl implements StandardRepositoryCustom {
         return query.fetch();
     }
 
-    private OrderSpecifier<?> getOrderSpecifier(String sortKey, boolean ascending, QStandard qStandard) {
+    private OrderSpecifier<?> getOrderSpecifier(String sortKey, boolean asc, QStandard qStandard) {
         return switch (sortKey) {
-            case "name" -> ascending ? qStandard.name.asc() : qStandard.name.desc();
-            case "createdAt" -> ascending ? qStandard.createdAt.asc() : qStandard.createdAt.desc();
+            case "name" -> asc ? qStandard.name.asc() : qStandard.name.desc();
+            case "createdAt" -> asc ? qStandard.createdAt.asc() : qStandard.createdAt.desc();
             default -> null;
         };
     }
