@@ -6,5 +6,5 @@ import com.partner.contract.standard.dto.StandardListRequestForAndroidDto;
 import java.util.List;
 
 public interface StandardRepositoryCustom {
-    List<Standard> findAllByCondition(StandardListRequestForAndroidDto requestForAndroidDto);
+    List<Standard> findAllByConditions(StandardListRequestForAndroidDto requestForAndroidDto);
 }
