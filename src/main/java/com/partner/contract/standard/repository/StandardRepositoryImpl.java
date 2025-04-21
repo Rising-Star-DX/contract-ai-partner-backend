@@ -49,6 +49,10 @@ public class StandardRepositoryImpl implements StandardRepositoryCustom {
                 }
             }
             builder.and(statusBuilder);
+        } else {
+            builder.and(
+                    qStandard.fileStatus.eq(FileStatus.SUCCESS)
+                            .and(qStandard.aiStatus.isNotNull()));
         }
 
         // type
