@@ -25,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -67,6 +68,15 @@ public class StandardService {
     }
 
     public List<StandardListResponseDto> findStandardListForAndroid(StandardListRequestForAndroidDto requestForAndroidDto) {
+        if(!CollectionUtils.isEmpty(requestForAndroidDto.getSortBy())) {
+            List<String> sortBy = requestForAndroidDto.getSortBy();
+            List<Boolean> asc = requestForAndroidDto.getAsc();
+
+            if(CollectionUtils.isEmpty(asc) || sortBy.size() != asc.size()) {
+                throw new ApplicationException(ErrorCode.REQUEST_PARAMETER_MISSING_ERROR);
+            }
+        }
+
         return standardRepository.findAllByConditions(requestForAndroidDto)
                 .stream()
                 .map(StandardListResponseDto::fromEntity)

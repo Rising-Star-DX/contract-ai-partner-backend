@@ -75,9 +75,7 @@ public class StandardRepositoryImpl implements StandardRepositoryCustom {
         if(requestForAndroidDto.getSortBy() != null && !requestForAndroidDto.getSortBy().isEmpty()){
             for(int i=0; i<requestForAndroidDto.getSortBy().size(); i++){
                 String sortKey = requestForAndroidDto.getSortBy().get(i);
-                Boolean asc = requestForAndroidDto.getAsc() != null
-                        && requestForAndroidDto.getSortBy().size() == requestForAndroidDto.getAsc().size()
-                        && Boolean.TRUE.equals(requestForAndroidDto.getAsc().get(i));
+                Boolean asc = Boolean.TRUE.equals(requestForAndroidDto.getAsc().get(i));
                 OrderSpecifier<?> orderSpecifier = getOrderSpecifier(sortKey, asc, qStandard);
                 if(orderSpecifier != null){
                     query.orderBy(orderSpecifier);
