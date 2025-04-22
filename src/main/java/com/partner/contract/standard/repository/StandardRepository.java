@@ -29,7 +29,7 @@ public interface StandardRepository extends JpaRepository<Standard, Long>, Stand
 
     @Query("""
         select new com.partner.contract.standard.dto.StandardContentResponseDto(
-            sc.page, sc.content
+            sc.id, sc.page, sc.content
         )
         from StandardContent sc
         where sc.standard.id = :id
