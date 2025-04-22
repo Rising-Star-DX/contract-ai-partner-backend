@@ -95,7 +95,7 @@ public class AgreementAnalysisAsyncService {
                 agreementIncorrectTextRepository.save(agreementIncorrectText);
 
                 for(IncorrectClauseDataDto incorrectClauseDataDto : agreementIncorrectDto.getIncorrectClauseDataDtoList()) {
-                    if (incorrectClauseDataDto.getPosition() == null || incorrectClauseDataDto.getPosition().isEmpty()) {
+                    if (incorrectClauseDataDto.getPosition() == null || incorrectClauseDataDto.getPosition().isEmpty() || incorrectClauseDataDto.getPositionPart() == null) {
                         agreement.updateAiStatus(AiStatus.FAILED);
                         agreementRepository.save(agreement);
                         throw new ApplicationException(ErrorCode.AI_ANALYSIS_POSITION_EMPTY_ERROR);
@@ -103,6 +103,7 @@ public class AgreementAnalysisAsyncService {
 
                     AgreementIncorrectPosition agreementIncorrectPosition = AgreementIncorrectPosition.builder()
                             .position(incorrectClauseDataDto.getPosition().toString())
+                            .positionPart(incorrectClauseDataDto.getPositionPart().toString())
                             .page(incorrectClauseDataDto.getPage())
                             .orderIndex(incorrectClauseDataDto.getOrderIndex())
                             .agreementIncorrectText(agreementIncorrectText)
@@ -117,6 +118,8 @@ public class AgreementAnalysisAsyncService {
             agreement.updateAnalysisInfomation(flaskResponseDto.getTotalPage(), flaskResponseDto.getTotalChunks());
             agreementRepository.save(agreement);
 
+        } catch (ApplicationException e) {
+            throw e;
         } catch (Exception e) {
             agreement.updateAiStatus(AiStatus.FAILED);
             agreementRepository.save(agreement);

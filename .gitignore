@@ -39,3 +39,6 @@ out/
 ## application.yml
 src/main/resources/*.yml
 !application.yml
+
+#QueryDSL Qclass
+src/main/generated/
