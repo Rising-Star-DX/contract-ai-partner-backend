@@ -45,7 +45,7 @@ public class AgreementAnalysisAsyncService {
     public void analyze(Agreement agreement, String categoryName){
         try {
             // Flask에 AI 분석 요청
-            String url = "http://rising-star-alb-885642517.ap-northeast-2.elb.amazonaws.com:5000/flask/agreements/analysis";
+            String url = FLASK_SERVER_IP + "/flask/agreements/analysis";
 
             AnalysisRequestDto analysisRequestDto = AnalysisRequestDto.builder()
                     .id(agreement.getId())
