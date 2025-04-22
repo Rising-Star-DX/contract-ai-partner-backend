@@ -14,6 +14,8 @@ public class AgreementIncorrectPosition {
 
     private String position;
 
+    private String positionPart;
+
     private Integer page;
 
     private Integer orderIndex;
@@ -23,8 +25,9 @@ public class AgreementIncorrectPosition {
     private AgreementIncorrectText agreementIncorrectText;
 
     @Builder
-    public AgreementIncorrectPosition(String position, Integer page, Integer orderIndex, AgreementIncorrectText agreementIncorrectText) {
+    public AgreementIncorrectPosition(String position, String positionPart, Integer page, Integer orderIndex, AgreementIncorrectText agreementIncorrectText) {
         this.position = position;
+        this.positionPart = positionPart;
         this.page = page;
         this.orderIndex = orderIndex;
         this.agreementIncorrectText = agreementIncorrectText;

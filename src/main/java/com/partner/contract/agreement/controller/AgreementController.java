@@ -1,10 +1,8 @@
 package com.partner.contract.agreement.controller;
 
-import com.partner.contract.agreement.dto.AgreementAnalysisStartResponseDto;
-import com.partner.contract.agreement.dto.AgreementAnalysisReportDetailsResponseDto;
-import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
-import com.partner.contract.agreement.dto.AgreementListResponseDto;
+import com.partner.contract.agreement.dto.*;
 import com.partner.contract.agreement.service.AgreementService;
+import com.partner.contract.common.enums.FileType;
 import com.partner.contract.global.exception.dto.SuccessResponse;
 import com.partner.contract.global.exception.error.SuccessCode;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +26,28 @@ public class AgreementController {
             @RequestParam(name = "category-id", required = false) Long categoryId) {
         List<AgreementListResponseDto> agreements = agreementService.findAgreementList(name, categoryId);
 
+        return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), agreements));
+    }
+
+    @GetMapping("/android")
+    public ResponseEntity<SuccessResponse<List<AgreementListResponseDto>>> agreementListAndroid(
+            @RequestParam(name = "status", required = false) List<String> status,
+            @RequestParam(name = "type", required = false) List<FileType> type,
+            @RequestParam(name = "categoryId", required = false) Long categoryId,
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "sortBy", required = false) List<String> sortBy,
+            @RequestParam(name = "asc", required = false) List<Boolean> asc
+    ) {
+        AgreementListRequestForAndroidDto requestForAndroidDto = AgreementListRequestForAndroidDto.builder()
+                .name(name)
+                .type(type)
+                .categoryId(categoryId)
+                .status(status)
+                .sortBy(sortBy)
+                .asc(asc)
+                .build();
+
+        List<AgreementListResponseDto> agreements = agreementService.findAgreementListForAndroid(requestForAndroidDto);
         return ResponseEntity.ok(SuccessResponse.of(SuccessCode.SELECT_SUCCESS.getCode(), SuccessCode.SELECT_SUCCESS.getMessage(), agreements));
     }
 

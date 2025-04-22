@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface StandardRepository extends JpaRepository<Standard, Long> {
+public interface StandardRepository extends JpaRepository<Standard, Long>, StandardRepositoryCustom {
     @Query("select s from Standard s join fetch s.category c where s.aiStatus is not null and s.name like %:name% order by s.createdAt desc")
     List<Standard> findWithCategoryByNameContainingOrderByCreatedAtDesc(@Param("name") String name);
 

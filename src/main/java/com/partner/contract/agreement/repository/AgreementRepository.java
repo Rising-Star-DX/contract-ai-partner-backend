@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface AgreementRepository extends JpaRepository<Agreement, Long> {
+public interface AgreementRepository extends JpaRepository<Agreement, Long>, AgreementRepositoryCustom {
     @Query("select a from Agreement a join fetch a.category c where a.aiStatus is not null and a.name like %:name% order by a.createdAt desc")
     List<Agreement> findWithCategoryByNameContainingOrderByCreatedAtDesc(@Param("name") String name);
 

@@ -1,10 +1,7 @@
 package com.partner.contract.agreement.service;
 
 import com.partner.contract.agreement.domain.Agreement;
-import com.partner.contract.agreement.dto.AgreementAnalysisStartResponseDto;
-import com.partner.contract.agreement.dto.AgreementAnalysisReportDetailsResponseDto;
-import com.partner.contract.agreement.dto.AgreementDetailsResponseDto;
-import com.partner.contract.agreement.dto.AgreementListResponseDto;
+import com.partner.contract.agreement.dto.*;
 import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.category.domain.Category;
 import com.partner.contract.category.repository.CategoryRepository;
@@ -20,6 +17,7 @@ import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -55,7 +53,23 @@ public class AgreementService {
                 .map(AgreementListResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
-  
+
+    public List<AgreementListResponseDto> findAgreementListForAndroid(AgreementListRequestForAndroidDto requestForAndroidDto) {
+        if(!CollectionUtils.isEmpty(requestForAndroidDto.getSortBy())) {
+            List<String> sortBy = requestForAndroidDto.getSortBy();
+            List<Boolean> asc = requestForAndroidDto.getAsc();
+
+            if(CollectionUtils.isEmpty(asc) || sortBy.size() != asc.size()) {
+                throw new ApplicationException(ErrorCode.REQUEST_PARAMETER_MISSING_ERROR);
+            }
+        }
+
+        return agreementRepository.findAllByConditions(requestForAndroidDto)
+                .stream()
+                .map(AgreementListResponseDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+
     public Long uploadFile(MultipartFile file, Long categoryId) {
 
         Category category = categoryRepository.findById(categoryId)
