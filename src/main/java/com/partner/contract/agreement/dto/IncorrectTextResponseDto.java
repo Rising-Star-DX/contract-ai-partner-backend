@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.List;
 
@@ -18,8 +17,9 @@ public class IncorrectTextResponseDto {
     private String proofText;
     private String correctedText;
     private List<IncorrectPositionResponseDto> positions;
+    private List<IncorrectPositionResponseDto> positionParts;
 
-    public IncorrectTextResponseDto(Long id, Integer page, Double accuracy, String incorrectText, String proofText, String correctedText, String positions) {
+    public IncorrectTextResponseDto(Long id, Integer page, Double accuracy, String incorrectText, String proofText, String correctedText, String positions, String positionParts) {
         this.id = id;
         this.page = page;
         this.accuracy = accuracy;
@@ -27,6 +27,7 @@ public class IncorrectTextResponseDto {
         this.proofText = proofText;
         this.correctedText = correctedText;
         this.positions = parsePositionJson(positions);
+        this.positionParts  = parsePositionJson(positionParts);
     }
 
     private List<IncorrectPositionResponseDto> parsePositionJson(String position) {
