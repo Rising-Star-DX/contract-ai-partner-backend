@@ -6,8 +6,11 @@ spring:
     active: dev
 
   kafka:
-    producer:
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    topics:
+      standard-analysis-request: standard_analysis_request_topic
+      standard-analysis-response: standard_analysis_response_topic
+      agreement-analysis-request: agreement_analysis_request_topic
+      agreement-analysis-response: agreement_analysis_response_topic
 
   servlet:
     multipart:
