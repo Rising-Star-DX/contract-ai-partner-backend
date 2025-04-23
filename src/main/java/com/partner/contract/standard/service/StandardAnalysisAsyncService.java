@@ -77,19 +77,15 @@ public class StandardAnalysisAsyncService {
                 standard.updateTotalPage(body.getData().getContents().size());
                 standardRepository.save(standard);
 
-                Boolean exists = standardContentRepository.existsByStandardId(standard.getId());
+                List<String> contents = body.getData().getContents();
+                for(int i=0; i<contents.size(); i++) {
+                    StandardContent standardContent = StandardContent.builder()
+                            .page(i+1)
+                            .content(contents.get(i))
+                            .standard(standard)
+                            .build();
 
-                if(!exists) {
-                    List<String> contents = body.getData().getContents();
-                    for (int i = 0; i < contents.size(); i++) {
-                        StandardContent standardContent = StandardContent.builder()
-                                .page(i + 1)
-                                .content(contents.get(i))
-                                .standard(standard)
-                                .build();
-
-                        standardContentRepository.save(standardContent);
-                    }
+                    standardContentRepository.save(standardContent);
                 }
             } else {
                 standard.updateAiStatus(AiStatus.FAILED);
