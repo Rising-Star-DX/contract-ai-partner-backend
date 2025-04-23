@@ -4,6 +4,7 @@ import com.partner.contract.common.dto.AnalysisRequestDto;
 import com.partner.contract.common.dto.FlaskStandardContentsResponseDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
+import com.partner.contract.common.service.KafkaProducerService;
 import com.partner.contract.standard.domain.Standard;
 import com.partner.contract.standard.domain.StandardContent;
 import com.partner.contract.standard.repository.StandardContentRepository;
@@ -29,6 +30,7 @@ public class StandardAnalysisAsyncService {
     private final StandardRepository standardRepository;
     private final StandardContentRepository standardContentRepository;
     private final RestTemplate restTemplate;
+    private final KafkaProducerService kafkaProducerService;
 
     @Value("${secret.flask.ip}")
     private String FLASK_SERVER_IP;
@@ -47,23 +49,26 @@ public class StandardAnalysisAsyncService {
                 .build();
 
         // HTTP Request Header 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
 
         // HTTP Request Body 설정
-        HttpEntity<AnalysisRequestDto> requestEntity = new HttpEntity<>(analysisRequestDto, headers);
+//        HttpEntity<AnalysisRequestDto> requestEntity = new HttpEntity<>(analysisRequestDto, headers);
 
-        FlaskResponseDto<FlaskStandardContentsResponseDto> body = null;
+//        FlaskResponseDto<FlaskStandardContentsResponseDto> body = null;
         try {
             // Flask에 API 요청
-            ResponseEntity<FlaskResponseDto<FlaskStandardContentsResponseDto>> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    requestEntity,
-                    new ParameterizedTypeReference<FlaskResponseDto<FlaskStandardContentsResponseDto>>() {} // ✅ 제네릭 타입 유지
-            );
+//            ResponseEntity<FlaskResponseDto<FlaskStandardContentsResponseDto>> response = restTemplate.exchange(
+//                    url,
+//                    HttpMethod.POST,
+//                    requestEntity,
+//                    new ParameterizedTypeReference<FlaskResponseDto<FlaskStandardContentsResponseDto>>() {} // ✅ 제네릭 타입 유지
+//            );
+//
+//            body = response.getBody();
 
-            body = response.getBody();
+            // kafka에 메시지 보내기
+            kafkaProducerService.sendMessage(analysisRequestDto);
 
         } catch (RestClientException e) {
             standard.updateAiStatus(AiStatus.FAILED);
