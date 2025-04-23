@@ -5,6 +5,8 @@ import com.partner.contract.common.dto.FlaskStandardContentsResponseDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.common.service.KafkaProducerService;
+import com.partner.contract.global.exception.error.ApplicationException;
+import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
 import com.partner.contract.standard.domain.StandardContent;
 import com.partner.contract.standard.repository.StandardContentRepository;
@@ -14,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.kafka.KafkaException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +31,7 @@ import java.util.List;
 public class StandardAnalysisAsyncService {
 
     private final StandardRepository standardRepository;
-    private final StandardContentRepository standardContentRepository;
+//    private final StandardContentRepository standardContentRepository;
     private final RestTemplate restTemplate;
     private final KafkaProducerService kafkaProducerService;
 
@@ -36,7 +39,7 @@ public class StandardAnalysisAsyncService {
     private String FLASK_SERVER_IP;
 
     @Async
-    @Transactional
+    @Transactional(noRollbackFor = ApplicationException.class)
     public void analyze(Standard standard, String categoryName){
         // Flask에 AI 분석 요청
         String url = FLASK_SERVER_IP + "/flask/standards/analysis";
@@ -58,7 +61,7 @@ public class StandardAnalysisAsyncService {
 //        FlaskResponseDto<FlaskStandardContentsResponseDto> body = null;
         try {
             // Flask에 API 요청
-//            ResponseEntity<FlaskResponseDto<FlaskStandardContentsResponseDto>> response = restTemplate.exchange(
+//            ResponseEntity<FlaskResponseDto<FlaskStandardContentsResponseDto>>  = restTemplate.exchange(
 //                    url,
 //                    HttpMethod.POST,
 //                    requestEntity,
@@ -68,43 +71,44 @@ public class StandardAnalysisAsyncService {
 //            body = response.getBody();
 
             // kafka에 메시지 보내기
-            kafkaProducerService.sendMessage(analysisRequestDto);
+            kafkaProducerService.sendStandardAnalysisRequest(analysisRequestDto);
 
-        } catch (RestClientException e) {
+        } catch (KafkaException e) {
             standard.updateAiStatus(AiStatus.FAILED);
             standardRepository.save(standard);
-            log.error("Flask 서버 연결 오류 : {}", e.getMessage(), e);
+            throw new ApplicationException(ErrorCode.KAFKA_SERVER_CONNECTION_ERROR);
+            //log.error("Flask 서버 연결 오류 : {}", e.getMessage(), e);
         }
 
-        try {
-            if ("success".equals(body.getData().getResult())) { // 기준문서 분석 성공
-                standard.updateAiStatus(AiStatus.SUCCESS);
-                standard.updateTotalPage(body.getData().getContents().size());
-                standardRepository.save(standard);
-
-                Boolean exists = standardContentRepository.existsByStandardId(standard.getId());
-
-                if(!exists) {
-                    List<String> contents = body.getData().getContents();
-                    for (int i = 0; i < contents.size(); i++) {
-                        StandardContent standardContent = StandardContent.builder()
-                                .page(i + 1)
-                                .content(contents.get(i))
-                                .standard(standard)
-                                .build();
-
-                        standardContentRepository.save(standardContent);
-                    }
-                }
-            } else {
-                standard.updateAiStatus(AiStatus.FAILED);
-                standardRepository.save(standard);
-                log.error("Flask에서 AI 분석에 실패했습니다.");
-            }
-        } catch (NullPointerException e) {
-            standard.updateAiStatus(AiStatus.FAILED);
-            standardRepository.save(standard);
-            log.error("Flask에서 응답한 data가 null입니다. : {}", e.getMessage(), e);
-        }
+//        try {
+//            if ("success".equals(body.getData().getResult())) { // 기준문서 분석 성공
+//                standard.updateAiStatus(AiStatus.SUCCESS);
+//                standard.updateTotalPage(body.getData().getContents().size());
+//                standardRepository.save(standard);
+//
+//                Boolean exists = standardContentRepository.existsByStandardId(standard.getId());
+//
+//                if(!exists) {
+//                    List<String> contents = body.getData().getContents();
+//                    for (int i = 0; i < contents.size(); i++) {
+//                        StandardContent standardContent = StandardContent.builder()
+//                                .page(i + 1)
+//                                .content(contents.get(i))
+//                                .standard(standard)
+//                                .build();
+//
+//                        standardContentRepository.save(standardContent);
+//                    }
+//                }
+//            } else {
+//                standard.updateAiStatus(AiStatus.FAILED);
+//                standardRepository.save(standard);
+//                log.error("Flask에서 AI 분석에 실패했습니다.");
+//            }
+//        } catch (NullPointerException e) {
+//            standard.updateAiStatus(AiStatus.FAILED);
+//            standardRepository.save(standard);
+//            log.error("Flask에서 응답한 data가 null입니다. : {}", e.getMessage(), e);
+//        }
     }
 }

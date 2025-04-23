@@ -7,6 +7,10 @@ import java.util.List;
 
 @Data
 public class AgreementAnalysisFlaskResponseDto {
+    private Long agreementId;
+
+    private String result;
+
     private Integer totalPage;
 
     private Integer totalChunks;
