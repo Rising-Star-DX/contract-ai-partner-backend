@@ -40,6 +40,7 @@ public class IncorrectTextResponseDto {
 
             // List<List<Double>>를 List<PositionResponseDto>로 변환
             return parsedPositions.stream()
+                    .filter(data -> data.size() == 4)
                     .map(data -> new IncorrectPositionResponseDto(
                             data.get(0), // height
                             data.get(1), // width

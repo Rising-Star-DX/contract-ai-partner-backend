@@ -28,7 +28,8 @@ public interface AgreementRepository extends JpaRepository<Agreement, Long>, Agr
             ait.incorrect_text AS incorrectText,
             ait.proof_text AS proofText,
             ait.corrected_text AS correctedText,
-            aip.position AS position
+            aip.position AS positions,
+            aip.position_part AS positionParts
         FROM (
             SELECT * FROM agreement_incorrect_text 
             WHERE agreement_id = :agreementId
