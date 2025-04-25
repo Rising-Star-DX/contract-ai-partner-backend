@@ -57,7 +57,7 @@ public enum ErrorCode {
     FLASK_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FL005", "Flask에서 데이터 삭제에 실패했습니다."),
     
     //Kafka
-    KAFKA_SERVER_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "KF002", "Kafka 메시지 전송 중 오류가 발생했습니다."),
+    KAFKA_SERVER_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "KF001", "Kafka 메시지 전송 중 오류가 발생했습니다."),
     // LibreOffice
     OFFICE_CONNECTION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "OF001", "LibreOffice 통신 중 문제가 발생했습니다.")
     ;
