@@ -39,7 +39,7 @@ public class StandardAnalysisAsyncService {
     private String FLASK_SERVER_IP;
 
     @Async
-    @Transactional(noRollbackFor = ApplicationException.class)
+    @Transactional
     public void analyze(Standard standard, String categoryName){
         // Flask에 AI 분석 요청
         String url = FLASK_SERVER_IP + "/flask/standards/analysis";

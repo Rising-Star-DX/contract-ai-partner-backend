@@ -47,7 +47,7 @@ public class AgreementAnalysisAsyncService {
     @Transactional(noRollbackFor = ApplicationException.class)
     public void analyze(Agreement agreement, String categoryName){
         try {
-             //Flask에 AI 분석 요청
+            // Flask에 AI 분석 요청
             String url = FLASK_SERVER_IP + "/flask/agreements/analysis";
 
             AnalysisRequestDto analysisRequestDto = AnalysisRequestDto.builder()
