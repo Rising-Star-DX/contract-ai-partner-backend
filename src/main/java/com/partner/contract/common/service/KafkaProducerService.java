@@ -15,11 +15,11 @@ public class KafkaProducerService {
     @Value("${kafka.topics.agreement-analysis-request}")
     private String agreementAnalysisRequestTopic;
 
-    public <T> void sendStandardAnalysisRequest(T message) {
+    public void sendStandardAnalysisRequest(Object message) {
         kafkaTemplate.send(standardAnalysisRequestTopic, message);
     }
 
-    public <T> void sendAgreementAnalysisRequest(T message) {
+    public void sendAgreementAnalysisRequest(Object message) {
         kafkaTemplate.send(agreementAnalysisRequestTopic, message);
     }
 }
