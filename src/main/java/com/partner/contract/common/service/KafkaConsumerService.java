@@ -10,7 +10,6 @@ import com.partner.contract.agreement.dto.IncorrectClauseDataDto;
 import com.partner.contract.agreement.repository.AgreementIncorrectPositionRepository;
 import com.partner.contract.agreement.repository.AgreementIncorrectTextRepository;
 import com.partner.contract.agreement.repository.AgreementRepository;
-import com.partner.contract.common.dto.AnalysisRequestDto;
 import com.partner.contract.common.dto.FlaskStandardContentsResponseDto;
 import com.partner.contract.common.enums.AiStatus;
 import com.partner.contract.global.exception.error.ApplicationException;
@@ -21,10 +20,7 @@ import com.partner.contract.standard.repository.StandardContentRepository;
 import com.partner.contract.standard.repository.StandardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.KafkaException;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +37,11 @@ public class KafkaConsumerService {
     private final AgreementIncorrectTextRepository agreementIncorrectTextRepository;
     private final AgreementIncorrectPositionRepository agreementIncorrectPositionRepository;
 
-    @KafkaListener(topics = "${kafka.topics.standard-analysis-response}")
-    @Transactional
+    @KafkaListener(
+            topics = "${kafka.topics.standard-analysis-response}",
+            containerFactory = "standardKafkaListenerContainerFactory"
+    )
+    @Transactional(noRollbackFor = ApplicationException.class)
     public void listenStandardAnalysisResponse(FlaskStandardContentsResponseDto flaskResponseDto) {
         Long standardId = flaskResponseDto.getStandardId();
         Standard standard = standardRepository.findById(standardId).orElseThrow(() -> new ApplicationException(ErrorCode.STANDARD_NOT_FOUND_ERROR));
@@ -70,16 +69,19 @@ public class KafkaConsumerService {
             } else {
                 standard.updateAiStatus(AiStatus.FAILED);
                 standardRepository.save(standard);
-                log.error("Flask에서 AI 분석에 실패했습니다.");
+                throw new ApplicationException(ErrorCode.FLASK_ANALYSIS_ERROR);
             }
         } catch (NullPointerException e) {
             standard.updateAiStatus(AiStatus.FAILED);
             standardRepository.save(standard);
-            log.error("Flask에서 응답한 data가 null입니다. : {}", e.getMessage(), e);
+            throw new ApplicationException(ErrorCode.FLASK_RESPONSE_NULL_ERROR);
         }
     }
 
-    @KafkaListener(topics = "${kafka.topics.agreement-analysis-response}")
+    @KafkaListener(
+            topics = "${kafka.topics.agreement-analysis-response}",
+            containerFactory = "agreementKafkaListenerContainerFactory"
+    )
     @Transactional(noRollbackFor = ApplicationException.class)
     public void listenAgreementAnalysisResponse(AgreementAnalysisFlaskResponseDto flaskResponseDto) {
         Long agreementId = flaskResponseDto.getAgreementId();
