@@ -185,7 +185,7 @@ public class StandardService {
         standardRepository.save(standard);
 
         // 비동기 분석 요청
-        standardAnalysisAsyncService.analyze(standard, standard.getCategory().getName());
+        standardAnalysisAsyncService.analyzeWithKafka(standard, standard.getCategory().getName());
     }
 
     public void cancelFileUpload(Long id) {
