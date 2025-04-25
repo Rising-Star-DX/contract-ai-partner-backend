@@ -186,7 +186,7 @@ public class AgreementService {
         agreementRepository.save(agreement);
 
         // 비동기로 분석 요청
-        agreementAnalysisAsyncService.analyze(agreement, agreement.getCategory().getName());
+        agreementAnalysisAsyncService.analyzeWithKafka(agreement, agreement.getCategory().getName());
 
         return new AgreementAnalysisStartResponseDto(id, agreement.getUrl());
     }

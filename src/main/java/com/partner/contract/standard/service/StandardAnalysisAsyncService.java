@@ -1,9 +1,12 @@
 package com.partner.contract.standard.service;
 
 import com.partner.contract.common.dto.AnalysisRequestDto;
-import com.partner.contract.common.dto.FlaskStandardContentsResponseDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
+import com.partner.contract.common.dto.FlaskStandardContentsResponseDto;
 import com.partner.contract.common.enums.AiStatus;
+import com.partner.contract.common.service.KafkaProducerService;
+import com.partner.contract.global.exception.error.ApplicationException;
+import com.partner.contract.global.exception.error.ErrorCode;
 import com.partner.contract.standard.domain.Standard;
 import com.partner.contract.standard.domain.StandardContent;
 import com.partner.contract.standard.repository.StandardContentRepository;
@@ -13,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.kafka.KafkaException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +33,7 @@ public class StandardAnalysisAsyncService {
     private final StandardRepository standardRepository;
     private final StandardContentRepository standardContentRepository;
     private final RestTemplate restTemplate;
+    private final KafkaProducerService kafkaProducerService;
 
     @Value("${secret.flask.ip}")
     private String FLASK_SERVER_IP;
@@ -100,6 +105,26 @@ public class StandardAnalysisAsyncService {
             standard.updateAiStatus(AiStatus.FAILED);
             standardRepository.save(standard);
             log.error("Flask에서 응답한 data가 null입니다. : {}", e.getMessage(), e);
+        }
+    }
+
+    @Async
+    @Transactional(noRollbackFor = ApplicationException.class)
+    public void analyzeWithKafka(Standard standard, String categoryName){
+
+        AnalysisRequestDto analysisRequestDto = AnalysisRequestDto.builder()
+                .id(standard.getId())
+                .url(standard.getUrl())
+                .categoryName(categoryName)
+                .type(standard.getType())
+                .build();
+
+        try {
+            kafkaProducerService.sendStandardAnalysisRequest(analysisRequestDto);
+        } catch (KafkaException e) {
+            standard.updateAiStatus(AiStatus.FAILED);
+            standardRepository.save(standard);
+            throw new ApplicationException(ErrorCode.KAFKA_SERVER_CONNECTION_ERROR);
         }
     }
 }

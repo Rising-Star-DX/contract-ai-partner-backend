@@ -1,0 +1,25 @@
+package com.partner.contract.common.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class KafkaProducerService {
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    @Value("${kafka.topics.standard-analysis-request}")
+    private String standardAnalysisRequestTopic;
+    @Value("${kafka.topics.agreement-analysis-request}")
+    private String agreementAnalysisRequestTopic;
+
+    public void sendStandardAnalysisRequest(Object message) {
+        kafkaTemplate.send(standardAnalysisRequestTopic, message);
+    }
+
+    public void sendAgreementAnalysisRequest(Object message) {
+        kafkaTemplate.send(agreementAnalysisRequestTopic, message);
+    }
+}

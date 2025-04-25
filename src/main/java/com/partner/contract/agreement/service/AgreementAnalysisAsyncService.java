@@ -12,6 +12,7 @@ import com.partner.contract.agreement.repository.AgreementRepository;
 import com.partner.contract.common.dto.AnalysisRequestDto;
 import com.partner.contract.common.dto.FlaskResponseDto;
 import com.partner.contract.common.enums.AiStatus;
+import com.partner.contract.common.service.KafkaProducerService;
 import com.partner.contract.global.exception.error.ApplicationException;
 import com.partner.contract.global.exception.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.kafka.KafkaException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,7 @@ public class AgreementAnalysisAsyncService {
     private final AgreementIncorrectTextRepository agreementIncorrectTextRepository;
     private final AgreementIncorrectPositionRepository agreementIncorrectPositionRepository;
     private final RestTemplate restTemplate;
+    private final KafkaProducerService kafkaProducerService;
 
     @Value("${secret.flask.ip}")
     private String FLASK_SERVER_IP;
@@ -124,6 +127,26 @@ public class AgreementAnalysisAsyncService {
             agreement.updateAiStatus(AiStatus.FAILED);
             agreementRepository.save(agreement);
             throw new ApplicationException(ErrorCode.FLASK_ANALYSIS_ERROR);
+        }
+    }
+
+    @Async
+    @Transactional(noRollbackFor = ApplicationException.class)
+    public void analyzeWithKafka(Agreement agreement, String categoryName){
+
+        AnalysisRequestDto analysisRequestDto = AnalysisRequestDto.builder()
+                .id(agreement.getId())
+                .url(agreement.getUrl())
+                .categoryName(categoryName)
+                .type(agreement.getType())
+                .build();
+
+        try {
+            kafkaProducerService.sendAgreementAnalysisRequest(analysisRequestDto);
+        } catch (KafkaException e) {
+            agreement.updateAiStatus(AiStatus.FAILED);
+            agreementRepository.save(agreement);
+            throw new ApplicationException(ErrorCode.KAFKA_SERVER_CONNECTION_ERROR);
         }
     }
 }

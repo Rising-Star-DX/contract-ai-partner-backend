@@ -1,11 +1,14 @@
 package com.partner.contract.common.dto;
 
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Getter
+@Data
+@NoArgsConstructor
 public class FlaskStandardContentsResponseDto {
+    private Long standardId;
     private String result;
     private List<String> contents;
 }
