@@ -5,13 +5,6 @@ spring:
   profiles:
     active: dev
 
-  kafka:
-    topics:
-      standard-analysis-request: standard_analysis_request_topic
-      standard-analysis-response: standard_analysis_response_topic
-      agreement-analysis-request: agreement_analysis_request_topic
-      agreement-analysis-response: agreement_analysis_response_topic
-
   servlet:
     multipart:
       max-file-size: 100MB
@@ -69,3 +62,9 @@ logging:
 #    root: DEBUG
 #    org.hibernate.SQL: DEBUG
 #    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+kafka:
+  topics:
+    standard-analysis-request: standard_analysis_request_topic
+    standard-analysis-response: standard_analysis_response_topic
+    agreement-analysis-request: agreement_analysis_request_topic
+    agreement-analysis-response: agreement_analysis_response_topic
